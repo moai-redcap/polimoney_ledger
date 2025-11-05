@@ -15,6 +15,8 @@ Polimoneyへインポート可能なjsonと、政治資金収支報告書もし�
 ### Step1. Appwrite Cloud
 このプロダクトはオープンソースとして簡単に（GUIで）セットアップできるよう Appwrite Cloudというサービスの使用を想定しています。
 
+入力した収支等、Polimoney Ledgerのデータは、基本的にAppwrite Cloudに保存されます。
+
 [Appwriteの公式サイト](https://appwrite.io/)より、Appwrite Cloudに登録できます。
 
 通常は無料プランで問題なくご使用いただけると思いますが、場合によっては有料となる場合があります。
