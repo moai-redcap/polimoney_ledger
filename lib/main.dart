@@ -1,79 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:polimoney_ledger/core/services/appwrite_client.dart';
-import 'package:polimoney_ledger/features/auth/presentation/pages/appwrite_config_page.dart';
-import 'package:polimoney_ledger/features/auth/presentation/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:polimoney_ledger/features/auth/presentation/pages/splash_page.dart';
+import 'package:polimoney_ledger/features/auth/presentation/pages/supabase_config_page.dart';
+import 'package:polimoney_ledger/features/home/presentation/pages/home_page.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final supabaseUrl = prefs.getString('supabase_url');
+  final supabaseAnonKey = prefs.getString('supabase_anon_key');
+
+  if (supabaseUrl != null && supabaseAnonKey != null) {
+    await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  } else {
+    // ユーザーがまだ設定を入力していない場合、SupabaseConfigPageが最初の画面になる
+    // そのため、ここではプレースホルダーで初期化しておく
+    await Supabase.initialize(
+      url: 'https://placeholder.supabase.co',
+      anonKey: 'placeholder',
+    );
+  }
+  
+  runApp(MyApp(isConfigured: supabaseUrl != null));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final _storage = const FlutterSecureStorage();
-  late Future<Widget> _initialPageFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _initialPageFuture = _getInitialPage();
-  }
-
-  Future<Widget> _getInitialPage() async {
-    final endpoint = await _storage.read(key: 'appwrite_endpoint');
-    final projectId = await _storage.read(key: 'appwrite_project_id');
-
-    if (endpoint != null && projectId != null) {
-      // Config exists, initialize Appwrite client and go to login page
-      AppwriteClient.instance.initialize(endpoint: endpoint, projectId: projectId);
-      return const LoginPage();
-    } else {
-      // No config, go to config page
-      return const AppwriteConfigPage();
-    }
-  }
+class MyApp extends StatelessWidget {
+  final bool isConfigured;
+  const MyApp({super.key, required this.isConfigured});
 
   @override
   Widget build(BuildContext context) {
+    // ログイン状態に応じて初期画面を振り分ける
+    Widget getInitialPage() {
+      if (!isConfigured) {
+        return const SupabaseConfigPage();
+      }
+      
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        return const HomePage();
+      } else {
+        // 設定済みで、未ログインの場合はSplashPageでユーザー数を確認
+        return const SplashPage();
+      }
+    }
+
     return MaterialApp(
       title: 'polimoney_ledger',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: FutureBuilder<Widget>(
-        future: _initialPageFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                child: Text('An error occurred: ${snapshot.error}'),
-              ),
-            );
-          }
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          }
-          // Default case
-          return const Scaffold(
-            body: Center(
-              child: Text('An unknown error occurred.'),
-            ),
-          );
-        },
-      ),
+      home: getInitialPage(),
     );
   }
 }
