@@ -1,9 +1,9 @@
-# **Polimoney Ledger \- 機能仕様書 (v3.8)**
+# **Polimoney Ledger - 機能仕様書 (v3.8)**
 
-## **1\. 機能概要 (Feature Overview)**
+## **1. 機能概要 (Feature Overview)**
 
 この機能は、政治団体や候補者の会計担当者を対象としています。  
-会計担当者が、自身が管理する\*\*「政治団体」または「政治家（候補者）」を登録し、それぞれに紐づく「選挙」\*\*の台帳を作成します。  
+会計担当者が、自身が管理する**「政治団体」または「政治家（候補者）」を登録し、それぞれに紐づく「選挙」**の台帳を作成します。  
 v3.0 より、複式簿記モデルを導入します。  
 v3.5 より、台帳タイプ（政治団体 / 選挙運動）に応じて、使用する勘定科目が自動で切り替わります。  
 （例：「選挙」台帳では「人件費」「自己資金」、「政治団体」台帳では「経常経費」「政治活動費」が選択肢となります）  
@@ -16,127 +16,40 @@ v3.8 では、選挙運動費用の公費負担対応と、支払元の複数行
 アカウント発行と認証は、ディープリンクが不要な「OTP（ワンタイムパスコード）」方式を採用します。  
 関係者（contacts）のプライバシー設定（匿名化・非公開理由の明記）に対応します。
 
-## **2\. データモデル (Data Model)**
+## **2. データモデル (Data Model)**
 
-### **2.1. 勘定科目マスタ (【v3.6 更新】)**
+### **2.1. 勘定科目マスタ (【v3.9 更新】)**
 
-owner_user_id カラムを削除。accounts テーブルは、OSS ユーザーが README.md の SQL で投入する「共通マスタ」専用テーブルとなります。
+**方針変更:**
+勘定科目（Master Accounts）は、Supabase のテーブルではなく、**アプリケーション内の定数（コード）として静的に定義**します。
+ユーザーが任意に追加できるのは、各勘定科目に紐づく「**補助科目 (Sub Accounts)**」のみとし、これを Supabase に保存します。
 
-**テーブル名:** accounts
+**テーブル名:** sub_accounts (旧 accounts テーブルを廃止・代替)
 
-| 列名 (Column Name) | データ型 (Data Type) | 説明 (Description)      | 備考 (Notes)                                                                              |
-| :----------------- | :------------------- | :---------------------- | :---------------------------------------------------------------------------------------- |
-| id                 | uuid                 | 一意な ID               | 主キー, uuid_generate_v4()                                                                |
-| ledger_type        | text                 | **台帳タイプ**          | **political_organization** (政治団体) or **election** (選挙運動)。必須                    |
-| account_code       | text                 | 勘定科目コード (任意)   | 例: 111 (現金), 511 (人件費)                                                              |
-| account_name       | text                 | 勘定科目名              | 必須。例: 「現金」「普通預金」「人件費」「自己資金」                                      |
-| account_type       | text                 | 勘定タイプ              | asset (資産), liability (負債), equity (純資産), revenue (収益/収入), expense (費用/支出) |
-| report_category    | text                 | 報告書上の分類          | 必須。例: 「経常経費」「政治活動費」                                                      |
-| is_debit_positive  | boolean              | 借方(Debit)がプラス側か | true (資産, 費用), false (負債, 純資産, 収益)                                             |
-| is_active          | boolean              | 現在使用可能か          | デフォルト true                                                                           |
+| 列名 (Column Name)  | データ型 (Data Type) | 説明 (Description)         | 備考 (Notes)                                                             |
+| :------------------ | :------------------- | :------------------------- | :----------------------------------------------------------------------- |
+| id                  | uuid                 | 一意な ID (補助科目 ID)    | 主キー, uuid_generate_v4()                                               |
+| owner_user_id       | uuid                 | 台帳のオーナーユーザー ID  | auth.users.id への参照 (RLS 用)                                          |
+| ledger_type         | text                 | **台帳タイプ**             | **political_organization** (政治団体) or **election** (選挙運動)。必須   |
+| parent_account_code | text                 | **親となる勘定科目コード** | アプリ側で定義された Master Account のコード (例: 'EXP_UTILITIES')。必須 |
+| name                | text                 | **補助科目名**             | 必須。例: 「電気代」「水道代」                                           |
+| created_at          | timestamptz          | レコード作成日時           | デフォルトで now()                                                       |
 
-#### **2.1.1. 勘定科目一覧（ledger_type \= 'political_organization'）**
+#### **2.1.1. 静的勘定科目マスタ（アプリ内定義）**
 
-政治資金収支報告書の様式（総務省）に基づいた共通マスタ科目一覧です。
+`lib/core/constants/account_master.dart` 等で定義します。
 
-**資産 (Asset) / 負債 (Liability) / 純資産 (Equity)**
+**共通プロパティ:**
 
-| account_name     | account_type | report_category | 備考                                  |
-| :--------------- | :----------- | :-------------- | :------------------------------------ |
-| 現金             | asset        | 資産            |                                       |
-| 普通預金         | asset        | 資産            |                                       |
-| 当座預金         | asset        | 資産            |                                       |
-| 郵便振替         | asset        | 資産            |                                       |
-| 定期預金         | asset        | 資産            |                                       |
-| その他の預金     | asset        | 資産            |                                       |
-| 仮払金           | asset        | 資産            |                                       |
-| 前払金           | asset        | 資産            |                                       |
-| 貸付金           | asset        | 資産            |                                       |
-| 未収金           | asset        | 資産            |                                       |
-| 建物             | asset        | 資産            |                                       |
-| 構築物           | asset        | 資産            |                                       |
-| 機械装置         | asset        | 資産            |                                       |
-| 車両運搬具       | asset        | 資産            |                                       |
-| 備品             | asset        | 資産            |                                       |
-| 土地             | asset        | 資産            |                                       |
-| 敷金・保証金     | asset        | 資産            |                                       |
-| 借入金           | liability    | 負債            | ※収入としての借入金は取引タイプで区別 |
-| 未払金           | liability    | 負債            |                                       |
-| 預り金           | liability    | 負債            |                                       |
-| 元入金           | equity       | 純資産          |                                       |
-| 前期繰越収支差額 | equity       | 純資産          |                                       |
+- `code`: 一意な識別子 (例: 'ASSET_CASH', 'EXP_PERSONNEL')
+- `name`: 表示名 (例: '現金', '人件費')
+- `type`: 勘定タイプ (asset, liability, equity, revenue, expense)
+- `reportCategory`: 報告書上の分類 (例: '経常経費', '政治活動費')
 
-**収入 (Revenue)**
+##### **(例: 政治団体用)**
 
-| account_name                     | account_type | report_category | 備考                            |
-| :------------------------------- | :----------- | :-------------- | :------------------------------ |
-| 党費又は会費                     | revenue      | 党費又は会費    |                                 |
-| 寄附                             | revenue      | 寄附            | 政党匿名寄附以外のもの          |
-| 政党匿名寄附                     | revenue      | 寄附            | 政党のみ                        |
-| 機関紙誌の発行事業収入           | revenue      | 事業収入        |                                 |
-| その他の事業収入                 | revenue      | 事業収入        |                                 |
-| 本部又は支部から供与された交付金 | revenue      | 本部支部交付金  |                                 |
-| 借入金収入                       | revenue      | 借入金          | ※簿記上は負債増加だが収入計上用 |
-| その他の収入                     | revenue      | その他の収入    | 預金利子など                    |
-
-**支出 (Expense)**
-
-| account_name                 | account_type | report_category | 備考 |
-| :--------------------------- | :----------- | :-------------- | :--- |
-| 人件費                       | expense      | 経常経費        |      |
-| 光熱水費                     | expense      | 経常経費        |      |
-| 備品・消耗品費               | expense      | 経常経費        |      |
-| 事務所費                     | expense      | 経常経費        |      |
-| 組織活動費                   | expense      | 政治活動費      |      |
-| 選挙関係費                   | expense      | 政治活動費      |      |
-| 機関紙誌の発行事業費         | expense      | 政治活動費      |      |
-| 宣伝事業費                   | expense      | 政治活動費      |      |
-| 政治資金パーティー開催事業費 | expense      | 政治活動費      |      |
-| その他の事業費               | expense      | 政治活動費      |      |
-| 調査研究費                   | expense      | 政治活動費      |      |
-| 寄附・交付金                 | expense      | 政治活動費      |      |
-| その他の経費                 | expense      | 政治活動費      |      |
-
-#### **2.1.2. 勘定科目一覧（ledger_type \= 'election'）**
-
-選挙運動費用収支報告書の様式（公職選挙法）に基づいた共通マスタ科目一覧です。
-
-**資産 (Asset) / 負債 (Liability) / 純資産 (Equity)**
-
-| account_name     | account_type | report_category | 備考 |
-| :--------------- | :----------- | :-------------- | :--- |
-| 現金             | asset        | 資産            |      |
-| 普通預金         | asset        | 資産            |      |
-| 選挙運動用立替金 | asset        | 資産            |      |
-| 未払金           | liability    | 負債            |      |
-| 借入金           | liability    | 負債            |      |
-| 元入金           | equity       | 純資産          |      |
-
-**収入 (Revenue)**
-
-| account_name | account_type | report_category | 備考                   |
-| :----------- | :----------- | :-------------- | :--------------------- |
-| 寄附         | revenue      | 寄附            |                        |
-| 自己資金     | revenue      | その他の収入    | ※候補者本人の資金      |
-| 公費負担     | revenue      | その他の収入    | 選挙運動費用の公費負担 |
-| その他の収入 | revenue      | その他の収入    | 預金利子、公費負担など |
-
-**支出 (Expense)**
-
-※選挙運動費用収支報告書の「支出の部」に対応する費目です。
-
-| account_name | account_type | report_category | 備考                         |
-| :----------- | :----------- | :-------------- | :--------------------------- |
-| 人件費       | expense      | 人件費          | 報酬、食事代など             |
-| 家屋費       | expense      | 家屋費          | 選挙事務所費、集合会場費等   |
-| 通信費       | expense      | 通信費          | 電信電話料、切手代など       |
-| 交通費       | expense      | 交通費          | 鉄道運賃、自動車借上料など   |
-| 印刷費       | expense      | 印刷費          | ポスター、ビラ、選挙公報など |
-| 広告費       | expense      | 広告費          | 新聞広告、看板、拡声器など   |
-| 文具費       | expense      | 文具費          | 事務用品など                 |
-| 食料費       | expense      | 食料費          | 湯茶・菓子代、弁当代など     |
-| 休泊費       | expense      | 休泊費          | 宿泊料など                   |
-| 雑費         | expense      | 雑費            | 上記に含まれないもの         |
+- `EXP_UTILITIES`: { name: '光熱水費', type: expense, category: '経常経費' }
+  - ユーザーはこれに対して「電気代」「ガス代」などの `sub_accounts` を作成可能。
 
 ### **2.2. 仕訳ヘッダ (【v3.4 更新】)**
 
@@ -164,19 +77,21 @@ v2.10 の transactions テーブルの「メタデータ」部分を引き継ぎ
 | receipt_hard_to_collect_reason | text                 | 領収証徴収困難理由   | NULL 許容。                                                                                                                                          |
 | created_at                     | timestamptz          | レコード作成日時     | now()                                                                                                                                                |
 
-### **2.3. 仕訳明細 (【v3.0 新規】)**
+### **2.3. 仕訳明細 (【v3.9 更新】)**
 
 複式簿記の「借方(Debit)」「貸方(Credit)」を記録します。
+`account_id` (FK) を廃止し、`account_code` (Static) と `sub_account_id` (FK, Optional) の組み合わせに変更します。
 
 **テーブル名:** journal_entries
 
-| 列名 (Column Name) | データ型 (Data Type) | 説明 (Description)  | 備考 (Notes)                         |
-| :----------------- | :------------------- | :------------------ | :----------------------------------- |
-| id                 | uuid                 | 一意な ID           | 主キー, uuid_generate_v4()           |
-| journal_id         | uuid                 | 紐づく仕訳ヘッダ ID | journals.id への FK (Cascade Delete) |
-| account_id         | uuid                 | 紐づく勘定科目 ID   | accounts.id への FK                  |
-| debit_amount       | integer              | 借方金額 (円)       | 必須, デフォルト 0                   |
-| credit_amount      | integer              | 貸方金額 (円)       | 必須, デフォルト 0                   |
+| 列名 (Column Name) | データ型 (Data Type) | 説明 (Description)  | 備考 (Notes)                                 |
+| :----------------- | :------------------- | :------------------ | :------------------------------------------- |
+| id                 | uuid                 | 一意な ID           | 主キー, uuid_generate_v4()                   |
+| journal_id         | uuid                 | 紐づく仕訳ヘッダ ID | journals.id への FK (Cascade Delete)         |
+| account_code       | text                 | **勘定科目コード**  | **必須**。アプリ内の Master Account コード。 |
+| sub_account_id     | uuid                 | **補助科目 ID**     | **NULL 許容**。sub_accounts.id への FK。     |
+| debit_amount       | integer              | 借方金額 (円)       | 必須, デフォルト 0                           |
+| credit_amount      | integer              | 貸方金額 (円)       | 必須, デフォルト 0                           |
 
 ### **2.4. 政治団体テーブル**
 
@@ -219,20 +134,20 @@ v2.10 の transactions テーブルの「メタデータ」部分を引き継ぎ
 
 **テーブル名:** contacts
 
-| 列名 (Column Name)    | データ型 (Data Type) | 説明 (Description)              | 備考 (Notes)                                                                          |
-| :-------------------- | :------------------- | :------------------------------ | :------------------------------------------------------------------------------------ |
-| id                    | uuid                 | 一意な ID (関係者 ID)           | 主キー, uuid_generate_v4()                                                            |
-| owner_user_id         | uuid                 | このマスターの管理ユーザー ID   | auth.users.id への参照 (RLS 用)                                                       |
-| contact_type          | text                 | **関係者種別**                  | **person (個人) or corporation (法人/団体)**。必須                                    |
-| name                  | text                 | 氏名 又は 団体名                | 必須。例: 「田中太郎（寄付者）」, 「みずほ銀行」                                      |
-| address               | text                 | 住所                            | NULL 許容                                                                             |
-| occupation            | text                 | 職業                            | NULL 許容 (contact_type \= 'person' の場合のみ使用)                                   |
-| is_name_private       | boolean              | **氏名/団体名を非公開にするか** | 必須, デフォルト false                                                                |
-| is_address_private    | boolean              | **住所を非公開にするか**        | 必須, デフォルト false                                                                |
-| is_occupation_private | boolean              | **職業を非公開にするか**        | 必須, デフォルト false                                                                |
-| privacy_reason_type   | text                 | **非公開理由（種別）**          | personal_info (個人情報保護), other (その他)。いずれかが \_private \= true の場合必須 |
-| privacy_reason_other  | text                 | **非公開理由（その他）**        | privacy_reason_type \= 'other' の場合必須                                             |
-| created_at            | timestamptz          | レコード作成日時                | デフォルトで now()                                                                    |
+| 列名 (Column Name)    | データ型 (Data Type) | 説明 (Description)              | 備考 (Notes)                                                                         |
+| :-------------------- | :------------------- | :------------------------------ | :----------------------------------------------------------------------------------- |
+| id                    | uuid                 | 一意な ID (関係者 ID)           | 主キー, uuid_generate_v4()                                                           |
+| owner_user_id         | uuid                 | このマスターの管理ユーザー ID   | auth.users.id への参照 (RLS 用)                                                      |
+| contact_type          | text                 | **関係者種別**                  | **person (個人) or corporation (法人/団体)**。必須                                   |
+| name                  | text                 | 氏名 又は 団体名                | 必須。例: 「田中太郎（寄付者）」, 「みずほ銀行」                                     |
+| address               | text                 | 住所                            | NULL 許容                                                                            |
+| occupation            | text                 | 職業                            | NULL 許容 (contact_type = 'person' の場合のみ使用)                                   |
+| is_name_private       | boolean              | **氏名/団体名を非公開にするか** | 必須, デフォルト false                                                               |
+| is_address_private    | boolean              | **住所を非公開にするか**        | 必須, デフォルト false                                                               |
+| is_occupation_private | boolean              | **職業を非公開にするか**        | 必須, デフォルト false                                                               |
+| privacy_reason_type   | text                 | **非公開理由（種別）**          | personal_info (個人情報保護), other (その他)。いずれかが \_private = true の場合必須 |
+| privacy_reason_other  | text                 | **非公開理由（その他）**        | privacy_reason_type = 'other' の場合必須                                             |
+| created_at            | timestamptz          | レコード作成日時                | デフォルトで now()                                                                   |
 
 ### **2.8. メディア（証憑）テーブル**
 
@@ -325,8 +240,8 @@ enum AppRole {
 /// DB の文字列から AppRole enum に変換するヘルパー  
 AppRole roleFromString(String roleString) {  
  return AppRole.values.firstWhere(  
- (role) \=\> role.name \== roleString,  
- orElse: () \=\> AppRole.viewer, // 不正な値の場合は閲覧者扱い  
+ (role) => role.name == roleString,  
+ orElse: () => AppRole.viewer, // 不正な値の場合は閲覧者扱い  
  );  
 }
 
@@ -351,7 +266,7 @@ String getRoleDisplayName(AppRole role) {
 // lib/services/permission_service.dart (実装例)
 
 /// 各役割が持つ権限の静的な定義マップ  
-const Map\<AppRole, Set\<AppPermission\>\> rolePermissions \= {  
+const Map<AppRole, Set<AppPermission>> rolePermissions = {  
  // 管理者  
  AppRole.admin: {  
  AppPermission.viewLedger,  
@@ -387,15 +302,15 @@ const Map\<AppRole, Set\<AppPermission\>\> rolePermissions \= {
 class PermissionService {  
  /// 現在のユーザー（\`myRole\`）が、指定された権限（\`permission\`）を持つかチェックする  
  bool hasPermission(AppRole myRole, AppPermission permission) {  
- final permissions \= rolePermissions\[myRole\];  
- if (permissions \== null) {  
+ final permissions = rolePermissions[myRole];  
+ if (permissions == null) {  
  return false;  
  }  
  return permissions.contains(permission);  
  }  
 }
 
-## **3\. 画面仕様 (Screen Specifications)**
+## **3. 画面仕様 (Screen Specifications)**
 
 ### **3.1. 台帳選択画面 (LedgerSelectionScreen)**
 
@@ -434,24 +349,24 @@ class PermissionService {
   - Form ウィジェットでラップされた ListView (スクロール可能にするため)
   - **入力フォーム:**
     - SegmentedButton (トグル) で、「政治団体」(LedgerType.organization) と「選挙」(LedgerType.election) のどちらを登録するか選択する。
-    - **if (\_ledgerType \== LedgerType.organization):**
-      - TextFormField (政治団体名) \- decoration: InputDecoration(labelText: '政治団体名')
-    - **if (\_ledgerType \== LedgerType.election):**
+    - **if (\_ledgerType == LedgerType.organization):**
+      - TextFormField (政治団体名) - decoration: InputDecoration(labelText: '政治団体名')
+    - **if (\_ledgerType == LedgerType.election):**
       - DropdownButtonFormField (政治家)
         - items: politicians テーブルから owner_user_id が一致するリストを取得して表示。
         - decoration: InputDecoration(labelText: '政治家', suffixIcon: IconButton(icon: Icon(Icons.person_add), onPressed: \_addNewPolitician))
-      - TextFormField (選挙名) \- decoration: InputDecoration(labelText: '選挙名 (例: 2025 年〇〇市議選)')
+      - TextFormField (選挙名) - decoration: InputDecoration(labelText: '選挙名 (例: 2025 年〇〇市議選)')
       - DatePicker (選挙の投開票日)
 - **機能:**
   - **\_saveLedger (保存):**
-    - 選択された \_ledgerType に応じて、owner_user_id \= auth.uid を設定して、対応するテーブル (political_organizations または elections) に insert を実行する。
+    - 選択された \_ledgerType に応じて、owner_user_id = auth.uid を設定して、対応するテーブル (political_organizations または elections) に insert を実行する。
     - elections を保存する際は、ドロップダウンで選択された politician_id を含める。
     - （accounts テーブルへのデータ投入は、README.md の初期 SQL で行われている前提のため、この画面でのロジックは不要）
     - 保存後、モーダルを閉じる (Navigator.pop)。
   - **\_addNewPolitician (新規政治家追加):**
-    - suffixIcon の \+ ボタンが押されたら、小さなアラートダイアログ（AlertDialog）を表示する。
+    - suffixIcon の + ボタンが押されたら、小さなアラートダイアログ（AlertDialog）を表示する。
     - ダイアログには TextFormField (政治家名)と「追加」ボタンを配置。
-    - 「追加」ボタンで politicians テーブルに owner_user_id \= auth.uid を設定して新しい政治家を保存し、ダイアログを閉じる。
+    - 「追加」ボタンで politicians テーブルに owner_user_id = auth.uid を設定して新しい政治家を保存し、ダイアログを閉じる。
     - DropdownButtonFormField の政治家リストが自動でリフレッシュされ、今追加した政治家が選択状態になる。
 
 ### **3.3. 仕訳一覧画面 (JournalListScreen)**
@@ -460,10 +375,10 @@ class PermissionService {
 - **前提:** ledger_id（organization_id または election_id）、**ledger_type (文字列)**、my_role (文字列) を受け取る。
 - **ロジック:**
   - initState で PermissionService と roleFromString を使い、各種権限（canManageMembers, canApprove, canSubmit, canRegister, canManageContacts）を bool 変数として保持する。
-  - final AppRole myAppRole \= roleFromString(widget.my_role);
-  - final bool canManageMembers \= permissionService.hasPermission(myAppRole, AppPermission.manageMembers);
-  - final bool canManageContacts \= permissionService.hasPermission(myAppRole, AppPermission.manageContacts);
-  - final bool canApprove \= permissionService.hasPermission(myAppRole, AppPermission.approveJournal);
+  - final AppRole myAppRole = roleFromString(widget.my_role);
+  - final bool canManageMembers = permissionService.hasPermission(myAppRole, AppPermission.manageMembers);
+  - final bool canManageContacts = permissionService.hasPermission(myAppRole, AppPermission.manageContacts);
+  - final bool canApprove = permissionService.hasPermission(myAppRole, AppPermission.approveJournal);
 - **レイアウト:**
   - AppBar に、選択された台帳名を表示する。
   - AppBar の actions:
@@ -474,16 +389,16 @@ class PermissionService {
   - ListView.builder:
     - ListTile:
       - title: Text(journal.description) (摘要)
-      - subtitle: FutureBuilder を使用し、journal.id に紐づく journal_entries と accounts を JOIN。account.type \== 'expense' または account.type \== 'revenue' の科目の account_name を表示。
+      - subtitle: FutureBuilder を使用し、journal.id に紐づく journal_entries と accounts を JOIN。account.type == 'expense' または account.type == 'revenue' の科目の account_name を表示。
       - leading: status が draft なら Icon(Icons.pending_actions, color: Colors.orange)、approved なら Icon(Icons.check_circle, color: Colors.green)。
       - trailing: FutureBuilder を使用し、journal.id に紐づく journal_entries から合計金額（SUM(debit_amount)など）を計算して表示。
 - **機能:**
   - **ListTile タップ:**
-    - status \== 'draft' かつ canApprove が true の場合:
+    - status == 'draft' かつ canApprove が true の場合:
       - 「仕訳承認画面 (ApproveJournalScreen)」(3.6) をモーダルで表示する。
   - **FloatingActionButton:**
-    - final bool canSubmit \= permissionService.hasPermission(myAppRole, AppPermission.submitJournal);
-    - final bool canRegister \= permissionService.hasPermission(myAppRole, AppPermission.registerJournal);
+    - final bool canSubmit = permissionService.hasPermission(myAppRole, AppPermission.submitJournal);
+    - final bool canRegister = permissionService.hasPermission(myAppRole, AppPermission.registerJournal);
     - if (canSubmit || canRegister) の場合のみ FloatingActionButton を表示。
     - タップすると「仕訳登録画面 (AddJournalScreen)」に遷移。その際、ledger_id、**ledger_type**、my_role を引数として渡す。
   - **\_navigateToContacts (関係者マスタへ移動):**
@@ -496,70 +411,66 @@ class PermissionService {
 - **ファイル (推奨):** lib/widgets/add_journal_sheet.dart
 - **前提:** ledger_id（organization_id または election_id）、**ledger_type (文字列)**、my_role (文字列) を受け取る。
 - **ロジック:**
-  - final AppRole myAppRole \= roleFromString(widget.my_role);
-  - final bool canRegister \= permissionService.hasPermission(myAppRole, AppPermission.registerJournal);
+  - final AppRole myAppRole = roleFromString(widget.my_role);
+  - final bool canRegister = permissionService.hasPermission(myAppRole, AppPermission.registerJournal);
 - **レイアウト:**
   - AppBar に Text('新規仕訳の登録') と ElevatedButton
     - ElevatedButton のテキスト: canRegister ? Text('登録 (承認済み)') : Text('承認申請 (起票)')
   - Form ウィジェットでラップされた ListView
   - **入力フォーム:**
     - DatePicker (仕訳日)
-    - TextFormField (摘要) \- 例: 「事務所家賃 5 月分」
-    - SegmentedButton (取引タイプ) \- \_entryType (State 変数): expense (支出), revenue (収入), transfer (振替)
-    - TextFormField (金額) \- TextInputType.number
-    - if (\_entryType \== 'expense'):
+    - TextFormField (摘要) - 例: 「事務所家賃 5 月分」
+    - SegmentedButton (取引タイプ) - \_entryType (State 変数): expense (支出), revenue (収入), transfer (振替)
+    - TextFormField (金額) - TextInputType.number
+    - if (\_entryType == 'expense'):
       - DropdownButtonFormField (支出科目（借方）)
-        - items: \_loadAccounts でロードした account_type \= 'expense' のリスト
+        - items: \_loadAccounts でロードした account_type = 'expense' のリスト
       - **支払元（貸方） - 複数行入力可 (【v3.8 更新】):**
         - ListView.builder で「支払元行」を動的に追加・削除可能にする。（デフォルト 1 行）
         - 各行:
-          - DropdownButtonFormField (支払元科目): account_type \= 'asset' (現金, 預金) **または** 'revenue' (自己資金, 公費負担)
+          - DropdownButtonFormField (支払元科目): account_type = 'asset' (現金, 預金) **または** 'revenue' (自己資金, 公費負担)
           - TextFormField (金額)
         - **バリデーション:** 支払元金額の合計が、支出金額と一致すること。
-    - if (\_entryType \== 'revenue'):
+    - if (\_entryType == 'revenue'):
       - DropdownButtonFormField (入金先（借方）)
-        - items: \_loadAccounts でロードした account_type \= 'asset' のリスト
+        - items: \_loadAccounts でロードした account_type = 'asset' のリスト
       - DropdownButtonFormField (収入科目（貸方）)
-        - items: \_loadAccounts でロードした account_type \= 'revenue' または 'equity' のリスト
-    - if (\_entryType \== 'transfer'):
+        - items: \_loadAccounts でロードした account_type = 'revenue' または 'equity' のリスト
+    - if (\_entryType == 'transfer'):
       - DropdownButtonFormField (振替元（貸方）)
-        - items: \_loadAccounts でロードした account_type \= 'asset' のリスト
+        - items: \_loadAccounts でロードした account_type = 'asset' のリスト
       - DropdownButtonFormField (振替先（借方）)
-        - items: \_loadAccounts でロードした account_type \= 'asset' のリスト
-    - if (widget.ledger_type \== 'election'):
-      - SegmentedButton (区分) \- （選択肢: pre-campaign (立候補準備), campaign (選挙運動)）
+        - items: \_loadAccounts でロードした account_type = 'asset' のリスト
+    - if (widget.ledger_type == 'election'):
+      - SegmentedButton (区分) - （選択肢: pre-campaign (立候補準備), campaign (選挙運動)）
     - **関係者 (寄付者/支出先/銀行/借入先):** DropdownButtonFormField
       - items: contacts テーブルから取得。
       - decoration: InputDecoration(labelText: '関係者', suffixIcon: IconButton(icon: Icon(Icons.person_add), onPressed: \_navigateToContacts))
     - TextFormField (金銭以外の見積の根拠)
-    - TextFormField (政党交付金充当額) \- TextInputType.number, デフォルト'0'
-    - TextFormField (政党基金充当額) \- TextInputType.number, デフォルト'0'
+    - TextFormField (政党交付金充当額) - TextInputType.number, デフォルト'0'
+    - TextFormField (政党基金充当額) - TextInputType.number, デフォルト'0'
     - CheckboxListTile(title: Text('領収証を徴し難い'), value: \_isReceiptHardToCollect, ...)
     - if (\_isReceiptHardToCollect): (徴収困難理由の UI)
-    - if (\!\_isReceiptHardToCollect): (領収証添付 UI)
-    - TextFormField (備考) \- maxLines: 3
+    - if (!\_isReceiptHardToCollect): (領収証添付 UI)
+    - TextFormField (備考) - maxLines: 3
 - **機能:**
   - **\_loadAccounts (データ取得ロジック):**
     - initState で、supabase.from('accounts').select().eq('ledger_type', widget.ledger_type) を実行し、勘定科目リストをロードする。
   - **\_navigateToContacts (関係者マスタへ移動):**
     - suffixIcon の+ボタンが押されたら、「関係者マスタ管理画面 (ContactsScreen)」(3.8) に Navigator.push で遷移する。
-  - ## **\_saveJournal (保存):**
+  - **\_saveJournal (保存):**
     1. ユーザーの権限に基づき status を決定。
-    - canRegister が true の場合: status \= 'approved', approved_by_user_id \= auth.uid
-    - canRegister が false の場合: status \= 'draft', approved_by_user_id \= null
-    -
+       - canRegister が true の場合: status = 'approved', approved_by_user_id = auth.uid
+       - canRegister が false の場合: status = 'draft', approved_by_user_id = null
     2. journals テーブルにヘッダ情報（journal_date, description, status, contact_id, ledger_id 等）を insert し、new_journal_id を取得。
-    -
     3. journal_entries テーブルに明細を insert（2 行）。
-    - （例：支出の場合）
-    - insert into journal_entries (journal_id, account_id, debit_amount, credit_amount)
-    - values (new_journal_id, (支出科目 ID), (金額), 0\)
-    - **支払元（貸方）の行数分ループ:**
-      - insert into journal_entries (journal_id, account_id, debit_amount, credit_amount)
-      - values (new_journal_id, (支払元科目 ID), 0, (支払元金額))
-    -
+       - （例：支出の場合）
+       - insert into journal_entries (journal_id, account_id, debit_amount, credit_amount)
+       - values (new_journal_id, (支出科目 ID), (金額), 0)
+       - **支払元（貸方）の行数分ループ:**
+         - insert into journal_entries (journal_id, account_id, debit_amount, credit_amount)
+         - values (new_journal_id, (支払元科目 ID), 0, (支払元金額))
     4. 領収証ファイルが添付されている場合、Storage にアップロードし、media_assets に new_journal_id を紐付けて保存。
-    -
     5. モーダルを閉じる。
 
 ### **3.5. メディア（証憑）管理画面**
@@ -578,7 +489,7 @@ class PermissionService {
 
 ### **3.6. （新設）仕訳承認画面 (ApproveJournalScreen)**
 
-「起票」された仕訳（status \== 'draft'）を承認または却下するためのモーダル画面。
+「起票」された仕訳（status == 'draft'）を承認または却下するためのモーダル画面。
 
 - **ファイル (推奨):** lib/widgets/approve_journal_sheet.dart
 - **前提:** journal_id を引数として受け取る。
@@ -589,7 +500,7 @@ class PermissionService {
     - 登録画面 (3.4) と同様のフォームを表示するが、**すべてのフィールドを読み取り専用 (readOnly: true)** にする。（勘定科目、金額、関係者、添付ファイルなどをすべて表示）
     - Text('起票者: ${profile.full_name}') を表示。（submitted_by_user_id から profiles を引いて表示）
     - 画面下部に Row でボタンを配置:
-      - if (journal.submitted_by_user_id \== auth.uid) (起票者が自分自身の場合):
+      - if (journal.submitted_by_user_id == auth.uid) (起票者が自分自身の場合):
         - Text('ご自身が起票した取引は承認できません。') を表示。
       - else (起票者が他人の場合):
         - ElevatedButton(child: Text('承認する'), onPressed: \_approve, style: successStyle)
@@ -597,8 +508,8 @@ class PermissionService {
 - **機能:**
   - **\_approve (承認):**
     - journals テーブルの該当レコードを update する。
-    - status \= 'approved'
-    - approved_by_user_id \= auth.uid
+    - status = 'approved'
+    - approved_by_user_id = auth.uid
     - Navigator.pop() でモーダルを閉じる。
   - **\_reject (却下):**
     - journals テーブルから該当レコードを delete する。（media_assets も on delete cascade で削除されることが望ましい）
@@ -609,9 +520,9 @@ class PermissionService {
 - **ファイル (推奨):** lib/pages/ledger_settings_page.dart
 - **前提:** ledger_id（organization_id または election_id） と my_role (文字列) を引数として受け取る。（3.3 の制御により admin のみアクセス可能）
 - **ロジック:**
-  - final AppRole myAppRole \= roleFromString(widget.my_role);
-  - final bool canManageMembers \= permissionService.hasPermission(myAppRole, AppPermission.manageMembers);
-  - final bool canEditSettings \= permissionService.hasPermission(myAppRole, AppPermission.editLedgerSettings);
+  - final AppRole myAppRole = roleFromString(widget.my_role);
+  - final bool canManageMembers = permissionService.hasPermission(myAppRole, AppPermission.manageMembers);
+  - final bool canEditSettings = permissionService.hasPermission(myAppRole, AppPermission.editLedgerSettings);
 - **レイアウト:**
   - AppBar に Text('台帳設定')
   - ListView:
@@ -622,7 +533,7 @@ class PermissionService {
       - if (canManageMembers) ブロックで表示:
         - TextFormField (Email)
         - DropdownButtonFormField (役割): AppRole.values からリストを生成
-          - items: AppRole.values.map((role) \=\> DropdownMenuItem(value: role.name, child: Text(getRoleDisplayName(role)))).toList()
+          - items: AppRole.values.map((role) => DropdownMenuItem(value: role.name, child: Text(getRoleDisplayName(role)))).toList()
         - ElevatedButton(child: Text('招待する'), onPressed: \_inviteMember)
     - **メンバー一覧 UI:**
       - if (canManageMembers) ブロックで表示:
@@ -630,24 +541,21 @@ class PermissionService {
         - ListTile:
           - title: Text(profile.full_name ?? profile.email)
           - subtitle: Text(getRoleDisplayName(roleFromString(member.role))) (役割名)
-          - trailing: IconButton(icon: Icon(Icons.delete), onPressed: () \=\> \_removeMember(member.id)) (オーナー自身は削除不可にする)
+          - trailing: IconButton(icon: Icon(Icons.delete), onPressed: () => \_removeMember(member.id)) (オーナー自身は削除不可にする)
 - **機能:**
   - **\_inviteMember (招待) (OTP 方式):**
     - この機能は **Supabase Edge Function** の呼び出しを推奨（auth.admin 操作のため）。
-    -
     1. Flutter アプリから、入力された Email と選択された role (文字列) を引数として、Edge Function (/invite-user-otp) を呼び出す。
-    -
-    2. Edge Function 側（サーバーサイド）:
-    - a. const { data: existingUser } \= await supabase.auth.admin.getUserByEmail(email) でユーザー存在チェック。
+    1. Edge Function 側（サーバーサイド）:
+    - a. const { data: existingUser } = await supabase.auth.admin.getUserByEmail(email) でユーザー存在チェック。
     - b. user_id を取得。もし existingUser がいない場合:
-      - const { data: newUser } \= await supabase.auth.admin.createUser({ email: email, email_confirm: true }) を実行し、**アカウントを強制作成**する。
-      - user_id \= newUser.user.id
-    - c. ledger_members テーブルにレコードを insert する。（user_id, ledger_id, role (文字列), invited_by_user_id \= auth.uid）
+      - const { data: newUser } = await supabase.auth.admin.createUser({ email: email, email_confirm: true }) を実行し、**アカウントを強制作成**する。
+      - user_id = newUser.user.id
+    - c. ledger_members テーブルにレコードを insert する。（user_id, ledger_id, role (文字列), invited_by_user_id = auth.uid）
     - d. **OTP（数字コード）を送信する:**
       - await supabase.auth.signInWithOtp({ email: email }) を（またはパスワードリセット OTP を）実行する。
       - これにより、ディープリンク不要の「**6 桁の数字コード**」が記載されたメールがユーザーに送信される。
-    -
-    3. 招待されたユーザーは、**4.2 招待されたユーザーの初回ログイン** のフローに従い、認証を完了する。
+    1. 招待されたユーザーは、**4.2 招待されたユーザーの初回ログイン** のフローに従い、認証を完了する。
   - **\_removeMember (削除):**
     - ledger_members テーブルから、該当する id のレコードを delete する。
 
@@ -662,7 +570,7 @@ class PermissionService {
   - body: StreamBuilder で contacts テーブルから owner_user_id が一致するデータを取得し、ListView.builder で表示する。
   - ListTile:
     - title: Text(contact.name)
-    - subtitle: Text('${contact.contact_type \== 'person' ? '個人' : '法人/団体'} / ${contact.address ?? '住所未設定'}')
+    - subtitle: Text('${contact.contact_type == 'person' ? '個人' : '法人/団体'} / ${contact.address ?? '住所未設定'}')
     - trailing: Icon(Icons.edit)
   - FloatingActionButton: Icon(Icons.add) を配置。
 - **機能:**
@@ -687,40 +595,35 @@ class PermissionService {
     - CheckboxListTile(title: Text('氏名/団体名を非公開にする'), value: \_isNamePrivate, ...)
     - TextFormField (住所)
     - CheckboxListTile(title: Text('住所を非公開にする'), value: \_isAddressPrivate, ...)
-    - if (\_contactType \== 'person'):
+    - if (\_contactType == 'person'):
       - TextFormField (職業)
       - CheckboxListTile(title: Text('職業を非公開にする'), value: \_isOccupationPrivate, ...)
     - Divider()
     - if (\_isNamePrivate || \_isAddressPrivate || \_isOccupationPrivate): (非公開設定が 1 つでもある場合)
       - Text('非公開理由 (必須)')
       - DropdownButtonFormField (理由): personal_info (個人情報保護のため) / other (その他)
-      - if (\_privacyReasonType \== 'other'):
+      - if (\_privacyReasonType == 'other'):
         - TextFormField (その他の理由を具体的に入力)
 - **機能:**
   - **\_saveContact (保存):**
-    - owner_user_id \= auth.uid を設定する。
+    - owner_user_id = auth.uid を設定する。
     - フォームのバリデーション（非公開設定が ON なのに理由が未入力、など）を実行。
     - contacts テーブルに insert または update を実行する。
     - Navigator.pop() でモーダルを閉じる。
 
-## **4\. 認証フロー仕様 (【v3.3 新規】)**
+## **4. 認証フロー仕様 (【v3.3 新規】)**
 
 アカウント管理と認証は、ディープリンク不要の「OTP（ワンタイムパスコード）」方式を前提として実装する。
 
 ### **4.1. 新規アカウント作成（マスターアカウント）**
 
 - **ファイル (推奨):** lib/pages/signup_page.dart
-- ## **機能:**
+- **機能:**
   1. ユーザーが Email, Password, 氏名 を入力して「登録」ボタンを押下。
-  -
   2. supabase.auth.signUp() を実行。（data: {'full_name': fullName} も同時に渡し、auth.users.raw_user_meta_data に保存する）
-  -
   3. Supabase から OTP（数字コード）付きの確認メールが送信される。
-  -
   4. アプリは OTP 入力画面に遷移。
-  -
   5. ユーザーがメールで受信した OTP コードを入力し supabase.auth.verifyOtp(email: email, token: otp, type: OtpType.signup) を実行して認証を完了する。
-  -
   6. （Supabase の Auth トリガー（README.md 参照）により、profiles テーブルにも full_name, email が自動でコピーされる）
 
 ### **4.2. 招待されたユーザーの初回ログイン**
@@ -734,40 +637,33 @@ class PermissionService {
     - TextFormField (受信した OTP コード)
     - TextFormField (新しいパスワード)
     - TextFormField (新しいパスワードの確認)
-- ## **機能:**
+- **機能:**
   1. ユーザーが Email と OTP コードを入力し「認証」ボタンを押下。
-  -
   2. supabase.auth.verifyOtp(email: email, token: otp, type: OtpType.invite) （または OtpType.recovery）を実行し、OTP 認証を行う。
-  -
   3. 認証が成功したら、続けて入力された「新しいパスワード」を使い supabase.auth.updateUser() を実行し、パスワードを設定する。
-  -
   4. パスワード設定後、HomePage (台帳選択画面) に遷移する。
 
 ### **4.3. パスワードリセット**
 
 - **ファイル (推奨):** lib/pages/login_page.dart
-- ## **機能:**
+- **機能:**
   1. ログイン画面に「パスワードをお忘れですか？」リンクを設置。
-  -
   2. タップすると AlertDialog または別画面で Email 入力欄を表示。
-  -
   3. supabase.auth.resetPasswordForEmail(email) を実行。（**注意:** Supabase 側で「OTP を使用する」設定が有効になっている必要がある）
-  -
   4. Supabase から OTP（数字コード）付きのパスワードリセットメールが送信される。
-  -
-  5. ユーザーは 4.2 と同様の「Email \+ OTP \+ 新パスワード」入力フォームを使い、パスワードをリセットする。（verifyOtp の type は OtpType.recovery を使用）
+  5. ユーザーは 4.2 と同様の「Email + OTP + 新パスワード」入力フォームを使い、パスワードをリセットする。（verifyOtp の type は OtpType.recovery を使用）
 
-## **5\. アウトプット仕様（将来機能） (【v3.6 更新】)**
+## **5. アウトプット仕様（将来機能） (【v3.6 更新】)**
 
 Polimoney 互換 JSON をエクスポートする際、仕訳データ（journals, journal_entries）と、勘定科目（accounts）、関係者（contacts）を JOIN する。
 
 - **「自己資金」の判別:**
-  - アウトプット（Polimoney）側は、journal_entries が accounts.account_name \= '自己資金' の account_id に紐づいているか否かで、その取引が自己資金であるかを明確に判別できる。
+  - アウトプット（Polimoney）側は、journal_entries が accounts.account_name = '自己資金' の account_id に紐づいているか否かで、その取引が自己資金であるかを明確に判別できる。
 - **「銀行口座別」の集計:**
-  - アウトプット（Polimoney）側は、journals.contact_id と contacts.name \= 'みずほ銀行' を紐付けることで、accounts.account_name \= '普通預金' の内訳（補助科目）として残高を追跡できる。
+  - アウトプット（Polimoney）側は、journals.contact_id と contacts.name = 'みずほ銀行' を紐付けることで、accounts.account_name = '普通預金' の内訳（補助科目）として残高を追跡できる。
 - **関係者情報の匿名化:**
   - contacts.contact_type (person / corporation) は**常に公開**する。
-  - contacts.name は、is_name_private \== true の場合、null または「非公開」という文字列で上書きする。
-  - contacts.address は、is_address_private \== true の場合、null または「非公開」という文字列で上書きする。
-  - contacts.occupation は、is_occupation_private \== true の場合、null または「非公開」という文字列で上書きする。
+  - contacts.name は、is_name_private == true の場合、null または「非公開」という文字列で上書きする。
+  - contacts.address は、is_address_private == true の場合、null または「非公開」という文字列で上書きする。
+  - contacts.occupation は、is_occupation_private == true の場合、null または「非公開」という文字列で上書きする。
   - 非公開項目が 1 つでもある場合、privacy_reason_type と privacy_reason_other の内容もエクスポート対象に含める。
