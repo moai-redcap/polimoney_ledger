@@ -1,3 +1,5 @@
+import 'package:polimoney_ledger/features/ledger/domain/models/politician.dart';
+
 class Election {
   final String id;
   final String ownerUserId;
@@ -5,6 +7,7 @@ class Election {
   final String electionName;
   final DateTime electionDate;
   final DateTime createdAt;
+  final Politician? politician; // Can be null
 
   Election({
     required this.id,
@@ -13,6 +16,7 @@ class Election {
     required this.electionName,
     required this.electionDate,
     required this.createdAt,
+    this.politician, // Make politician optional in constructor
   });
 
   factory Election.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,10 @@ class Election {
       electionName: json['election_name'] as String,
       electionDate: DateTime.parse(json['election_date'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
+      // If politician data is nested in the JSON, parse it
+      politician: json['politician'] != null
+          ? Politician.fromJson(json['politician'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -34,6 +42,7 @@ class Election {
       'election_name': electionName,
       'election_date': electionDate.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
+      'politician': politician?.toJson(),
     };
   }
 }

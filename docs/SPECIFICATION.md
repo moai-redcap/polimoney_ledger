@@ -1,9 +1,18 @@
-# **Polimoney Ledger - 機能仕様書 (v3.8)**
+# **Polimoney Ledger - 機能仕様書 (v3.10)**
 
 ## **1. 機能概要 (Feature Overview)**
 
 この機能は、政治団体や候補者の会計担当者を対象としています。  
 会計担当者が、自身が管理する**「政治団体」または「政治家（候補者）」を登録し、それぞれに紐づく「選挙」**の台帳を作成します。  
+年度の締め処理と繰越は、ユーザーによる**手動入力**で行います。  
+新しい年度の開始時（1月1日付）に、ユーザーが「前期繰越」という特別な勘定科目を使い、前期末の資産・負債残高を期首残高として手動登録することを想定しています。  
+その際、前期末の資産・負債残高を期首残高をサジェストする様にします。
+
+役割（ロール）と権限の関係は、Flutter アプリ側で静的に定義されます。  
+アカウント発行と認証は、ディープリンクが不要な「OTP（ワンタイムパスコード）」方式を採用します。  
+関係者（contacts）のプライバシー設定（匿名化・非公開理由の明記）に対応します。
+
+### 更新履歴概要
 v3.0 より、複式簿記モデルを導入します。  
 v3.5 より、台帳タイプ（政治団体 / 選挙運動）に応じて、使用する勘定科目が自動で切り替わります。  
 （例：「選挙」台帳では「人件費」「自己資金」、「政治団体」台帳では「経常経費」「政治活動費」が選択肢となります）  
@@ -11,10 +20,6 @@ v3.6 より、**勘定科目マスタ（accounts）は、アプリ側で定義�
 
 v3.7 では、テーブル定義の明確化と、仕様書のフォーマット修正を行いました。
 v3.8 では、選挙運動費用の公費負担対応と、支払元の複数行入力（複合仕訳）対応を行いました。
-
-役割（ロール）と権限の関係は、Flutter アプリ側で静的に定義されます。  
-アカウント発行と認証は、ディープリンクが不要な「OTP（ワンタイムパスコード）」方式を採用します。  
-関係者（contacts）のプライバシー設定（匿名化・非公開理由の明記）に対応します。
 
 ## **2. データモデル (Data Model)**
 
@@ -50,6 +55,7 @@ v3.8 では、選挙運動費用の公費負担対応と、支払元の複数行
 
 - `EXP_UTILITIES`: { name: '光熱水費', type: expense, category: '経常経費' }
   - ユーザーはこれに対して「電気代」「ガス代」などの `sub_accounts` を作成可能。
+- EQUITY_CARRYOVER: { name: '前期繰越', type: equity, category: '資産等' }
 
 ### **2.2. 仕訳ヘッダ (【v3.4 更新】)**
 
@@ -371,40 +377,53 @@ class PermissionService {
 
 ### **3.3. 仕訳一覧画面 (JournalListScreen)**
 
-- **ファイル (推奨):** lib/pages/journal_list_page.dart
-- **前提:** ledger_id（organization_id または election_id）、**ledger_type (文字列)**、my_role (文字列) を受け取る。
-- **ロジック:**
-  - initState で PermissionService と roleFromString を使い、各種権限（canManageMembers, canApprove, canSubmit, canRegister, canManageContacts）を bool 変数として保持する。
-  - final AppRole myAppRole = roleFromString(widget.my_role);
-  - final bool canManageMembers = permissionService.hasPermission(myAppRole, AppPermission.manageMembers);
-  - final bool canManageContacts = permissionService.hasPermission(myAppRole, AppPermission.manageContacts);
-  - final bool canApprove = permissionService.hasPermission(myAppRole, AppPermission.approveJournal);
+- **ファイル (推奨):** `lib/pages/journal_list_page.dart`
+- **前提:**
+    - `ledgerId`（`organization_id` または `election_id`）
+    - `ledgerType`（文字列）
+    - `myRole`（文字列）
+    - `ledgerName`（文字列） を受け取る。
+- **ロジック (State):**
+    - この画面は `StatefulWidget` として実装する。
+    - **`_currentYear` (int):** 現在表示している会計年度を保持する状態変数。初期値は現在の暦年 (`DateTime.now().year`)。
+    - **権限フラグ:** `initState`で、`myRole`に基づき各種権限（`canManageMembers`など）をbool変数として保持する。
 - **レイアウト:**
-  - AppBar に、選択された台帳名を表示する。
-  - AppBar の actions:
-    - if (canManageContacts): IconButton(icon: Icon(Icons.contacts), onPressed: \_navigateToContacts)
-    - if (canManageMembers): IconButton(icon: Icon(Icons.settings), onPressed: \_navigateToSettings)
-  - body: StreamBuilder を使用。
-    - **データ取得:** journals テーブルから、ledger_id が一致するレコードを journal_date の降順で取得。
-  - ListView.builder:
-    - ListTile:
-      - title: Text(journal.description) (摘要)
-      - subtitle: FutureBuilder を使用し、journal.id に紐づく journal_entries と accounts を JOIN。account.type == 'expense' または account.type == 'revenue' の科目の account_name を表示。
-      - leading: status が draft なら Icon(Icons.pending_actions, color: Colors.orange)、approved なら Icon(Icons.check_circle, color: Colors.green)。
-      - trailing: FutureBuilder を使用し、journal.id に紐づく journal_entries から合計金額（SUM(debit_amount)など）を計算して表示。
+    - **AppBar:**
+        - `title`: `Text(widget.ledgerName)`
+        - `actions`:
+            - **年度選択ドロップダウン:**
+                - `DropdownButton<int>` を配置。
+                - 選択肢: この台帳に存在する仕訳の`journal_date`から、重複を除いた「年」のリストを降順で表示する。（例: `[2024, 2023]`）
+                - `onChanged`: 新しい年が選択されたら、`setState`を呼び出して `_currentYear` を更新し、データ再取得をトリガーする。
+            - `IconButton` (関係者マスタ) ※権限に応じて表示
+            - `IconButton` (台帳設定) ※権限に応じて表示
+    - **body:**
+        - `Column` を配置。
+        - **繰越残高表示エリア:**
+            - `ListView` の上に `Card` や `ListTile` を使って、「**前期繰越: ¥〇〇,〇〇〇**」を表示する。
+            - この金額は、`(_currentYear - 1)`年度の期末残高（全ての資産 - 負債 - 純資産）を計算して表示する。（この計算は`JournalRepository`に新しいメソッドとして実装することを推奨）
+        - **仕訳リスト:**
+            - `StreamBuilder` または `FutureBuilder` を使用。
+            - **データ取得:** `journals` テーブルから、`ledger_id`が一致し、かつ`journal_date`が `_currentYear` の **1月1日から12月31日まで**のレコードを、日付の降順で取得する。
+            - `ListView.builder`:
+                - `ListTile`:
+                    - `title`: `Text(journal.description)` (摘要)
+                    - `subtitle`: （勘定科目名を表示）
+                    - `leading`: （承認ステータスアイコン）
+                    - `trailing`: （金額）
 - **機能:**
   - **ListTile タップ:**
-    - status == 'draft' かつ canApprove が true の場合:
-      - 「仕訳承認画面 (ApproveJournalScreen)」(3.6) をモーダルで表示する。
+  - status == 'draft' かつ canApprove が true の場合:
+    - 「仕訳承認画面 (ApproveJournalScreen)」(3.6) をモーダルで表示する。
   - **FloatingActionButton:**
-    - final bool canSubmit = permissionService.hasPermission(myAppRole, AppPermission.submitJournal);
-    - final bool canRegister = permissionService.hasPermission(myAppRole, AppPermission.registerJournal);
-    - if (canSubmit || canRegister) の場合のみ FloatingActionButton を表示。
-    - タップすると「仕訳登録画面 (AddJournalScreen)」に遷移。その際、ledger_id、**ledger_type**、my_role を引数として渡す。
+  - final bool canSubmit = permissionService.hasPermission(myAppRole, AppPermission.submitJournal);
+  - final bool canRegister = permissionService.hasPermission(myAppRole, AppPermission.registerJournal);
+  - if (canSubmit || canRegister) の場合のみ FloatingActionButton を表示。
+  - タップすると「仕訳登録画面 (AddJournalScreen)」に遷移。その際、ledger_id、**ledger_type**、my_role を引数として渡す。
   - **\_navigateToContacts (関係者マスタへ移動):**
-    - 「関係者マスタ管理画面 (ContactsScreen)」(3.8) に Navigator.push で遷移する。
+  - 「関係者マスタ管理画面 (ContactsScreen)」(3.8) に Navigator.push で遷移する。
   - **\_navigateToSettings (設定へ移動):**
-    - 「台帳設定・メンバー管理画面 (LedgerSettingsScreen)」(3.7) に Navigator.push で遷移する。
+  - 「台帳設定・メンバー管理画面 (LedgerSettingsScreen)」(3.7) に Navigator.push で遷移する。
 
 ### **3.4. 仕訳登録画面 (AddJournalScreen)**
 

@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:polimoney_ledger/features/journal/data/repositories/journal_repository.dart';
 import 'package:polimoney_ledger/features/journal/presentation/pages/journal_list_page.dart';
-import 'package:polimoney_ledger/features/ledger/domain/models/political_organization.dart';
-import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_political_organization_dialog.dart'; // UPDATED
+import 'package:polimoney_ledger/features/ledger/domain/models/election.dart';
+import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_election_dialog.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/empty_state_widget.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/error_message_widget.dart';
 
-class PoliticalOrganizationList extends StatelessWidget {
-  final Future<List<PoliticalOrganization>> organizationsFuture;
+class ElectionList extends StatelessWidget {
+  final Future<List<Election>> electionsFuture;
   final VoidCallback onRefresh;
 
-  const PoliticalOrganizationList({
+  const ElectionList({
     super.key,
-    required this.organizationsFuture,
+    required this.electionsFuture,
     required this.onRefresh,
   });
 
   void _showAddDialog(BuildContext context) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => const AddPoliticalOrganizationDialog(), // UPDATED
+      builder: (context) => const AddElectionDialog(),
     );
     if (result == true) {
       onRefresh();
@@ -29,14 +27,14 @@ class PoliticalOrganizationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<PoliticalOrganization>>(
-      future: organizationsFuture,
+    return FutureBuilder<List<Election>>(
+      future: electionsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return ErrorMessageWidget(message: 'Error: ${snapshot.error}', code: 'E-POL-01');
+          return ErrorMessageWidget(message: 'Error: ${snapshot.error}', code: 'E-EL-01');
         }
         return Column(
           children: [
@@ -46,15 +44,15 @@ class PoliticalOrganizationList extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.add),
-                  label: const Text('政治団体を追加'),
-                  onPressed: () => _showAddDialog(context), // UPDATED
+                  label: const Text('選挙を追加'),
+                  onPressed: () => _showAddDialog(context),
                 ),
               ),
             ),
             Expanded(
               child: (!snapshot.hasData || snapshot.data!.isEmpty)
                   ? const EmptyStateWidget(
-                      message: 'まだ政治団体が登録されていません。',
+                      message: 'まだ選挙台帳が登録されていません。',
                       callToAction: '上のボタンから最初の台帳を登録しましょう！',
                     )
                   : Container(
@@ -64,27 +62,28 @@ class PoliticalOrganizationList extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          final org = snapshot.data![index];
+                          final election = snapshot.data![index];
+                          final politicianName = election.politician?.name ?? '政治家不明';
+                          final formattedDate = election.electionDate.toIso8601String().substring(0, 10);
                           return Column(
                             children: [
                               ListTile(
-                                title: Text(org.name),
+                                title: Text(election.electionName),
+                                subtitle: Text('$politicianName / $formattedDate'),
                                 trailing: const Icon(Icons.arrow_forward_ios),
-                                onTap: () async {
-                                  final journalRepo = Provider.of<JournalRepository>(context, listen: false);
-                                  const ledgerType = 'political_organization';
-                                  final initialYear = await journalRepo.findInitialYear(org.id, ledgerType);
-                                  if (context.mounted) {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => JournalListPage(
-                                          ledgerId: org.id, ledgerType: ledgerType,
-                                          myRole: 'admin', // TODO: Fetch actual role
-                                          ledgerName: org.name, initialYear: initialYear,
-                                        ),
+                                onTap: () {
+                                  const ledgerType = 'election';
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => JournalListPage(
+                                        ledgerId: election.id,
+                                        ledgerType: ledgerType,
+                                        myRole: 'admin', // TODO: Fetch actual role
+                                        ledgerName: election.electionName,
+                                        initialYear: DateTime.now().year,
                                       ),
-                                    );
-                                  }
+                                    ),
+                                  );
                                 },
                               ),
                               const Divider(height: 1, thickness: 0.8),

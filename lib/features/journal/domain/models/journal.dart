@@ -16,6 +16,7 @@ class Journal {
   final bool isReceiptHardToCollect;
   final String? receiptHardToCollectReason;
   final DateTime createdAt;
+  final int? totalAmount; // New field for the calculated amount
 
   Journal({
     required this.id,
@@ -35,6 +36,7 @@ class Journal {
     this.isReceiptHardToCollect = false,
     this.receiptHardToCollectReason,
     required this.createdAt,
+    this.totalAmount, // Add to constructor
   });
 
   factory Journal.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,8 @@ class Journal {
       receiptHardToCollectReason:
           json['receipt_hard_to_collect_reason'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      // Parse the new field from the RPC response
+      totalAmount: json['total_amount'] as int?,
     );
   }
 
@@ -80,6 +84,7 @@ class Journal {
       'is_receipt_hard_to_collect': isReceiptHardToCollect,
       'receipt_hard_to_collect_reason': receiptHardToCollectReason,
       'created_at': createdAt.toIso8601String(),
+      'total_amount': totalAmount,
     };
   }
 }

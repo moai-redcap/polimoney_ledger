@@ -9,39 +9,62 @@ class LedgerRepository {
 
   LedgerRepository(this._supabase);
 
-  // Political Organizations
   Future<List<PoliticalOrganization>> fetchPoliticalOrganizations(
     String userId,
   ) async {
-    // Fetch organizations where the user is the owner
-    final ownerResponse = await _supabase
-        .from('political_organizations')
-        .select()
-        .eq('owner_user_id', userId);
-
-    final ownerOrgs = (ownerResponse as List)
+    final response = await _supabase
+        .rpc('get_user_organizations', params: {'p_user_id': userId});
+    
+    return (response as List)
         .map((json) => PoliticalOrganization.fromJson(json))
         .toList();
+  }
+  
+  Future<List<Election>> fetchElections(String userId) async {
+    final rpcResponse = await _supabase
+        .rpc('get_user_elections', params: {'p_user_id': userId});
+    
+    final electionsData = rpcResponse as List;
+    if (electionsData.isEmpty) {
+      return [];
+    }
 
-    // Fetch organizations where the user is a member
-    final memberResponse = await _supabase
-        .from('ledger_members')
-        .select('political_organizations(*)')
-        .eq('user_id', userId)
-        .not('organization_id', 'is', null);
+    final politicianIds = electionsData.map((json) => json['politician_id'] as String).toSet().toList();
+    
+    if (politicianIds.isEmpty) {
+      // If there are no politicians to fetch, just map the elections with a default politician
+       return electionsData.map((electionJson) {
+        electionJson['politician'] = Politician(id: '', ownerUserId: '', name: '不明な政治家', createdAt: DateTime(0)).toJson();
+        return Election.fromJson(electionJson);
+      }).toList();
+    }
 
-    final memberOrgs = (memberResponse as List)
-        .map(
-          (json) =>
-              PoliticalOrganization.fromJson(json['political_organizations']),
-        )
+    // --- FINAL FIX: Use .or() filter to avoid the problematic 'in' keyword ---
+    final orFilter = politicianIds.map((id) => 'id.eq.$id').join(',');
+    final politiciansResponse = await _supabase
+        .from('politicians')
+        .select()
+        .or(orFilter);
+        
+    final politicians = (politiciansResponse as List)
+        .map((json) => Politician.fromJson(json))
         .toList();
 
-    // Merge and remove duplicates
-    final allOrgs = {...ownerOrgs, ...memberOrgs}.toList();
-    return allOrgs;
+    final List<Election> result = [];
+    for (final electionJson in electionsData) {
+      final politician = politicians.firstWhere(
+        (p) => p.id == electionJson['politician_id'],
+        orElse: () => Politician(id: '', ownerUserId: '', name: '不明な政治家', createdAt: DateTime(0)),
+      );
+      
+      electionJson['politician'] = politician.toJson();
+      result.add(Election.fromJson(electionJson));
+    }
+    
+    return result;
   }
 
+  // ... (rest of the file is unchanged)
   Future<PoliticalOrganization> createPoliticalOrganization(
     String name,
     String ownerUserId,
@@ -53,33 +76,6 @@ class LedgerRepository {
         .single();
 
     return PoliticalOrganization.fromJson(response);
-  }
-
-  // Elections
-  Future<List<Election>> fetchElections(String userId) async {
-    // Fetch elections where the user is the owner
-    final ownerResponse = await _supabase
-        .from('elections')
-        .select()
-        .eq('owner_user_id', userId);
-
-    final ownerElections = (ownerResponse as List)
-        .map((json) => Election.fromJson(json))
-        .toList();
-
-    // Fetch elections where the user is a member
-    final memberResponse = await _supabase
-        .from('ledger_members')
-        .select('elections(*)')
-        .eq('user_id', userId)
-        .not('election_id', 'is', null);
-
-    final memberElections = (memberResponse as List)
-        .map((json) => Election.fromJson(json['elections']))
-        .toList();
-
-    final allElections = {...ownerElections, ...memberElections}.toList();
-    return allElections;
   }
 
   Future<Election> createElection({
@@ -102,7 +98,6 @@ class LedgerRepository {
     return Election.fromJson(response);
   }
 
-  // Politicians
   Future<List<Politician>> fetchPoliticians(String userId) async {
     final response = await _supabase
         .from('politicians')
@@ -122,14 +117,13 @@ class LedgerRepository {
     return Politician.fromJson(response);
   }
 
-  // Ledger Members
   Future<List<LedgerMember>> fetchLedgerMembers({
     String? organizationId,
     String? electionId,
   }) async {
     assert(organizationId != null || electionId != null);
 
-    var query = _supabase.from('ledger_members').select();
+    var query = _supabase.from('ledger_members').select('*, user:profiles(*)');
 
     if (organizationId != null) {
       query = query.eq('organization_id', organizationId);

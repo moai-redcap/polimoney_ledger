@@ -2,7 +2,7 @@
 
 ## PDF
 
-- [総務省 政治資金規正法に基づく政治資金収支報告書の手引](https://www.soumu.go.jp/main_content/000072666.pdf)
+- [総務省 国会議員関係政治団体の収支報告の手引](https://www.soumu.go.jp/main_content/000077911.pdf)
 
 ## Google Sheet
 
