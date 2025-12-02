@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:polimoney_ledger/core/models/app_permission.dart';
-import 'package:polimoney_ledger/core/models/app_role.dart';
+import 'package:polimoney_ledger/core/models/permissions.dart';
+import 'package:polimoney_ledger/core/models/roles.dart';
 import 'package:polimoney_ledger/core/services/permission_service.dart';
 import 'package:polimoney_ledger/features/journal/data/repositories/journal_repository.dart';
 import 'package:polimoney_ledger/features/journal/domain/models/journal.dart';

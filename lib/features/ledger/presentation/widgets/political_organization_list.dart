@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:polimoney_ledger/features/journal/data/repositories/journal_repository.dart';
 import 'package:polimoney_ledger/features/journal/presentation/pages/journal_list_page.dart';
 import 'package:polimoney_ledger/features/ledger/domain/models/political_organization.dart';
-import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_political_organization_dialog.dart'; // UPDATED
+import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_ledger_sheet.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/empty_state_widget.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/error_message_widget.dart';
 
@@ -16,16 +16,6 @@ class PoliticalOrganizationList extends StatelessWidget {
     required this.organizationsFuture,
     required this.onRefresh,
   });
-
-  void _showAddDialog(BuildContext context) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => const AddPoliticalOrganizationDialog(), // UPDATED
-    );
-    if (result == true) {
-      onRefresh();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +30,6 @@ class PoliticalOrganizationList extends StatelessWidget {
         }
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  label: const Text('政治団体を追加'),
-                  onPressed: () => _showAddDialog(context), // UPDATED
-                ),
-              ),
-            ),
             Expanded(
               child: (!snapshot.hasData || snapshot.data!.isEmpty)
                   ? const EmptyStateWidget(

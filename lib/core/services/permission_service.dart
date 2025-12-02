@@ -1,5 +1,5 @@
-import 'package:polimoney_ledger/core/models/app_permission.dart';
-import 'package:polimoney_ledger/core/models/app_role.dart';
+import 'package:polimoney_ledger/core/models/roles.dart';
+import 'package:polimoney_ledger/core/models/permissions.dart';
 
 /// 各役割が持つ権限の静的な定義マップ
 const Map<AppRole, Set<AppPermission>> rolePermissions = {
