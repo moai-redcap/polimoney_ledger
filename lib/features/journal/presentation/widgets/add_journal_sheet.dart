@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:polimoney_ledger/features/contacts/data/repositories/contact_repository.dart';
 import 'package:polimoney_ledger/features/contacts/domain/models/contact.dart';
 import 'package:polimoney_ledger/features/ledger/data/repositories/account_repository.dart';
-import 'package:polimoney_ledger/features/ledger/domain/models/account_master.dart';
+import 'package:polimoney_ledger/core/constants/account_master.dart';
 
 enum EntryType { expense, revenue, transfer }
 

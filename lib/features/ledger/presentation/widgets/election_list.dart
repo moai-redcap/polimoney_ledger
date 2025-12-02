@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polimoney_ledger/features/journal/presentation/pages/journal_list_page.dart';
 import 'package:polimoney_ledger/features/ledger/domain/models/election.dart';
-import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_election_dialog.dart';
+import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_ledger_sheet.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/empty_state_widget.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/error_message_widget.dart';
 
@@ -14,16 +14,6 @@ class ElectionList extends StatelessWidget {
     required this.electionsFuture,
     required this.onRefresh,
   });
-
-  void _showAddDialog(BuildContext context) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => const AddElectionDialog(),
-    );
-    if (result == true) {
-      onRefresh();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +28,6 @@ class ElectionList extends StatelessWidget {
         }
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  label: const Text('選挙を追加'),
-                  onPressed: () => _showAddDialog(context),
-                ),
-              ),
-            ),
             Expanded(
               child: (!snapshot.hasData || snapshot.data!.isEmpty)
                   ? const EmptyStateWidget(
