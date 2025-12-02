@@ -206,7 +206,7 @@ manageContacts 権限を追加。
 
 アプリ内でユーザーが実行可能な操作（権限）を enum（または const String）で定義します。
 
-// lib/models/permissions.dart (実装例)
+// lib/core/models/permissions.dart (実装例)
 
 /// アプリ内でチェックされる権限の種類  
 enum AppPermission {  
@@ -232,7 +232,7 @@ enum AppPermission {
 
 ledger_members.role カラムに保存される役割キーを enum で定義します。
 
-// lib/models/roles.dart (実装例)
+// lib/core/models/roles.dart (実装例)
 
 /// ユーザーに割り当てられる役割。  
 /// この enum の \`name\` (例: 'admin') が DB の \`ledger_members.role\` (text) に保存される。  
@@ -269,7 +269,7 @@ String getRoleDisplayName(AppRole role) {
 
 どの役割（Role）がどの権限（Permission）のセットを持つかを Map で定義します。
 
-// lib/services/permission_service.dart (実装例)
+// lib/core/services/permission_service.dart (実装例)
 
 /// 各役割が持つ権限の静的な定義マップ  
 const Map<AppRole, Set<AppPermission>> rolePermissions = {  
@@ -320,7 +320,7 @@ class PermissionService {
 
 ### **3.1. 台帳選択画面 (LedgerSelectionScreen)**
 
-- **ファイル (推奨):** lib/pages/home_page.dart
+- **ファイル (推奨):** lib/features/home/presentation/pages/home_page.dart
 - **レイアウト:**
   - AppBar の title に Text('台帳選択') を表示。
   - AppBar の bottom に TabBar を配置し、「政治団体」と「選挙」の 2 つのタブを設ける。
@@ -349,7 +349,7 @@ class PermissionService {
 
 ### **3.2. 台帳登録画面 (AddLedgerScreen)**
 
-- **ファイル (推奨):** lib/widgets/add_ledger_sheet.dart
+- **ファイル (推奨):** lib/features/ledger/presentation/widgets/add_ledger_sheet.dart
 - **レイアウト:**
   - AppBar に Text('新規台帳の登録') と ElevatedButton(child: Text('保存')) を配置。
   - Form ウィジェットでラップされた ListView (スクロール可能にするため)
@@ -377,7 +377,7 @@ class PermissionService {
 
 ### **3.3. 仕訳一覧画面 (JournalListScreen)**
 
-- **ファイル (推奨):** `lib/pages/journal_list_page.dart`
+- **ファイル (推奨):** `lib/features/journal/presentation/pages/journal_list_page.dart`
 - **前提:**
     - `ledgerId`（`organization_id` または `election_id`）
     - `ledgerType`（文字列）
@@ -427,7 +427,7 @@ class PermissionService {
 
 ### **3.4. 仕訳登録画面 (AddJournalScreen)**
 
-- **ファイル (推奨):** lib/widgets/add_journal_sheet.dart
+- **ファイル (推奨):** lib/features/journal/presentation/widgets/add_journal_sheet.dart
 - **前提:** ledger_id（organization_id または election_id）、**ledger_type (文字列)**、my_role (文字列) を受け取る。
 - **ロジック:**
   - final AppRole myAppRole = roleFromString(widget.my_role);
@@ -494,7 +494,7 @@ class PermissionService {
 
 ### **3.5. メディア（証憑）管理画面**
 
-- **ファイル (推奨):** lib/pages/media_library_page.dart
+- **ファイル (推奨):** lib/features/journal/presentation/pages/media_library_page.dart
 - **前提:** この画面は必ず organization_id または election_id の**どちらか一方**を引数として受け取ります。（JournalListScreen から遷移することを想定）
 - **レイアウト:**
   - AppBar に Text('領収証ライブラリ')
@@ -510,7 +510,7 @@ class PermissionService {
 
 「起票」された仕訳（status == 'draft'）を承認または却下するためのモーダル画面。
 
-- **ファイル (推奨):** lib/widgets/approve_journal_sheet.dart
+- **ファイル (推奨):** lib/features/journal/presentation/widgets/approve_journal_sheet.dart
 - **前提:** journal_id を引数として受け取る。
 - **レイアウト:**
   - AppBar に Text('仕訳の承認')
@@ -536,7 +536,7 @@ class PermissionService {
 
 ### **3.7. （新設）台帳設定・メンバー管理画面 (LedgerSettingsScreen)**
 
-- **ファイル (推奨):** lib/pages/ledger_settings_page.dart
+- **ファイル (推奨):** lib/features/ledger/presentation/pages/ledger_settings_page.dart
 - **前提:** ledger_id（organization_id または election_id） と my_role (文字列) を引数として受け取る。（3.3 の制御により admin のみアクセス可能）
 - **ロジック:**
   - final AppRole myAppRole = roleFromString(widget.my_role);
@@ -582,7 +582,7 @@ class PermissionService {
 
 仕訳登録に必要な「関係者（寄付者・支出先）」を作成・編集・管理する画面。
 
-- **ファイル (推奨):** lib/pages/contacts_page.dart
+- **ファイル (推奨):** lib/features/contacts/presentation/pages/contacts_page.dart
 - **前提:** 3.3 仕訳一覧画面 または 3.4 仕訳登録画面 から遷移してくる。
 - **レイアウト:**
   - AppBar に Text('関係者マスタ')
@@ -602,7 +602,7 @@ class PermissionService {
 
 関係者の詳細情報とプライバシー設定を入力するモーダル。
 
-- **ファイル (推奨):** lib/widgets/add_contact_sheet.dart
+- **ファイル (推奨):** lib/features/contacts/presentation/widgets/add_contact_sheet.dart
 - **前提:** （任意）編集対象の contact オブジェクトを受け取る。
 - **レイアウト:**
   - AppBar に Text('関係者の登録') と ElevatedButton(child: Text('保存'))
@@ -636,7 +636,7 @@ class PermissionService {
 
 ### **4.1. 新規アカウント作成（マスターアカウント）**
 
-- **ファイル (推奨):** lib/pages/signup_page.dart
+- **ファイル (推奨):** lib/features/auth/presentation/pages/signup_page.dart
 - **機能:**
   1. ユーザーが Email, Password, 氏名 を入力して「登録」ボタンを押下。
   2. supabase.auth.signUp() を実行。（data: {'full_name': fullName} も同時に渡し、auth.users.raw_user_meta_data に保存する）
@@ -647,7 +647,7 @@ class PermissionService {
 
 ### **4.2. 招待されたユーザーの初回ログイン**
 
-- **ファイル (推奨):** lib/pages/login_page.dart (または専用の lib/pages/invited_user_login_page.dart)
+- **ファイル (推奨):** lib/features/auth/presentation/pages/login_page.dart (または専用の lib/features/auth/presentation/pages/invited_user_login_page.dart)
 - **前提:** 招待されたユーザーは、3.7 のフローにより、パスワード未設定のアカウントが作成され、OTP コード付きのメールを受信している。
 - **レイアウト:**
   - login_page.dart に「招待された方はこちら」などのタブ/ボタンを追加する。
@@ -664,7 +664,7 @@ class PermissionService {
 
 ### **4.3. パスワードリセット**
 
-- **ファイル (推奨):** lib/pages/login_page.dart
+- **ファイル (推奨):** lib/features/auth/presentation/pages/login_page.dart
 - **機能:**
   1. ログイン画面に「パスワードをお忘れですか？」リンクを設置。
   2. タップすると AlertDialog または別画面で Email 入力欄を表示。
