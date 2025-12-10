@@ -1,11 +1,38 @@
-# **Polimoney Ledger - 機能仕様書 (v3.10)**
+# **Polimoney Ledger - 機能仕様書 (v3.11)**
+
+---
+
+## **【保留】Polimoney 連携 - 選挙識別子の課題**
+
+### 背景
+
+Polimoney との連携のため、各選挙台帳に一意の識別子を付与したい。
+
+### 課題
+
+- `city_code`（総務省の全国地方公共団体コード 6 桁）+ 年月日だけでは選挙を一意に特定できない
+- 参議院合同選挙区（鳥取・島根、徳島・高知）のような特殊ケースが存在
+- 衆院選・参院選・地方選で選挙区の定義が異なる
+- 参考: [参議院合同選挙区 - Wikipedia](https://ja.wikipedia.org/wiki/%E5%8F%82%E8%AD%B0%E9%99%A2%E5%90%88%E5%90%8C%E9%81%B8%E6%8C%99%E5%8C%BA)
+
+### 検討事項
+
+1. Polimoney 側でどのような識別子体系を採用するか
+2. 選挙種別（衆院選/参院選/都道府県議選/市区町村議選 等）の分類
+3. 選挙区の定義方法（小選挙区番号、比例ブロック、合同選挙区 等）
+
+### ステータス
+
+**保留中** - Polimoney 側に方針を提案するため、提案内容を考える。
+
+---
 
 ## **1. 機能概要 (Feature Overview)**
 
 この機能は、政治団体や候補者の会計担当者を対象としています。  
 会計担当者が、自身が管理する**「政治団体」または「政治家（候補者）」を登録し、それぞれに紐づく「選挙」**の台帳を作成します。  
 年度の締め処理と繰越は、ユーザーによる**手動入力**で行います。  
-新しい年度の開始時（1月1日付）に、ユーザーが「前期繰越」という特別な勘定科目を使い、前期末の資産・負債残高を期首残高として手動登録することを想定しています。  
+新しい年度の開始時（1 月 1 日付）に、ユーザーが「前期繰越」という特別な勘定科目を使い、前期末の資産・負債残高を期首残高として手動登録することを想定しています。  
 その際、前期末の資産・負債残高を期首残高をサジェストする様にします。
 
 役割（ロール）と権限の関係は、Flutter アプリ側で静的に定義されます。  
@@ -13,6 +40,7 @@
 関係者（contacts）のプライバシー設定（匿名化・非公開理由の明記）に対応します。
 
 ### 更新履歴概要
+
 v3.0 より、複式簿記モデルを導入します。  
 v3.5 より、台帳タイプ（政治団体 / 選挙運動）に応じて、使用する勘定科目が自動で切り替わります。  
 （例：「選挙」台帳では「人件費」「自己資金」、「政治団体」台帳では「経常経費」「政治活動費」が選択肢となります）  
@@ -40,22 +68,141 @@ v3.8 では、選挙運動費用の公費負担対応と、支払元の複数行
 | name                | text                 | **補助科目名**             | 必須。例: 「電気代」「水道代」                                           |
 | created_at          | timestamptz          | レコード作成日時           | デフォルトで now()                                                       |
 
-#### **2.1.1. 静的勘定科目マスタ（アプリ内定義）**
+#### **2.1.1. 静的勘定科目マスタ（アプリ内定義）【v3.11 大幅更新】**
 
 `lib/core/constants/account_master.dart` 等で定義します。
+政治資金規正法施行規則に基づき、収支報告書の項目分類に準拠した科目体系とします。
 
 **共通プロパティ:**
 
-- `code`: 一意な識別子 (例: 'ASSET_CASH', 'EXP_PERSONNEL')
-- `name`: 表示名 (例: '現金', '人件費')
-- `type`: 勘定タイプ (asset, liability, equity, revenue, expense)
-- `reportCategory`: 報告書上の分類 (例: '経常経費', '政治活動費')
+- `code`: 一意な識別子
+- `name`: 表示名
+- `type`: 勘定タイプ (asset, liability, equity, revenue, expense, subsidy)
+- `reportCategory`: 報告書上の分類
+- `availableLedgerTypes`: 使用可能な台帳タイプ
+- `isPublicSubsidyEligible`: **【v3.11 追加】** 公費負担対象かどうか（選挙運動費用の印刷費・広告費など）
 
-##### **(例: 政治団体用)**
+---
 
-- `EXP_UTILITIES`: { name: '光熱水費', type: expense, category: '経常経費' }
-  - ユーザーはこれに対して「電気代」「ガス代」などの `sub_accounts` を作成可能。
-- EQUITY_CARRYOVER: { name: '前期繰越', type: equity, category: '資産等' }
+##### **資産科目 (type: asset)**
+
+| code          | name         | reportCategory | 備考 |
+| ------------- | ------------ | -------------- | ---- |
+| ASSET_CASH    | 現金         | 資産           | 共通 |
+| ASSET_BANK    | 普通預金     | 資産           | 共通 |
+| ASSET_SAVINGS | 定期預金     | 資産           | 共通 |
+| ASSET_PREPAID | 前払金       | 資産           | 共通 |
+| ASSET_DEPOSIT | 敷金・保証金 | 資産           | 共通 |
+
+##### **負債科目 (type: liability)**
+
+| code                  | name   | reportCategory | 備考 |
+| --------------------- | ------ | -------------- | ---- |
+| LIAB_LOAN             | 借入金 | 負債           | 共通 |
+| LIAB_ACCOUNTS_PAYABLE | 未払金 | 負債           | 共通 |
+
+##### **純資産科目 (type: equity)**
+
+| code             | name       | reportCategory | 備考 |
+| ---------------- | ---------- | -------------- | ---- |
+| EQUITY_CAPITAL   | 元入金     | 純資産         | 共通 |
+| EQUITY_CARRYOVER | 前年繰越額 | 純資産         | 共通 |
+
+---
+
+##### **収入科目 (type: revenue)**
+
+**政治団体用:**
+
+| code                    | name                       | reportCategory | 備考                       |
+| ----------------------- | -------------------------- | -------------- | -------------------------- |
+| REV_MEMBERSHIP_FEE      | 党費・会費                 | 党費・会費     | 個人が負担する党費又は会費 |
+| REV_DONATION_INDIVIDUAL | 個人からの寄附             | 寄附           |                            |
+| REV_DONATION_CORPORATE  | 法人その他の団体からの寄附 | 寄附           |                            |
+| REV_DONATION_POLITICAL  | 政治団体からの寄附         | 寄附           |                            |
+| REV_ANONYMOUS           | 政党匿名寄附               | 寄附           | 政党支部のみ               |
+| REV_MAGAZINE            | 機関紙誌の発行事業収入     | 事業収入       |                            |
+| REV_PARTY_EVENT         | 政治資金パーティー収入     | 事業収入       |                            |
+| REV_OTHER_BUSINESS      | その他の事業収入           | 事業収入       |                            |
+| REV_GRANT_HQ            | 本部・支部からの交付金     | 交付金         |                            |
+| REV_INTEREST            | 利子収入                   | その他の収入   |                            |
+| REV_MISC                | その他の収入               | その他の収入   |                            |
+
+**選挙運動用（選挙運動費用収支報告書に基づく）:**
+
+収入は「寄附」と「その他の収入」の 2 種類に分類されます。
+
+| code                         | name               | reportCategory | 備考                 |
+| ---------------------------- | ------------------ | -------------- | -------------------- |
+| REV_SELF_FINANCING           | 自己資金           | その他の収入   | 候補者本人からの資金 |
+| REV_LOAN_ELEC                | 借入金             | その他の収入   | 選挙運動のための借入 |
+| REV_DONATION_INDIVIDUAL_ELEC | 個人からの寄附     | 寄附           |                      |
+| REV_DONATION_POLITICAL_ELEC  | 政治団体からの寄附 | 寄附           | 政党、政治団体等     |
+| REV_MISC_ELEC                | その他の収入       | その他の収入   | 上記以外（利子等）   |
+
+**公費負担（選挙公営）について:**
+
+公費負担は法定の収支報告書では収入に計上されませんが、Polimoney への透明化出力のために記録します。
+
+| code           | name     | type    | reportCategory | 備考                             |
+| -------------- | -------- | ------- | -------------- | -------------------------------- |
+| SUBSIDY_PUBLIC | 公費負担 | subsidy | 公費負担       | 選挙公営による負担（参考記録用） |
+
+※ `type: subsidy` は新しい勘定タイプとして追加（asset, liability, equity, revenue, expense に加えて）
+
+---
+
+##### **支出科目 (type: expense)**
+
+**経常経費（政治団体用）:**
+
+| code          | name           | reportCategory | 備考                                     |
+| ------------- | -------------- | -------------- | ---------------------------------------- |
+| EXP_PERSONNEL | 人件費         | 経常経費       | 給料、報酬、各種手当、社会保険料等       |
+| EXP_UTILITIES | 光熱水費       | 経常経費       | 電気、ガス、水道の使用料                 |
+| EXP_SUPPLIES  | 備品・消耗品費 | 経常経費       | 机、椅子、事務用品、ガソリン等           |
+| EXP_OFFICE    | 事務所費       | 経常経費       | 家賃、公租公課、保険料、通信費、修繕料等 |
+
+**政治活動費（政治団体用）:**
+
+| code               | name                         | reportCategory | 備考                                         |
+| ------------------ | ---------------------------- | -------------- | -------------------------------------------- |
+| EXP_ORGANIZATION   | 組織活動費                   | 政治活動費     | 大会費、行事費、組織対策費、渉外費、交際費等 |
+| EXP_ELECTION       | 選挙関係費                   | 政治活動費     | 公認推薦料、陣中見舞、選挙活動費等           |
+| EXP_MAGAZINE       | 機関紙誌の発行事業費         | 政治活動費     | 材料費、印刷費、発送費、原稿料等             |
+| EXP_PUBLICITY      | 宣伝事業費                   | 政治活動費     | 遊説費、広告料、ポスター・ビラ作成費等       |
+| EXP_PARTY_EVENT    | 政治資金パーティー開催事業費 | 政治活動費     | 会場費、記念品代、講演諸経費等               |
+| EXP_OTHER_BUSINESS | その他の事業費               | 政治活動費     |                                              |
+| EXP_RESEARCH       | 調査研究費                   | 政治活動費     | 研修会費、資料費、書籍購入費等               |
+| EXP_DONATION       | 寄附・交付金                 | 政治活動費     | 政治団体への寄附、本部・支部への交付金等     |
+| EXP_MISC           | その他の経費                 | 政治活動費     | 上記以外の政治活動費                         |
+
+**選挙運動費用（選挙用）- 公職選挙法に基づく 10 費目:**
+
+| code                   | name   | reportCategory | 公費対象 | 備考                                             |
+| ---------------------- | ------ | -------------- | -------- | ------------------------------------------------ |
+| EXP_PERSONNEL_ELEC     | 人件費 | 選挙運動費用   |          | 事務員報酬、車上運動員報酬、労務者報酬等         |
+| EXP_BUILDING_ELEC      | 家屋費 | 選挙運動費用   |          | 選挙事務所費（賃借料・設営費等）、集合会場費等   |
+| EXP_COMMUNICATION_ELEC | 通信費 | 選挙運動費用   |          | 電話料、切手代、郵便料等                         |
+| EXP_TRANSPORT_ELEC     | 交通費 | 選挙運動費用   |          | 運動員への交通費実費弁償、鉄道賃、車賃等         |
+| EXP_PRINTING_ELEC      | 印刷費 | 選挙運動費用   | ✅       | はがき、ビラ、ポスター等の印刷代                 |
+| EXP_ADVERTISING_ELEC   | 広告費 | 選挙運動費用   | ✅       | 看板・たすき作成費、拡声機借上料、新聞折込料等   |
+| EXP_STATIONERY_ELEC    | 文具費 | 選挙運動費用   |          | 用紙、ボールペン、コピー代、事務所消耗品等       |
+| EXP_FOOD_ELEC          | 食料費 | 選挙運動費用   |          | 茶菓代、弁当代、運動員への弁当料・茶菓料実費弁償 |
+| EXP_LODGING_ELEC       | 休泊費 | 選挙運動費用   |          | 運動員への宿泊料実費弁償、休憩所費用等           |
+| EXP_MISC_ELEC          | 雑費   | 選挙運動費用   |          | 上記以外の選挙運動費用                           |
+
+※ 公費対象: 選挙公営（公費負担）の対象となりうる科目。印刷費（ポスター・ビラ・はがき）、広告費（看板等）が該当。
+※ 選挙運動用自動車の使用費用は収支報告書に計上しないため、科目には含まない。
+
+---
+
+**補助科目の例:**
+
+- `EXP_UTILITIES` (光熱水費) に対して:
+  - 「電気代」「ガス代」「水道代」を `sub_accounts` として作成可能
+- `EXP_ORGANIZATION` (組織活動費) に対して:
+  - 「大会費」「渉外費」「交際費」「慶弔費」を `sub_accounts` として作成可能
 
 ### **2.2. 仕訳ヘッダ (【v3.4 更新】)**
 
@@ -79,6 +226,7 @@ v2.10 の transactions テーブルの「メタデータ」部分を引き継ぎ
 | notes                          | text                 | 備考                 | 任意入力。NULL 許容                                                                                                                                  |
 | amount_political_grant         | integer              | 政党交付金充当額     | NULL 許容, デフォルト 0                                                                                                                              |
 | amount_political_fund          | integer              | 政党基金充当額       | NULL 許容, デフォルト 0                                                                                                                              |
+| amount_public_subsidy          | integer              | **公費負担額**       | **【v3.11 追加】** NULL 許容, デフォルト 0。選挙公営による公費負担額。                                                                               |
 | is_receipt_hard_to_collect     | boolean              | 領収証徴収困難フラグ | 必須, デフォルト false                                                                                                                               |
 | receipt_hard_to_collect_reason | text                 | 領収証徴収困難理由   | NULL 許容。                                                                                                                                          |
 | created_at                     | timestamptz          | レコード作成日時     | now()                                                                                                                                                |
@@ -379,38 +527,38 @@ class PermissionService {
 
 - **ファイル (推奨):** `lib/features/journal/presentation/pages/journal_list_page.dart`
 - **前提:**
-    - `ledgerId`（`organization_id` または `election_id`）
-    - `ledgerType`（文字列）
-    - `myRole`（文字列）
-    - `ledgerName`（文字列） を受け取る。
+  - `ledgerId`（`organization_id` または `election_id`）
+  - `ledgerType`（文字列）
+  - `myRole`（文字列）
+  - `ledgerName`（文字列） を受け取る。
 - **ロジック (State):**
-    - この画面は `StatefulWidget` として実装する。
-    - **`_currentYear` (int):** 現在表示している会計年度を保持する状態変数。初期値は現在の暦年 (`DateTime.now().year`)。
-    - **権限フラグ:** `initState`で、`myRole`に基づき各種権限（`canManageMembers`など）をbool変数として保持する。
+  - この画面は `StatefulWidget` として実装する。
+  - **`_currentYear` (int):** 現在表示している会計年度を保持する状態変数。初期値は現在の暦年 (`DateTime.now().year`)。
+  - **権限フラグ:** `initState`で、`myRole`に基づき各種権限（`canManageMembers`など）を bool 変数として保持する。
 - **レイアウト:**
-    - **AppBar:**
-        - `title`: `Text(widget.ledgerName)`
-        - `actions`:
-            - **年度選択ドロップダウン:**
-                - `DropdownButton<int>` を配置。
-                - 選択肢: この台帳に存在する仕訳の`journal_date`から、重複を除いた「年」のリストを降順で表示する。（例: `[2024, 2023]`）
-                - `onChanged`: 新しい年が選択されたら、`setState`を呼び出して `_currentYear` を更新し、データ再取得をトリガーする。
-            - `IconButton` (関係者マスタ) ※権限に応じて表示
-            - `IconButton` (台帳設定) ※権限に応じて表示
-    - **body:**
-        - `Column` を配置。
-        - **繰越残高表示エリア:**
-            - `ListView` の上に `Card` や `ListTile` を使って、「**前期繰越: ¥〇〇,〇〇〇**」を表示する。
-            - この金額は、`(_currentYear - 1)`年度の期末残高（全ての資産 - 負債 - 純資産）を計算して表示する。（この計算は`JournalRepository`に新しいメソッドとして実装することを推奨）
-        - **仕訳リスト:**
-            - `StreamBuilder` または `FutureBuilder` を使用。
-            - **データ取得:** `journals` テーブルから、`ledger_id`が一致し、かつ`journal_date`が `_currentYear` の **1月1日から12月31日まで**のレコードを、日付の降順で取得する。
-            - `ListView.builder`:
-                - `ListTile`:
-                    - `title`: `Text(journal.description)` (摘要)
-                    - `subtitle`: （勘定科目名を表示）
-                    - `leading`: （承認ステータスアイコン）
-                    - `trailing`: （金額）
+  - **AppBar:**
+    - `title`: `Text(widget.ledgerName)`
+    - `actions`:
+      - **年度選択ドロップダウン:**
+        - `DropdownButton<int>` を配置。
+        - 選択肢: この台帳に存在する仕訳の`journal_date`から、重複を除いた「年」のリストを降順で表示する。（例: `[2024, 2023]`）
+        - `onChanged`: 新しい年が選択されたら、`setState`を呼び出して `_currentYear` を更新し、データ再取得をトリガーする。
+      - `IconButton` (関係者マスタ) ※権限に応じて表示
+      - `IconButton` (台帳設定) ※権限に応じて表示
+  - **body:**
+    - `Column` を配置。
+    - **繰越残高表示エリア:**
+      - `ListView` の上に `Card` や `ListTile` を使って、「**前期繰越: ¥ 〇〇,〇〇〇**」を表示する。
+      - この金額は、`(_currentYear - 1)`年度の期末残高（全ての資産 - 負債 - 純資産）を計算して表示する。（この計算は`JournalRepository`に新しいメソッドとして実装することを推奨）
+    - **仕訳リスト:**
+      - `StreamBuilder` または `FutureBuilder` を使用。
+      - **データ取得:** `journals` テーブルから、`ledger_id`が一致し、かつ`journal_date`が `_currentYear` の **1 月 1 日から 12 月 31 日まで**のレコードを、日付の降順で取得する。
+      - `ListView.builder`:
+        - `ListTile`:
+          - `title`: `Text(journal.description)` (摘要)
+          - `subtitle`: （勘定科目名を表示）
+          - `leading`: （承認ステータスアイコン）
+          - `trailing`: （金額）
 - **機能:**
   - **ListTile タップ:**
   - status == 'draft' かつ canApprove が true の場合:
@@ -462,6 +610,13 @@ class PermissionService {
         - items: \_loadAccounts でロードした account_type = 'asset' のリスト
     - if (widget.ledger_type == 'election'):
       - SegmentedButton (区分) - （選択肢: pre-campaign (立候補準備), campaign (選挙運動)）
+    - **【v3.11 追加】公費負担入力（選挙台帳 + 公費対象科目の場合のみ表示）:**
+      - if (widget.ledger_type == 'election' && \_selectedExpenseAccount.isPublicSubsidyEligible):
+        - Text('公費負担がある場合は自己負担額を入力してください')
+        - TextFormField (自己負担額) - \_selfPaymentAmount
+        - **公費負担額:** Text('¥ ${\_totalAmount - \_selfPaymentAmount}') ← 差額を自動計算表示
+        - ※ 自己負担額が未入力または支出金額と同額の場合は公費負担なし（amount_public_subsidy = 0）
+        - ※ 公費負担額は journals.amount_public_subsidy に保存
     - **関係者 (寄付者/支出先/銀行/借入先):** DropdownButtonFormField
       - items: contacts テーブルから取得。
       - decoration: InputDecoration(labelText: '関係者', suffixIcon: IconButton(icon: Icon(Icons.person_add), onPressed: \_navigateToContacts))
@@ -686,3 +841,17 @@ Polimoney 互換 JSON をエクスポートする際、仕訳データ（journal
   - contacts.address は、is_address_private == true の場合、null または「非公開」という文字列で上書きする。
   - contacts.occupation は、is_occupation_private == true の場合、null または「非公開」という文字列で上書きする。
   - 非公開項目が 1 つでもある場合、privacy_reason_type と privacy_reason_other の内容もエクスポート対象に含める。
+- **【v3.11 追加】公費負担の出力:**
+  - journals.amount_public_subsidy > 0 の仕訳について、公費負担情報を出力する。
+  - Polimoney では、法定報告書では表示されない公費負担の詳細（どの支出に対していくら）を可視化する。
+  - 出力例:
+    ```json
+    {
+      "journal_id": "...",
+      "description": "ポスター印刷代",
+      "total_amount": 600000,
+      "self_payment": 100000,
+      "public_subsidy": 500000,
+      "account_code": "EXP_PRINTING_ELEC"
+    }
+    ```

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:polimoney_ledger/features/journal/data/repositories/journal_repository.dart';
 import 'package:polimoney_ledger/features/journal/presentation/pages/journal_list_page.dart';
 import 'package:polimoney_ledger/features/ledger/domain/models/political_organization.dart';
-import 'package:polimoney_ledger/features/ledger/presentation/widgets/add_ledger_sheet.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/empty_state_widget.dart';
 import 'package:polimoney_ledger/features/ledger/presentation/widgets/error_message_widget.dart';
 

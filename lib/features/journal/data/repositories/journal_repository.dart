@@ -56,8 +56,64 @@ class JournalRepository {
     return (response as List).map((json) => JournalEntry.fromJson(json)).toList();
   }
 
-  Future<void> createJournal({ required Journal journal, required List<JournalEntry> entries, }) async {
-    // ...
+  /// 仕訳ヘッダと明細を作成
+  Future<String> createJournal({
+    required String? organizationId,
+    required String? electionId,
+    required DateTime journalDate,
+    required String description,
+    required String status,
+    required String submittedByUserId,
+    String? approvedByUserId,
+    required String contactId,
+    String? classification,
+    String? nonMonetaryBasis,
+    String? notes,
+    int amountPoliticalGrant = 0,
+    int amountPoliticalFund = 0,
+    bool isReceiptHardToCollect = false,
+    String? receiptHardToCollectReason,
+  }) async {
+    final response = await _supabase
+        .from('journals')
+        .insert({
+          'organization_id': organizationId,
+          'election_id': electionId,
+          'journal_date': journalDate.toIso8601String().substring(0, 10),
+          'description': description,
+          'status': status,
+          'submitted_by_user_id': submittedByUserId,
+          'approved_by_user_id': approvedByUserId,
+          'contact_id': contactId,
+          'classification': classification,
+          'non_monetary_basis': nonMonetaryBasis,
+          'notes': notes,
+          'amount_political_grant': amountPoliticalGrant,
+          'amount_political_fund': amountPoliticalFund,
+          'is_receipt_hard_to_collect': isReceiptHardToCollect,
+          'receipt_hard_to_collect_reason': receiptHardToCollectReason,
+        })
+        .select('id')
+        .single();
+
+    return response['id'] as String;
+  }
+
+  /// 仕訳明細を作成
+  Future<void> createJournalEntry({
+    required String journalId,
+    required String accountCode,
+    String? subAccountId,
+    required int debitAmount,
+    required int creditAmount,
+  }) async {
+    await _supabase.from('journal_entries').insert({
+      'journal_id': journalId,
+      'account_code': accountCode,
+      'sub_account_id': subAccountId,
+      'debit_amount': debitAmount,
+      'credit_amount': creditAmount,
+    });
   }
 
   Future<void> updateJournalStatus(String journalId, String status, String? approvedByUserId) async {

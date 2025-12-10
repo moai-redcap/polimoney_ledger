@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../domain/models/account_master.dart';
+import 'package:polimoney_ledger/core/constants/account_master.dart';
 
 class AccountRepository {
   final SupabaseClient _supabase;

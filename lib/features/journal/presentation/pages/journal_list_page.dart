@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:polimoney_ledger/core/models/permissions.dart';
 import 'package:polimoney_ledger/core/models/roles.dart';
 import 'package:polimoney_ledger/core/services/permission_service.dart';
+import 'package:polimoney_ledger/features/contacts/presentation/pages/contacts_page.dart';
 import 'package:polimoney_ledger/features/journal/data/repositories/journal_repository.dart';
 import 'package:polimoney_ledger/features/journal/domain/models/journal.dart';
 import 'package:polimoney_ledger/features/journal/presentation/widgets/add_journal_sheet.dart';
@@ -110,7 +111,15 @@ class _JournalListPageState extends State<JournalListPage> {
               );
             },
           ),
-          if (canManageContacts) IconButton(icon: const Icon(Icons.contacts), onPressed: () {}, tooltip: '関係者マスタ'),
+          if (canManageContacts) IconButton(
+            icon: const Icon(Icons.contacts),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ContactsPage()),
+              );
+            },
+            tooltip: '関係者マスタ',
+          ),
           if (canManageMembers) IconButton(icon: const Icon(Icons.settings), onPressed: () {}, tooltip: '台帳設定'),
         ],
       ),

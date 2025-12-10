@@ -4,8 +4,10 @@ from pypdf import PdfReader
 
 # 読み込む対象のディレクトリ
 target_dir = os.path.join("docs", "reference")
-# 出力するファイル名
-output_file = "agent_reference_context.md"
+# 出力するファイル名（同ディレクトリに出力）
+output_file = os.path.join(target_dir, "agent_reference_context.md")
+# 除外するファイル（自己参照を避けるため）
+exclude_files = {"agent_reference_context.md"}
 
 def extract_text_from_pdf(file_path):
     """PDFからテキストを抽出する"""
@@ -50,6 +52,11 @@ def create_context_file():
 
         # ファイルリストを取得してソート
         for filename in sorted(os.listdir(target_dir)):
+            # 除外ファイルをスキップ
+            if filename in exclude_files:
+                print(f"スキップ（除外対象）: {filename}")
+                continue
+
             file_path = os.path.join(target_dir, filename)
             content = ""
             file_type = ""
