@@ -45,13 +45,35 @@
 - [ ] 仕訳登録画面に添付 UI を追加
 - [ ] 仕訳一覧・詳細画面で添付ファイル表示
 
-### 【保留】Polimoney 連携 - 選挙識別子
+### 🆕 識別子・SaaS 化設計（Polimoney 連携）
 
-- **ステータス:** Polimoney 側に方針を提案するため、提案内容を考える。
+**詳細:** `docs/IDENTITY_DESIGN.md` を参照
+
+#### Phase 1: 設計確定
+- [ ] Azure DB のスキーマ設計（Polimoney チームと合意）
+- [ ] 選挙 ID の形式確定（合同選挙区等の特殊ケース対応）
+- [ ] profiles テーブルの拡張設計（politician_id 追加）
+
+#### Phase 2: Azure DB 構築
+- [ ] Azure PostgreSQL / Cosmos DB の選定
+- [ ] 識別子マスタテーブル作成（politicians, political_orgs, elections）
+- [ ] Polimoney との API 設計
+
+#### Phase 3: Supabase 変更
+- [ ] profiles テーブルに `politician_id` カラム追加
+- [ ] ledgers テーブルの参照を Azure DB に変更
+- [ ] contacts の使用ガイドライン更新（自分自身は登録不要に）
+
+#### Phase 4: アプリケーション実装
+- [ ] 新規登録フロー（政治家 ID 発行）の実装
+- [ ] プラン選択 UI
+- [ ] 2段階認証（TOTP）対応
+
+#### 旧課題（統合）
+- ~~選挙識別子~~ → 識別子設計に統合
 - **課題:** `city_code` + 年月日だけでは選挙を一意に特定できない
   - 参議院合同選挙区（鳥取・島根、徳島・高知）
   - 衆院選・参院選・地方選で選挙区定義が異なる
-- **詳細:** `docs/SPECIFICATION_AGENT.md` を参照
 
 ### 勘定科目マスタの拡充
 
