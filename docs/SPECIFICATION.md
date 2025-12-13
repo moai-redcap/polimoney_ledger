@@ -887,12 +887,13 @@ Freee 等のクラウド会計ソフトや銀行口座から取引データを�
 
 ### 6.2. 対応ソース
 
-| ソース | source_type | 連携方法 | 優先度 |
-|--------|-------------|----------|--------|
-| Freee | `freee` | OAuth2 API | 高 |
-| Moneytree | `moneytree` | OAuth2 API | 中 |
-| CSV アップロード | `csv` | ファイル | 高 |
-| 手動入力 | `manual` | フォーム | 高 |
+| ソース | source_type | 連携方法 | 優先度 | 備考 |
+|--------|-------------|----------|--------|------|
+| マネーフォワード クラウド | `moneyforward` | OAuth2 API | 🔴 高 | 開発者API公開 |
+| CSV アップロード | `csv` | ファイル | 🔴 高 | 汎用 |
+| 手動入力 | `manual` | フォーム | 🔴 高 | - |
+| Freee | `freee` | OAuth2 API | 🟡 中 | - |
+| Moneytree | `moneytree` | OAuth2 API | 🟢 低 | - |
 
 ### 6.3. transaction_drafts テーブル
 
@@ -937,7 +938,73 @@ pending ──→ converted  (仕訳に変換)
 3. **一括処理**
    - 複数の取引をまとめて仕訳に変換
 
-### 6.6. Freee API 連携
+### 6.6. マネーフォワード クラウド API 連携
+
+**開発者サイト:** https://developers.biz.moneyforward.com/
+
+#### 認証フロー
+
+```
+1. ユーザーが「マネーフォワード連携」ボタンをクリック
+2. マネーフォワードの認可画面にリダイレクト
+3. ユーザーが許可
+4. コールバックで認可コード取得
+5. アクセストークン取得
+6. 明細データ取得
+```
+
+#### API 仕様
+
+```typescript
+// OAuth2 認可エンドポイント
+const MF_AUTH_URL = "https://api.biz.moneyforward.com/authorize";
+const MF_TOKEN_URL = "https://api.biz.moneyforward.com/token";
+
+// 必要なスコープ
+const MF_SCOPES = [
+  "office",                    // 事業者情報
+  "account_item",              // 勘定科目
+  "wallet",                    // 口座
+  "wallet_txn",                // 口座明細
+];
+
+// 口座明細取得
+GET https://accounting.bizapi.moneyforward.com/api/v3/wallet_txns
+  ?office_id={office_id}
+  &from_date=2024-01-01
+  &to_date=2024-12-31
+
+// レスポンス例
+{
+  "wallet_txns": [
+    {
+      "id": 12345,
+      "date": "2024-03-01",
+      "amount": -50000,
+      "due_amount": 0,
+      "balance": 1000000,
+      "walletable_id": 1,
+      "walletable_type": "BankAccount",
+      "description": "ポスター印刷代",
+      "entry_side": "expense"
+    }
+  ]
+}
+
+// transaction_drafts に変換
+{
+  transaction_date: txn.date,
+  amount: txn.amount,  // マネーフォワードは符号付き
+  description: txn.description,
+  counterparty: null,  // 別途取得が必要
+  source_type: "moneyforward",
+  source_account_name: wallet.name,  // 口座名
+  source_transaction_id: String(txn.id),
+  source_raw_data: txn,
+}
+```
+
+### 6.7. Freee API 連携
 
 ```typescript
 // 必要なスコープ
