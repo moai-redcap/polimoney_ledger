@@ -125,6 +125,54 @@ create table if not exists ownership_transfers (
   updated_at timestamptz default now() not null
 );
 
+-- 10. Transaction Drafts (取引下書き) v3.14
+-- Freee等のクラウド会計ソフトや銀行明細から取り込んだ取引データ
+-- ユーザーが確認・科目割当後に仕訳(journals)に変換
+create table if not exists transaction_drafts (
+  id uuid primary key default uuid_generate_v4(),
+  owner_user_id uuid references auth.users(id) not null,
+  organization_id uuid references political_organizations(id),
+  election_id uuid references elections(id),
+  
+  -- 取引データ（外部ソースから取得）
+  transaction_date date not null,
+  amount integer not null,                -- 金額（正: 入金、負: 出金）
+  description text,                       -- 摘要（Freee等から取得）
+  counterparty text,                      -- 取引先名
+  
+  -- ソース情報
+  source_type text not null,              -- 'freee', 'moneytree', 'csv', 'manual'
+  source_account_name text,               -- '三菱UFJ銀行 普通預金'
+  source_transaction_id text,             -- 外部サービスの取引ID（重複防止）
+  source_raw_data jsonb,                  -- 元データ全体（デバッグ用）
+  
+  -- 仕訳変換用（ユーザーが設定 or AI推奨）
+  suggested_account_code text,            -- 推奨科目コード
+  suggested_contact_id uuid references contacts(id),
+  
+  -- ステータス
+  status text not null default 'pending'
+    check (status in ('pending', 'converted', 'ignored')),
+  converted_journal_id uuid references journals(id),
+  
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  
+  -- 重複防止
+  unique (owner_user_id, source_type, source_transaction_id)
+);
+
+create index if not exists idx_drafts_owner on transaction_drafts(owner_user_id);
+create index if not exists idx_drafts_status on transaction_drafts(status);
+create index if not exists idx_drafts_date on transaction_drafts(transaction_date);
+
+-- RLS for transaction_drafts
+alter table transaction_drafts enable row level security;
+
+drop policy if exists "Users can CRUD their own drafts" on transaction_drafts;
+create policy "Users can CRUD their own drafts" on transaction_drafts
+  for all using (auth.uid() = owner_user_id);
+
 -- Row Level Security (RLS) Policies
 
 alter table political_organizations enable row level security;

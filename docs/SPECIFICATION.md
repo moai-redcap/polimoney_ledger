@@ -865,3 +865,126 @@ Ledger DB (Supabase) ──Realtime──→ Polimoney Hub ──→ Polimoney (
 
 - journal_entries の account_code = 'REV_SELF_FINANCING' で判別
 - contact_id = NULL かつ自己資金科目 → 候補者本人からの資金
+
+---
+
+## **6. 外部連携・取引取込機能 (【v3.14 追加】)**
+
+### 6.1. 概要
+
+Freee 等のクラウド会計ソフトや銀行口座から取引データを取り込み、仕訳の下書きとして保存する機能。
+
+```
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│ Freee / 銀行API │ ──→ │ transaction_    │ ──→ │ journals        │
+│ 取引明細        │     │ drafts          │     │ 仕訳            │
+│                 │     │ (取引下書き)    │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+                              ↑
+                        ユーザーが確認
+                        科目を割り当て
+```
+
+### 6.2. 対応ソース
+
+| ソース | source_type | 連携方法 | 優先度 |
+|--------|-------------|----------|--------|
+| Freee | `freee` | OAuth2 API | 高 |
+| Moneytree | `moneytree` | OAuth2 API | 中 |
+| CSV アップロード | `csv` | ファイル | 高 |
+| 手動入力 | `manual` | フォーム | 高 |
+
+### 6.3. transaction_drafts テーブル
+
+| カラム | 型 | 説明 |
+|--------|-----|------|
+| id | UUID | 主キー |
+| owner_user_id | UUID | 所有者 |
+| organization_id | UUID | 政治団体（任意） |
+| election_id | UUID | 選挙（任意） |
+| transaction_date | DATE | 取引日 |
+| amount | INTEGER | 金額（正: 入金、負: 出金） |
+| description | TEXT | 摘要 |
+| counterparty | TEXT | 取引先名 |
+| source_type | TEXT | ソース種別 |
+| source_account_name | TEXT | 口座名（三菱UFJ銀行 等） |
+| source_transaction_id | TEXT | 外部ID（重複防止） |
+| source_raw_data | JSONB | 元データ（デバッグ用） |
+| suggested_account_code | TEXT | 推奨科目（AI or ルール） |
+| suggested_contact_id | UUID | 推奨関係者 |
+| status | TEXT | pending / converted / ignored |
+| converted_journal_id | UUID | 変換後の仕訳ID |
+
+### 6.4. ステータス遷移
+
+```
+pending ──→ converted  (仕訳に変換)
+    │
+    └────→ ignored     (無視/対象外)
+```
+
+### 6.5. UI フロー
+
+1. **取り込み画面**
+   - Freee 連携 / CSV アップロード / 手動追加 を選択
+   - 取引データを取得・表示
+
+2. **確認・編集画面**
+   - 未処理の取引一覧を表示
+   - 各取引に対して科目を割り当て（推奨科目を提示）
+   - 「仕訳に変換」または「無視」を選択
+
+3. **一括処理**
+   - 複数の取引をまとめて仕訳に変換
+
+### 6.6. Freee API 連携
+
+```typescript
+// 必要なスコープ
+const FREEE_SCOPES = [
+  "read",           // 基本読み取り
+  "wallet_txns",    // 口座明細
+];
+
+// 口座明細取得
+GET https://api.freee.co.jp/api/1/wallet_txns
+  ?company_id={company_id}
+  &start_date=2024-01-01
+  &end_date=2024-12-31
+
+// レスポンスを transaction_drafts に変換
+{
+  transaction_date: txn.date,
+  amount: txn.entry_side === "income" ? txn.amount : -txn.amount,
+  description: txn.description,
+  counterparty: txn.partner?.name,
+  source_type: "freee",
+  source_account_name: txn.walletable_name,
+  source_transaction_id: String(txn.id),
+  source_raw_data: txn,
+}
+```
+
+### 6.7. CSV フォーマット
+
+```csv
+日付,金額,摘要,取引先
+2024-03-01,-50000,ポスター印刷,印刷会社A
+2024-03-02,100000,寄附,山田一郎
+2024-03-05,-3000,タクシー代,
+```
+
+### 6.8. 将来拡張: AI 科目推奨
+
+取引摘要から科目を推論：
+
+```
+入力: "印刷会社A ポスター代"
+出力: 
+  - 選挙運動費/印刷費 (85%)
+  - 事務費/印刷費 (15%)
+```
+
+学習データ:
+- 過去の仕訳パターン
+- ユーザーの選択履歴

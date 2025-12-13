@@ -82,6 +82,32 @@
 - [ ] Supabase の account_master テーブルにデータ追加
 - **詳細:** `docs/SPECIFICATION_AGENT.md` の「2.1.1. 静的勘定科目マスタ」を参照
 
+### 🆕 外部連携・取引取込機能 (v3.14)
+
+**詳細:** `docs/SPECIFICATION.md` 6節を参照
+
+Freee 等のクラウド会計ソフトや銀行明細から取引データを取り込み、仕訳の下書きとして保存。
+
+#### Phase 1: 基盤構築
+- [ ] transaction_drafts テーブル作成（schema.sql 反映済み）
+- [ ] 取引下書き一覧画面
+- [ ] CSV アップロード機能
+- [ ] 手動入力フォーム
+
+#### Phase 2: 仕訳変換
+- [ ] 取引 → 仕訳変換ロジック
+- [ ] 科目割当 UI
+- [ ] 一括変換機能
+
+#### Phase 3: Freee 連携
+- [ ] Freee OAuth2 認証フロー
+- [ ] 口座明細取得 API 連携
+- [ ] 取引データ変換・保存
+
+#### Phase 4: AI 科目推奨（将来）
+- [ ] 過去の仕訳パターン学習
+- [ ] 摘要からの科目推論
+
 #### 対応する仕様書セクション
 
 - SPECIFICATION.md: 3.4. 仕訳登録画面 (AddJournalScreen)
