@@ -1,4 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
+import { Layout } from "../components/Layout.tsx";
 import ReSyncButton from "../islands/ReSyncButton.tsx";
 
 export default function Settings() {
@@ -7,26 +8,8 @@ export default function Settings() {
       <Head>
         <title>設定 - Polimoney Ledger</title>
       </Head>
-      <div class="min-h-screen bg-base-200">
-        {/* ナビゲーションバー */}
-        <div class="navbar bg-base-100 shadow-lg">
-          <div class="navbar-start">
-            <a href="/" class="text-xl font-bold px-4 hover:opacity-80">
-              Polimoney Ledger
-            </a>
-          </div>
-          <div class="navbar-center">
-            <span class="text-lg">設定</span>
-          </div>
-          <div class="navbar-end">
-            <a href="/" class="btn btn-ghost btn-sm">
-              ← 戻る
-            </a>
-          </div>
-        </div>
-
-        {/* メインコンテンツ */}
-        <main class="container mx-auto px-4 py-8 max-w-3xl">
+      <Layout currentPath="/settings" title="設定">
+        <div class="max-w-3xl">
           {/* 通常設定セクション */}
           <section class="card bg-base-100 shadow-xl mb-8">
             <div class="card-body">
@@ -56,8 +39,8 @@ export default function Settings() {
           <section>
             <ReSyncButton />
           </section>
-        </main>
-      </div>
+        </div>
+      </Layout>
     </>
   );
 }

@@ -5,6 +5,7 @@
 // 環境変数から Hub API の設定を取得
 const HUB_API_URL = Deno.env.get("HUB_API_URL") || "http://localhost:8000";
 const HUB_API_KEY = Deno.env.get("HUB_API_KEY") || "";
+const USE_MOCK_DATA = Deno.env.get("USE_MOCK_DATA") === "true";
 
 // ============================================
 // 型定義
@@ -109,15 +110,78 @@ async function fetchApi<T>(
 }
 
 // ============================================
+// モックデータ（開発用）
+// ============================================
+
+const MOCK_ELECTIONS: Election[] = [
+  {
+    id: "mock-election-1",
+    name: "第50回衆議院議員総選挙",
+    type: "HR",
+    area_code: "13101",
+    election_date: "2024-10-27",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: "mock-election-2",
+    name: "令和7年東京都知事選挙",
+    type: "PG",
+    area_code: "13000",
+    election_date: "2025-07-06",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: "mock-election-3",
+    name: "令和7年千代田区議会議員選挙",
+    type: "CM",
+    area_code: "13101",
+    election_date: "2025-04-20",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+];
+
+const MOCK_ORGANIZATIONS: Organization[] = [
+  {
+    id: "mock-org-1",
+    name: "○○後援会",
+    type: "support_group",
+    politician_id: "mock-pol-1",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: "mock-org-2",
+    name: "△△を応援する会",
+    type: "fund_management",
+    politician_id: "mock-pol-1",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+  },
+];
+
+// ============================================
 // 選挙 API
 // ============================================
 
 export async function getElections(): Promise<Election[]> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] getElections");
+    return MOCK_ELECTIONS;
+  }
   const result = await fetchApi<ApiResponse<Election[]>>("/api/v1/elections");
   return result.data;
 }
 
 export async function getElection(id: string): Promise<Election> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] getElection:", id);
+    const election = MOCK_ELECTIONS.find((e) => e.id === id);
+    if (!election) throw new Error("Election not found");
+    return election;
+  }
   const result = await fetchApi<ApiResponse<Election>>(
     `/api/v1/elections/${id}`
   );
@@ -129,6 +193,10 @@ export async function getElection(id: string): Promise<Election> {
 // ============================================
 
 export async function getOrganizations(): Promise<Organization[]> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] getOrganizations");
+    return MOCK_ORGANIZATIONS;
+  }
   const result = await fetchApi<ApiResponse<Organization[]>>(
     "/api/v1/organizations"
   );
@@ -136,6 +204,12 @@ export async function getOrganizations(): Promise<Organization[]> {
 }
 
 export async function getOrganization(id: string): Promise<Organization> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] getOrganization:", id);
+    const org = MOCK_ORGANIZATIONS.find((o) => o.id === id);
+    if (!org) throw new Error("Organization not found");
+    return org;
+  }
   const result = await fetchApi<ApiResponse<Organization>>(
     `/api/v1/organizations/${id}`
   );
