@@ -343,7 +343,126 @@ const channel = supabase
 
 ---
 
-## 7. 正確性・整合性の担保
+## 7. ストレージ戦略
+
+### 7.1. 年度締め機能（政治団体台帳）
+
+政治団体台帳は 1 台帳で複数年度のデータを管理（年度フィルタ方式）。
+各年度は個別に「締め処理」が可能。
+
+**ステータス遷移:**
+
+```
+open（編集可能）
+    │
+    │ ユーザーが「年度締め」（手動）
+    │ または 年度終了から 3年経過（自動）
+    ▼
+closed（読み取り専用）
+    │
+    │ 締めから 1年経過（自動）
+    ▼
+locked（完全ロック）
+    │ - 領収書画像: Ledger DB → Hub DB に移行
+    │ - Ledger Storage から削除
+    │
+    │ 修正が必要な場合
+    ▼
+temporary_unlock（一時解除、7日間）
+    │
+    │ 修正完了 or 期限切れ
+    ▼
+locked（再ロック）
+```
+
+**年度締めのトリガー:**
+
+| 方式 | タイミング              | 説明                 |
+| ---- | ----------------------- | -------------------- |
+| 手動 | 随時                    | ダッシュボードで促す |
+| 自動 | 年度終了から **3 年後** | 法定保存期間に基づく |
+
+### 7.2. データ保存場所
+
+| 期間   | 仕訳データ                          | 領収書画像           | 編集    |
+| ------ | ----------------------------------- | -------------------- | ------- |
+| open   | Ledger DB                           | Ledger Storage       | ✅ 可   |
+| closed | Ledger DB                           | Ledger Storage       | ❌ 不可 |
+| locked | Ledger DB（非公開）+ Hub DB（公開） | **Hub Storage のみ** | ❌ 不可 |
+
+**非公開データの扱い:**
+
+- 非公開情報（`is_name_private` 等）は **Ledger DB に残す**
+- Hub DB には匿名化済みの公開データのみ保存
+- Hub Admin は非公開データにアクセス不可
+
+### 7.3. ロック解除リクエスト
+
+ロックされたデータの修正が必要な場合:
+
+```
+1. ユーザーが Ledger から「修正依頼」を送信
+   - 対象: 台帳 + 年度（または選挙台帳）
+   - 理由: 修正が必要な理由を記載
+
+2. Hub Admin が確認・承認
+   - 形式的なチェックのみ
+   - 「承認」クリックで一時解除
+
+3. 一時解除（7日間）
+   - ユーザーが修正を実施
+   - 修正完了後「再締め」をクリック
+   - または 7日経過で自動再ロック
+```
+
+**管理者の作業は最小限:**
+
+| 作業             | 担当         | 工数 |
+| ---------------- | ------------ | ---- |
+| 修正理由の確認   | Admin        | 1 分 |
+| 「承認」クリック | Admin        | 5 秒 |
+| 実際の修正作業   | **ユーザー** | -    |
+| 再ロック         | **自動**     | -    |
+
+### 7.4. データモデル
+
+```sql
+-- 年度締めステータス
+CREATE TABLE ledger_year_closures (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ledger_id UUID NOT NULL REFERENCES ledgers(id),
+    fiscal_year INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open',
+    -- open / closed / locked / temporary_unlock
+    closed_at TIMESTAMPTZ,
+    locked_at TIMESTAMPTZ,
+    storage_migrated_at TIMESTAMPTZ,
+    UNIQUE(ledger_id, fiscal_year)
+);
+
+-- ロック解除リクエスト
+CREATE TABLE unlock_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ledger_id UUID REFERENCES ledgers(id),
+    election_id UUID REFERENCES elections(id),
+    fiscal_year INTEGER,
+    reason TEXT NOT NULL,
+    requested_by_user_id UUID NOT NULL,
+    requested_at TIMESTAMPTZ DEFAULT NOW(),
+    status TEXT DEFAULT 'pending',
+    -- pending / approved / rejected / completed / expired
+    reviewed_by_admin_id UUID,
+    reviewed_at TIMESTAMPTZ,
+    unlocked_at TIMESTAMPTZ,
+    unlock_expires_at TIMESTAMPTZ,
+    relocked_at TIMESTAMPTZ,
+    CHECK (ledger_id IS NOT NULL OR election_id IS NOT NULL)
+);
+```
+
+---
+
+## 8. 正確性・整合性の担保
 
 ### 7.1. 複式簿記のバリデーション
 
@@ -376,7 +495,7 @@ WHERE id = $1 AND updated_at = $2;  -- 競合検知
 
 ---
 
-## 8. 今後の検討事項
+## 9. 今後の検討事項
 
 - [ ] Azure への移行（Supabase Self-Host）
 - [ ] CI/CD パイプライン（GitHub Actions）
@@ -389,3 +508,5 @@ WHERE id = $1 AND updated_at = $2;  -- 競合検知
 ## 更新履歴
 
 - 初版作成
+- ストレージ戦略セクションを追加
+- 年度締め・ロック機構を追加

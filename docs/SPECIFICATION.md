@@ -211,26 +211,26 @@ v2.10 の transactions テーブルの「メタデータ」部分を引き継ぎ
 
 **テーブル名:** journals
 
-| 列名 (Column Name)             | データ型 (Data Type) | 説明 (Description)   | 備考 (Notes)                                                                                                                                         |
-| :----------------------------- | :------------------- | :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| id                             | uuid                 | 一意な ID (仕訳 ID)  | 主キー, uuid_generate_v4()                                                                                                                           |
-| organization_id                | uuid                 | 紐づく政治団体の ID  | NULL 許容, political_organizations.id への FK                                                                                                        |
-| election_id                    | uuid                 | 紐づく選挙台帳の ID  | NULL 許容, elections.id への FK                                                                                                                      |
-| journal_date                   | date                 | 仕訳日（取引日）     | 必須                                                                                                                                                 |
-| description                    | text                 | 摘要（取引内容）     | 必須。例: 「事務所家賃 5 月分」                                                                                                                      |
-| status                         | text                 | 承認ステータス       | draft (起票/承認前), approved (承認済)。必須                                                                                                         |
-| submitted_by_user_id           | uuid                 | 起票したユーザー ID  | auth.users.id への参照。必須                                                                                                                         |
-| approved_by_user_id            | uuid                 | 承認したユーザー ID  | status='approved'の場合必須                                                                                                                          |
+| 列名 (Column Name)             | データ型 (Data Type) | 説明 (Description)   | 備考 (Notes)                                                                                                            |
+| :----------------------------- | :------------------- | :------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| id                             | uuid                 | 一意な ID (仕訳 ID)  | 主キー, uuid_generate_v4()                                                                                              |
+| organization_id                | uuid                 | 紐づく政治団体の ID  | NULL 許容, political_organizations.id への FK                                                                           |
+| election_id                    | uuid                 | 紐づく選挙台帳の ID  | NULL 許容, elections.id への FK                                                                                         |
+| journal_date                   | date                 | 仕訳日（取引日）     | 必須                                                                                                                    |
+| description                    | text                 | 摘要（取引内容）     | 必須。例: 「事務所家賃 5 月分」                                                                                         |
+| status                         | text                 | 承認ステータス       | draft (起票/承認前), approved (承認済)。必須                                                                            |
+| submitted_by_user_id           | uuid                 | 起票したユーザー ID  | auth.users.id への参照。必須                                                                                            |
+| approved_by_user_id            | uuid                 | 承認したユーザー ID  | status='approved'の場合必須                                                                                             |
 | contact_id                     | uuid                 | **紐づく関係者 ID**  | **【v3.12 更新】NULL 許容**。収入・支出の場合は必須（アプリでバリデーション）、振替の場合は NULL。contacts.id への FK。 |
-| classification                 | text                 | 選挙運動の活動区分   | pre-campaign (立候補準備), campaign (選挙運動)。election_id が設定されている場合のみ使用                                                             |
-| non_monetary_basis             | text                 | 金銭以外の見積の根拠 | NULL 許容。                                                                                                                                          |
-| notes                          | text                 | 備考                 | 任意入力。NULL 許容                                                                                                                                  |
-| amount_political_grant         | integer              | 政党交付金充当額     | NULL 許容, デフォルト 0                                                                                                                              |
-| amount_political_fund          | integer              | 政党基金充当額       | NULL 許容, デフォルト 0                                                                                                                              |
-| amount_public_subsidy          | integer              | **公費負担額**       | **【v3.11 追加】** NULL 許容, デフォルト 0。選挙公営による公費負担額。                                                                               |
-| is_receipt_hard_to_collect     | boolean              | 領収証徴収困難フラグ | 必須, デフォルト false                                                                                                                               |
-| receipt_hard_to_collect_reason | text                 | 領収証徴収困難理由   | NULL 許容。                                                                                                                                          |
-| created_at                     | timestamptz          | レコード作成日時     | now()                                                                                                                                                |
+| classification                 | text                 | 選挙運動の活動区分   | pre-campaign (立候補準備), campaign (選挙運動)。election_id が設定されている場合のみ使用                                |
+| non_monetary_basis             | text                 | 金銭以外の見積の根拠 | NULL 許容。                                                                                                             |
+| notes                          | text                 | 備考                 | 任意入力。NULL 許容                                                                                                     |
+| amount_political_grant         | integer              | 政党交付金充当額     | NULL 許容, デフォルト 0                                                                                                 |
+| amount_political_fund          | integer              | 政党基金充当額       | NULL 許容, デフォルト 0                                                                                                 |
+| amount_public_subsidy          | integer              | **公費負担額**       | **【v3.11 追加】** NULL 許容, デフォルト 0。選挙公営による公費負担額。                                                  |
+| is_receipt_hard_to_collect     | boolean              | 領収証徴収困難フラグ | 必須, デフォルト false                                                                                                  |
+| receipt_hard_to_collect_reason | text                 | 領収証徴収困難理由   | NULL 許容。                                                                                                             |
+| created_at                     | timestamptz          | レコード作成日時     | now()                                                                                                                   |
 
 ### **2.3. 仕訳明細 (【v3.9 更新】)**
 
@@ -828,6 +828,103 @@ class PermissionService {
   4. Supabase から OTP（数字コード）付きのパスワードリセットメールが送信される。
   5. ユーザーは 4.2 と同様の「Email + OTP + 新パスワード」入力フォームを使い、パスワードをリセットする。（verifyOtp の type は OtpType.recovery を使用）
 
+## **4.5. 登録要件と証明書 (【v3.15 新規】)**
+
+### 4.5.1. 概要
+
+不正登録を防ぎ、実際の政治家・会計担当者のみが利用できるよう、**証明書類の提出を必須**とする。
+
+### 4.5.2. ユーザー種別と証明書
+
+| ユーザー種別   | 証明書類                   | 説明                             |
+| -------------- | -------------------------- | -------------------------------- |
+| **政治家本人** | 設立届出書（代表者欄）     | 政治団体の代表者と氏名が一致     |
+| **会計責任者** | 設立届出書（会計責任者欄） | 政治団体の会計責任者と氏名が一致 |
+| **現職議員**   | 議員証 / 当選証書          | 公的な身分証明                   |
+
+### 4.5.3. 政治団体登録の証明書
+
+| 証明書類                         | コード              | 説明               |
+| -------------------------------- | ------------------- | ------------------ |
+| 政治団体設立届出書（控え）       | `registration_form` | 選管に届出した控え |
+| 政治団体名簿のスクリーンショット | `name_list`         | 総務省サイト等     |
+| 政治資金収支報告書の表紙         | `financial_report`  | 過去の報告書       |
+
+### 4.5.4. 選挙登録の証明書
+
+| 証明書類                 | コード                  | 説明               |
+| ------------------------ | ----------------------- | ------------------ |
+| 立候補届出受理証明       | `candidacy_certificate` | 選管が発行         |
+| 選挙事務所設置届（控え） | `office_registration`   | 選管に届出した控え |
+| ポスター掲示場番号通知   | `poster_number`         | 選管からの通知     |
+
+### 4.5.5. 登録フロー
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. アカウント作成                                                    │
+│    - Email + Password + 氏名                                        │
+│    - OTP 認証                                                       │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 2. 政治団体を検索                                                    │
+│    - Hub から承認済み政治団体を検索                                  │
+│    - 見つかった場合 → 紐付けリクエスト                              │
+│    - 見つからない場合 → 新規登録リクエスト                          │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 3. 登録リクエスト送信                                                │
+│    - 団体名、種別、届出先                                           │
+│    - 証明書類のアップロード（必須）                                  │
+│    - ユーザーの役割（代表者 / 会計責任者）                          │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 4. Hub Admin が承認                                                  │
+│    - 証明書と申請内容を照合                                         │
+│    - 氏名が代表者/会計責任者と一致するか確認                        │
+│    - 承認 → 台帳作成が可能に                                        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 4.5.6. リクエスト制限
+
+| 制限項目                       | 値            |
+| ------------------------------ | ------------- |
+| 同一ユーザーの未承認リクエスト | 最大 **3 件** |
+| リクエスト間隔                 | **24 時間**   |
+
+### 4.5.7. データモデル
+
+```typescript
+// 証明書タイプ
+const EVIDENCE_TYPES = {
+  // 政治団体用
+  registration_form: "政治団体設立届出書（控え）",
+  name_list: "政治団体名簿のスクリーンショット",
+  financial_report: "政治資金収支報告書の表紙",
+  // 選挙用
+  candidacy_certificate: "立候補届出受理証明",
+  office_registration: "選挙事務所設置届（控え）",
+  poster_number: "ポスター掲示場番号通知",
+  // 議員用
+  member_id: "議員証",
+  election_certificate: "当選証書",
+};
+
+// ユーザーの役割
+const USER_ROLES = {
+  organization_representative: "政治団体の代表者",
+  organization_accountant: "政治団体の会計責任者",
+  elected_official: "現職議員",
+};
+```
+
 ## **5. Polimoney 連携仕様 (【v3.13 大幅更新】)**
 
 ### 方針変更
@@ -848,13 +945,13 @@ Ledger DB (Supabase) ──Realtime──→ Polimoney Hub ──→ Polimoney (
 
 ### 5.2. 匿名化ルール（Hub で実装）
 
-| フィールド | 条件 | 出力 |
-|------------|------|------|
-| contacts.contact_type | 常に | 公開 |
-| contacts.name | is_name_private == true | "非公開" |
-| contacts.address | is_address_private == true | "非公開" |
-| contacts.occupation | is_occupation_private == true | "非公開" |
-| privacy_reason_* | いずれかが private | 含める |
+| フィールド            | 条件                          | 出力     |
+| --------------------- | ----------------------------- | -------- |
+| contacts.contact_type | 常に                          | 公開     |
+| contacts.name         | is_name_private == true       | "非公開" |
+| contacts.address      | is_address_private == true    | "非公開" |
+| contacts.occupation   | is_occupation_private == true | "非公開" |
+| privacy*reason*\*     | いずれかが private            | 含める   |
 
 ### 5.3. 公費負担の連携
 
@@ -887,34 +984,34 @@ Freee 等のクラウド会計ソフトや銀行口座から取引データを�
 
 ### 6.2. 対応ソース
 
-| ソース | source_type | 連携方法 | 優先度 | 備考 |
-|--------|-------------|----------|--------|------|
-| マネーフォワード クラウド | `moneyforward` | OAuth2 API | 🔴 高 | 開発者API公開 |
-| CSV アップロード | `csv` | ファイル | 🔴 高 | 汎用 |
-| 手動入力 | `manual` | フォーム | 🔴 高 | - |
-| Freee | `freee` | OAuth2 API | 🟡 中 | - |
-| Moneytree | `moneytree` | OAuth2 API | 🟢 低 | - |
+| ソース                    | source_type    | 連携方法   | 優先度 | 備考            |
+| ------------------------- | -------------- | ---------- | ------ | --------------- |
+| マネーフォワード クラウド | `moneyforward` | OAuth2 API | 🔴 高  | 開発者 API 公開 |
+| CSV アップロード          | `csv`          | ファイル   | 🔴 高  | 汎用            |
+| 手動入力                  | `manual`       | フォーム   | 🔴 高  | -               |
+| Freee                     | `freee`        | OAuth2 API | 🟡 中  | -               |
+| Moneytree                 | `moneytree`    | OAuth2 API | 🟢 低  | -               |
 
 ### 6.3. transaction_drafts テーブル
 
-| カラム | 型 | 説明 |
-|--------|-----|------|
-| id | UUID | 主キー |
-| owner_user_id | UUID | 所有者 |
-| organization_id | UUID | 政治団体（任意） |
-| election_id | UUID | 選挙（任意） |
-| transaction_date | DATE | 取引日 |
-| amount | INTEGER | 金額（正: 入金、負: 出金） |
-| description | TEXT | 摘要 |
-| counterparty | TEXT | 取引先名 |
-| source_type | TEXT | ソース種別 |
-| source_account_name | TEXT | 口座名（三菱UFJ銀行 等） |
-| source_transaction_id | TEXT | 外部ID（重複防止） |
-| source_raw_data | JSONB | 元データ（デバッグ用） |
-| suggested_account_code | TEXT | 推奨科目（AI or ルール） |
-| suggested_contact_id | UUID | 推奨関係者 |
-| status | TEXT | pending / converted / ignored |
-| converted_journal_id | UUID | 変換後の仕訳ID |
+| カラム                 | 型      | 説明                          |
+| ---------------------- | ------- | ----------------------------- |
+| id                     | UUID    | 主キー                        |
+| owner_user_id          | UUID    | 所有者                        |
+| organization_id        | UUID    | 政治団体（任意）              |
+| election_id            | UUID    | 選挙（任意）                  |
+| transaction_date       | DATE    | 取引日                        |
+| amount                 | INTEGER | 金額（正: 入金、負: 出金）    |
+| description            | TEXT    | 摘要                          |
+| counterparty           | TEXT    | 取引先名                      |
+| source_type            | TEXT    | ソース種別                    |
+| source_account_name    | TEXT    | 口座名（三菱 UFJ 銀行 等）    |
+| source_transaction_id  | TEXT    | 外部 ID（重複防止）           |
+| source_raw_data        | JSONB   | 元データ（デバッグ用）        |
+| suggested_account_code | TEXT    | 推奨科目（AI or ルール）      |
+| suggested_contact_id   | UUID    | 推奨関係者                    |
+| status                 | TEXT    | pending / converted / ignored |
+| converted_journal_id   | UUID    | 変換後の仕訳 ID               |
 
 ### 6.4. ステータス遷移
 
@@ -927,10 +1024,12 @@ pending ──→ converted  (仕訳に変換)
 ### 6.5. UI フロー
 
 1. **取り込み画面**
+
    - Freee 連携 / CSV アップロード / 手動追加 を選択
    - 取引データを取得・表示
 
 2. **確認・編集画面**
+
    - 未処理の取引一覧を表示
    - 各取引に対して科目を割り当て（推奨科目を提示）
    - 「仕訳に変換」または「無視」を選択
@@ -1047,11 +1146,12 @@ GET https://api.freee.co.jp/api/1/wallet_txns
 
 ```
 入力: "印刷会社A ポスター代"
-出力: 
+出力:
   - 選挙運動費/印刷費 (85%)
   - 事務費/印刷費 (15%)
 ```
 
 学習データ:
+
 - 過去の仕訳パターン
 - ユーザーの選択履歴
