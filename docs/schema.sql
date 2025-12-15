@@ -173,6 +173,47 @@ drop policy if exists "Users can CRUD their own drafts" on transaction_drafts;
 create policy "Users can CRUD their own drafts" on transaction_drafts
   for all using (auth.uid() = owner_user_id);
 
+-- ============================================
+-- 11. 年度締めステータス（政治団体台帳用）
+-- ============================================
+-- 政治団体の台帳は年度ごとに締め処理を行う
+-- 選挙台帳は選挙終了後に一括で締めるため、このテーブルは使用しない
+create table if not exists ledger_year_closures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references political_organizations(id) on delete cascade,
+  fiscal_year integer not null,
+  status text not null default 'open'
+    check (status in ('open', 'closed', 'locked', 'temporary_unlock')),
+  -- open: 編集可能
+  -- closed: 締め済み（読み取り専用、1年後に自動ロック）
+  -- locked: ロック済み（画像は Hub に移行、テキストは Ledger に残る）
+  -- temporary_unlock: 一時解除中（7日後に自動再ロック）
+  closed_at timestamptz,              -- 年度締め日時
+  locked_at timestamptz,              -- ロック日時
+  storage_migrated_at timestamptz,    -- 画像移行完了日時
+  temporary_unlock_at timestamptz,    -- 一時解除開始日時
+  temporary_unlock_expires_at timestamptz, -- 一時解除期限
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(organization_id, fiscal_year)
+);
+
+create index if not exists idx_year_closures_org on ledger_year_closures(organization_id);
+create index if not exists idx_year_closures_status on ledger_year_closures(status);
+create index if not exists idx_year_closures_fiscal_year on ledger_year_closures(fiscal_year);
+
+-- RLS for ledger_year_closures
+alter table ledger_year_closures enable row level security;
+
+-- ユーザーは自分が所有する政治団体の年度締めステータスのみ操作可能
+drop policy if exists "Users can manage closures for their organizations" on ledger_year_closures;
+create policy "Users can manage closures for their organizations" on ledger_year_closures
+  for all using (
+    organization_id in (
+      select id from political_organizations where owner_user_id = auth.uid()
+    )
+  );
+
 -- Row Level Security (RLS) Policies
 
 alter table political_organizations enable row level security;
