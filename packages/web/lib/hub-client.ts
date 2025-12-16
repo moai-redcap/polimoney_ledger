@@ -354,8 +354,8 @@ export async function getOrganizationRequest(
 export interface SyncJournalInput {
   /** Ledger 側の仕訳 ID */
   journal_source_id: string;
-  /** Hub 側の台帳 ID */
-  ledger_id: string;
+  /** Ledger 側の台帳 ID（Hub では ledger_source_id として使用） */
+  ledger_source_id: string;
   /** 取引日 */
   date: string | null;
   /** 摘要（目的） */
@@ -391,6 +391,35 @@ export interface SyncResult {
 export interface SyncStatus {
   status: "ready" | "error";
   message: string;
+  stats?: {
+    public_ledgers: number;
+    public_journals: number;
+  };
+}
+
+/** Hub に送信する台帳データ */
+export interface SyncLedgerInput {
+  /** Ledger 側の台帳 ID */
+  ledger_source_id: string;
+  /** 政治家 ID (Hub の politicians.id) */
+  politician_id: string;
+  /** 政治団体 ID - 団体台帳の場合 */
+  organization_id?: string;
+  /** 選挙 ID - 選挙台帳の場合 */
+  election_id?: string;
+  /** 会計年度 */
+  fiscal_year: number;
+  /** 収入合計 */
+  total_income: number;
+  /** 支出合計 */
+  total_expense: number;
+  /** 仕訳件数 */
+  journal_count: number;
+}
+
+export interface SyncLedgerResult {
+  data: Record<string, unknown>;
+  action: "created" | "updated";
 }
 
 /**
@@ -399,6 +428,10 @@ export interface SyncStatus {
 export async function syncJournals(
   journals: SyncJournalInput[]
 ): Promise<SyncResult> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] syncJournals:", journals.length, "件");
+    return { created: journals.length, updated: 0, skipped: 0, errors: 0 };
+  }
   const result = await fetchApi<ApiResponse<SyncResult>>(
     "/api/v1/sync/journals",
     {
@@ -410,9 +443,48 @@ export async function syncJournals(
 }
 
 /**
+ * 台帳データを Hub に同期
+ */
+export async function syncLedger(
+  ledger: SyncLedgerInput
+): Promise<SyncLedgerResult> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] syncLedger:", ledger.ledger_source_id);
+    return { data: { id: "mock-ledger-id" }, action: "created" };
+  }
+  const result = await fetchApi<SyncLedgerResult>("/api/v1/sync/ledger", {
+    method: "POST",
+    body: JSON.stringify({ ledger }),
+  });
+  return result;
+}
+
+/**
  * 同期ステータスを確認
  */
 export async function getSyncStatus(): Promise<SyncStatus> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] getSyncStatus");
+    return { status: "ready", message: "Mock mode" };
+  }
   const result = await fetchApi<SyncStatus>("/api/v1/sync/status");
   return result;
+}
+
+/**
+ * 変更ログを記録
+ */
+export async function recordChangeLog(data: {
+  ledger_source_id: string;
+  change_summary: string;
+  change_details?: Record<string, unknown>;
+}): Promise<void> {
+  if (USE_MOCK_DATA) {
+    console.log("[Mock] recordChangeLog:", data.change_summary);
+    return;
+  }
+  await fetchApi("/api/v1/sync/change-log", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }

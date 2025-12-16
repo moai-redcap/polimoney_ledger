@@ -5,7 +5,6 @@
  * Hub の public_journals 形式に変換する
  */
 
-import { createHash } from "https://deno.land/std@0.224.0/crypto/mod.ts";
 import type { SyncJournalInput } from "./hub-client.ts";
 
 // ============================================
@@ -137,7 +136,8 @@ export interface TransformInput {
   journal: LedgerJournal;
   entries: LedgerJournalEntry[];
   contact: LedgerContact | null;
-  hubLedgerId: string;
+  /** Ledger 側の台帳 ID（Hub では ledger_source_id として使用） */
+  ledgerSourceId: string;
 }
 
 /**
@@ -146,7 +146,7 @@ export interface TransformInput {
 export async function transformJournalForSync(
   input: TransformInput
 ): Promise<SyncJournalInput> {
-  const { journal, entries, contact, hubLedgerId } = input;
+  const { journal, entries, contact, ledgerSourceId } = input;
 
   const amount = calculateAmount(entries);
   const accountCode = getAccountCode(entries);
@@ -162,7 +162,7 @@ export async function transformJournalForSync(
 
   return {
     journal_source_id: journal.id,
-    ledger_id: hubLedgerId,
+    ledger_source_id: ledgerSourceId,
     date: journal.journal_date,
     description: journal.description,
     amount,
