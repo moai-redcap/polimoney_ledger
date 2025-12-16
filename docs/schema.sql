@@ -1,12 +1,12 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
--- 2.10. Profiles
+-- 2.10. Profiles（Auth 補助情報）
+-- ※ full_name, email は Supabase Auth の user_metadata を使用
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  full_name text,
-  email text,
-  updated_at timestamptz
+  avatar_url text,
+  updated_at timestamptz default now()
 );
 
 -- 2.4. Political Organizations
@@ -93,16 +93,20 @@ create table if not exists journal_entries (
   credit_amount integer not null default 0
 );
 
--- 2.8. Media Assets
+-- 2.8. Media Assets（領収証・証憑添付）
 create table if not exists media_assets (
   id uuid primary key default uuid_generate_v4(),
-  journal_id uuid references journals(id),
+  journal_id uuid references journals(id) on delete cascade,
   uploaded_by_user_id uuid references auth.users(id),
   storage_path text not null,
   file_name text not null,
   mime_type text not null,
+  file_size integer,
   created_at timestamptz default now()
 );
+
+create index if not exists idx_media_assets_journal on media_assets(journal_id);
+create index if not exists idx_media_assets_user on media_assets(uploaded_by_user_id);
 
 -- 2.9. Ledger Members
 create table if not exists ledger_members (
@@ -128,6 +132,7 @@ create table if not exists ownership_transfers (
 -- 10. Transaction Drafts (取引下書き) v3.14
 -- Freee等のクラウド会計ソフトや銀行明細から取り込んだ取引データ
 -- ユーザーが確認・科目割当後に仕訳(journals)に変換
+-- ※ 未実装: 外部連携機能実装時に DB 作成予定
 create table if not exists transaction_drafts (
   id uuid primary key default uuid_generate_v4(),
   owner_user_id uuid references auth.users(id) not null,
@@ -216,12 +221,15 @@ create policy "Users can manage closures for their organizations" on ledger_year
 
 -- Row Level Security (RLS) Policies
 
+alter table profiles enable row level security;
 alter table political_organizations enable row level security;
 alter table politicians enable row level security;
 alter table elections enable row level security;
+alter table sub_accounts enable row level security;
 alter table contacts enable row level security;
 alter table journals enable row level security;
 alter table journal_entries enable row level security;
+alter table media_assets enable row level security;
 alter table ledger_members enable row level security;
 alter table ownership_transfers enable row level security;
 
@@ -248,3 +256,32 @@ create policy "Allow individual read access" on ownership_transfers
 drop policy if exists "Allow individual update access" on ownership_transfers;
 create policy "Allow individual update access" on ownership_transfers
   for update using (auth.uid() = to_user_id);
+
+-- Profiles policies
+drop policy if exists "Users can read own profile" on profiles;
+create policy "Users can read own profile" on profiles
+  for select using (auth.uid() = id);
+
+drop policy if exists "Users can update own profile" on profiles;
+create policy "Users can update own profile" on profiles
+  for update using (auth.uid() = id);
+
+drop policy if exists "Users can insert own profile" on profiles;
+create policy "Users can insert own profile" on profiles
+  for insert with check (auth.uid() = id);
+
+-- Sub Accounts policies
+drop policy if exists "Users can CRUD their own sub_accounts" on sub_accounts;
+create policy "Users can CRUD their own sub_accounts" on sub_accounts
+  for all using (auth.uid() = owner_user_id);
+
+-- Media Assets policies
+drop policy if exists "Users can manage their media assets" on media_assets;
+create policy "Users can manage their media assets" on media_assets
+  for all using (
+    auth.uid() = uploaded_by_user_id
+    or journal_id in (
+      select j.id from journals j
+      where j.submitted_by_user_id = auth.uid()
+    )
+  );
