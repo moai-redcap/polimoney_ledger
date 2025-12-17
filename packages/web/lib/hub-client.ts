@@ -6,21 +6,40 @@
 // 環境変数から Hub API の設定を取得
 // ============================================
 
-/** モックモード: true の場合は API を呼ばずにダミーデータを返す */
-const USE_MOCK_MODE = Deno.env.get("USE_MOCK_MODE") === "true";
+/** モックモード: true の場合はテストユーザーのデータを使用 */
+export const USE_MOCK_MODE = Deno.env.get("USE_MOCK_MODE") === "true";
 
 /** 本番/開発の判定 */
 const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
 
-/** Hub API URL（本番/開発で自動切り替え） */
-const HUB_API_URL = IS_PRODUCTION
-  ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
-  : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
+/**
+ * Hub API URL
+ * - USE_MOCK_MODE=true: 常に開発環境 URL を使用
+ * - USE_MOCK_MODE=false: DENO_ENV に応じて切り替え
+ */
+const HUB_API_URL = USE_MOCK_MODE
+  ? Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722"
+  : IS_PRODUCTION
+    ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
+    : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
 
-/** Hub API キー（本番/開発で自動切り替え） */
-const HUB_API_KEY = IS_PRODUCTION
-  ? Deno.env.get("HUB_API_KEY_PROD") || ""
-  : Deno.env.get("HUB_API_KEY_DEV") || "";
+/**
+ * Hub API キー
+ * - USE_MOCK_MODE=true: 常に DEV キーを使用（テストデータは Hub の DEV 側に同期）
+ * - USE_MOCK_MODE=false: DENO_ENV に応じて切り替え
+ */
+const HUB_API_KEY = USE_MOCK_MODE
+  ? Deno.env.get("HUB_API_KEY_DEV") || ""
+  : IS_PRODUCTION
+    ? Deno.env.get("HUB_API_KEY_PROD") || ""
+    : Deno.env.get("HUB_API_KEY_DEV") || "";
+
+// ============================================
+// テストユーザー定数（開発用ダミーデータの所有者）
+// ============================================
+
+/** テストユーザー ID（seed-supabase.ts と一致させる） */
+export const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
 // ============================================
 // 型定義

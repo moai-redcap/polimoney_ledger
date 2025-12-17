@@ -12,8 +12,9 @@ DENO_ENV=development
 # -------------------------------------------
 # モックモード
 # -------------------------------------------
-# true: Hub API を呼ばずにダミーデータを返す（Hub 未接続時の UI 開発用）
-# false: 実際に Hub API を呼び出す
+# true: テストユーザーのダミーデータを使用（DB に投入済み前提）
+#       Hub 同期時は DEV キーを使用
+# false: 実ユーザーのデータを使用
 USE_MOCK_MODE=false
 
 # -------------------------------------------
@@ -36,3 +37,7 @@ HUB_API_KEY_PROD=your-prod-api-key-here
 # Supabase Dashboard > Settings > API から取得
 SUPABASE_URL=https://your-ledger-project.supabase.co
 SUPABASE_PUBLISHABLE_KEY=your-anon-key-here
+
+# Service Role Key（USE_MOCK_MODE=true 時に必要）
+# ⚠️ 絶対にクライアントサイドに公開しないこと
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
