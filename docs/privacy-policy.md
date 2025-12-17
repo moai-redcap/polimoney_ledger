@@ -91,7 +91,7 @@ DD2030 は、個人情報の漏洩・紛失・改ざんを防ぐため、以下�
 - **削除権**: 個人情報の削除を請求できます（法令上の保存義務がある場合を除く）
 - **データポータビリティ**: 自身のデータをエクスポートできます
 
-これらの権利の行使については、お問い合わせフォームよりご連絡ください。
+これらの権利の行使については、[お問い合わせフォーム](https://docs.google.com/forms/d/e/1FAIpQLSdJ2h2SHLGBtzNbl8NvQ9CZPl0No3PyrPxk4QUGCEx1EB8J6Q/viewform)よりご連絡ください。
 
 ## 8. Cookie について
 
@@ -113,6 +113,7 @@ DD2030 は、必要に応じて本ポリシーを変更することがありま�
 
 本ポリシーに関するお問い合わせは、以下までご連絡ください。
 
+- **お問い合わせフォーム**: [Polimoney 総合お問い合わせ窓口](https://docs.google.com/forms/d/e/1FAIpQLSdJ2h2SHLGBtzNbl8NvQ9CZPl0No3PyrPxk4QUGCEx1EB8J6Q/viewform)
 - **組織名**: Digital Democracy 2030
 - **ウェブサイト**: [https://dd2030.org](https://dd2030.org)
 - **GitHub**: [github.com/digitaldemocracy2030](https://github.com/digitaldemocracy2030)
