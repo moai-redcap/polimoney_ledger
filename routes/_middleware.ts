@@ -15,7 +15,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 
 // 認証不要なパス
-const PUBLIC_PATHS = ["/", "/login", "/register", "/api/"];
+const PUBLIC_PATHS = ["/", "/login", "/register", "/api/", "/pending-review"];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => pathname.startsWith(path));
@@ -110,6 +110,18 @@ export async function handler(req: Request, ctx: FreshContext) {
         Location: `/login?redirect=${encodeURIComponent(url.pathname)}`,
       },
     });
+  }
+
+  // 審査ステータスをチェック
+  const registrationStatus = user.user_metadata?.registration_status;
+  if (registrationStatus === "pending_review") {
+    // 審査待ちユーザーは専用ページにリダイレクト
+    if (!url.pathname.startsWith("/pending-review")) {
+      return new Response(null, {
+        status: 302,
+        headers: { Location: "/pending-review" },
+      });
+    }
   }
 
   // ユーザー情報をコンテキストに追加

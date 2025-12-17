@@ -4,6 +4,11 @@ import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+// Hub API 設定
+const HUB_API_URL = Deno.env.get("HUB_API_URL_PROD") || Deno.env.get("HUB_API_URL_DEV") || "";
+const HUB_API_KEY = Deno.env.get("HUB_API_KEY_PROD") || Deno.env.get("HUB_API_KEY_DEV") || "";
 
 interface RegisterData {
   error?: string;
@@ -48,9 +53,16 @@ export const handler: Handlers<RegisterData> = {
     }
 
     // ファイル形式チェック
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "application/pdf",
+    ];
     if (!allowedTypes.includes(verificationDoc.type)) {
-      return ctx.render({ error: "JPG, PNG, GIF, PDF形式のファイルを添付してください" });
+      return ctx.render({
+        error: "JPG, PNG, GIF, PDF形式のファイルを添付してください",
+      });
     }
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
@@ -76,17 +88,90 @@ export const handler: Handlers<RegisterData> = {
       return ctx.render({ error: authError.message });
     }
 
-    // TODO: 本人確認書類を Supabase Storage にアップロード
-    // const userId = authData.user?.id;
-    // if (userId) {
-    //   const fileExt = verificationDoc.name.split('.').pop();
-    //   const filePath = `verification/${userId}/${Date.now()}.${fileExt}`;
-    //   await supabase.storage
-    //     .from('documents')
-    //     .upload(filePath, verificationDoc);
-    // }
+    const userId = authData.user?.id;
+    if (!userId) {
+      return ctx.render({ error: "ユーザー作成に失敗しました" });
+    }
+
+    // Service Role クライアントでファイルをアップロード
+    // （ユーザーはまだメール確認前なので、Service Role が必要）
+    let verificationDocUrl = "";
+    if (SUPABASE_SERVICE_ROLE_KEY) {
+      const serviceClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      });
+
+      const fileExt = verificationDoc.name.split(".").pop();
+      const filePath = `${userId}/${Date.now()}.${fileExt}`;
+      const fileBuffer = await verificationDoc.arrayBuffer();
+
+      const { data: uploadData, error: uploadError } = await serviceClient.storage
+        .from("verification-documents")
+        .upload(filePath, fileBuffer, {
+          contentType: verificationDoc.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("[Register] Upload error:", uploadError);
+        // アップロード失敗してもユーザーは作成済みなので続行
+      } else {
+        // 公開 URL を取得（Hub からアクセスできるように）
+        const { data: urlData } = serviceClient.storage
+          .from("verification-documents")
+          .getPublicUrl(filePath);
+        verificationDocUrl = urlData.publicUrl;
+      }
+    }
+
+    // Hub に登録申請を送信
+    if (HUB_API_URL && HUB_API_KEY) {
+      try {
+        const hubResponse = await fetch(`${HUB_API_URL}/api/v1/registration-requests`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-API-Key": HUB_API_KEY,
+          },
+          body: JSON.stringify({
+            email,
+            full_name: fullName,
+            role,
+            ledger_user_id: userId,
+            ledger_supabase_url: SUPABASE_URL,
+            verification_doc_url: verificationDocUrl || `pending:${userId}`,
+            verification_doc_type: getDocType(role),
+            verification_doc_name: verificationDoc.name,
+          }),
+        });
+
+        if (!hubResponse.ok) {
+          const errorData = await hubResponse.json().catch(() => ({}));
+          console.error("[Register] Hub API error:", errorData);
+          // Hub への送信失敗してもユーザーは作成済みなので続行
+        }
+      } catch (hubError) {
+        console.error("[Register] Hub API request failed:", hubError);
+        // Hub への送信失敗してもユーザーは作成済みなので続行
+      }
+    }
 
     return ctx.render({ success: true, email });
+  },
+};
+
+// 役割から書類タイプを推定
+function getDocType(role: string): string {
+  switch (role) {
+    case "politician":
+      return "certificate";
+    case "accountant":
+      return "appointment_form";
+    case "both":
+      return "registration_form";
+    default:
+      return "other";
+  }
   },
 };
 
@@ -174,7 +259,9 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
                 />
               </svg>
               <div>
-                <p class="font-bold text-sm">本サービスは政治家・会計責任者向けです</p>
+                <p class="font-bold text-sm">
+                  本サービスは政治家・会計責任者向けです
+                </p>
                 <p class="text-xs">
                   登録には本人確認書類の提出と審査が必要です。
                 </p>
@@ -275,7 +362,11 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
                     あなたの役割 <span class="text-error">*</span>
                   </span>
                 </label>
-                <select name="role" class="select select-bordered w-full" required>
+                <select
+                  name="role"
+                  class="select select-bordered w-full"
+                  required
+                >
                   <option value="" disabled selected>
                     選択してください
                   </option>
@@ -286,7 +377,9 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
               </div>
 
               {/* 本人確認書類 */}
-              <div class="divider text-sm text-base-content/60">本人確認書類</div>
+              <div class="divider text-sm text-base-content/60">
+                本人確認書類
+              </div>
 
               <div class="form-control">
                 <label class="label">
