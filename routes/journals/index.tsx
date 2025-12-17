@@ -47,9 +47,7 @@ export const handler: Handlers<PageData> = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(req);
+        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
       let query = supabase
         .from("journals")

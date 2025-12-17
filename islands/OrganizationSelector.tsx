@@ -100,26 +100,27 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
                     <ul class="menu p-0">
                       {orgs.map((org) => (
                         <li key={org.id}>
-                          <button
-                            class="flex justify-between items-start py-4 px-6 rounded-none border-b border-base-200 last:border-b-0"
-                            onClick={() => {
-                              alert(`団体を選択: ${org.name}\nID: ${org.id}`);
-                            }}
-                          >
-                            <div class="text-left">
+                          <div class="flex justify-between items-center py-4 px-6 border-b border-base-200 last:border-b-0">
+                            <div>
                               <h3 class="font-medium">{org.name}</h3>
-                              <div class="mt-1">
-                                <span class="badge badge-success">
+                              <div class="mt-1 flex items-center gap-2">
+                                <span class="badge badge-success badge-sm">
                                   {ORGANIZATION_TYPES[org.type] || org.type}
+                                </span>
+                                <span class="text-xs opacity-70">
+                                  {new Date(org.created_at).toLocaleDateString(
+                                    "ja-JP"
+                                  )}
                                 </span>
                               </div>
                             </div>
-                            <div class="text-sm opacity-70">
-                              {new Date(org.created_at).toLocaleDateString(
-                                "ja-JP"
-                              )}
-                            </div>
-                          </button>
+                            <a
+                              href={`/organizations/${org.id}/ledger`}
+                              class="btn btn-primary btn-sm"
+                            >
+                              台帳を開く
+                            </a>
+                          </div>
                         </li>
                       ))}
                     </ul>

@@ -97,31 +97,30 @@ export default function ElectionSelector({ initialElections }: Props) {
                   <ul class="menu p-0">
                     {groupedByYear[year].map((election) => (
                       <li key={election.id}>
-                        <button
-                          class="flex justify-between items-start py-4 px-6 rounded-none border-b border-base-200 last:border-b-0"
-                          onClick={() => {
-                            alert(
-                              `選挙を選択: ${election.name}\nID: ${election.id}`
-                            );
-                          }}
-                        >
-                          <div class="text-left">
+                        <div class="flex justify-between items-center py-4 px-6 border-b border-base-200 last:border-b-0">
+                          <div>
                             <h3 class="font-medium">{election.name}</h3>
-                            <div class="mt-1 flex flex-wrap gap-2">
-                              <span class="badge badge-info">
+                            <div class="mt-1 flex flex-wrap items-center gap-2">
+                              <span class="badge badge-info badge-sm">
                                 {ELECTION_TYPES[election.type] || election.type}
                               </span>
-                              <span class="text-sm opacity-70">
+                              <span class="text-xs opacity-70">
+                                {new Date(
+                                  election.election_date
+                                ).toLocaleDateString("ja-JP")}
+                              </span>
+                              <span class="text-xs opacity-70">
                                 選挙区: {election.area_code}
                               </span>
                             </div>
                           </div>
-                          <div class="text-sm opacity-70">
-                            {new Date(
-                              election.election_date
-                            ).toLocaleDateString("ja-JP")}
-                          </div>
-                        </button>
+                          <a
+                            href={`/elections/${election.id}/ledger`}
+                            class="btn btn-primary btn-sm"
+                          >
+                            台帳を開く
+                          </a>
+                        </div>
                       </li>
                     ))}
                   </ul>

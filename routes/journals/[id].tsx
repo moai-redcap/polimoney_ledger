@@ -63,9 +63,7 @@ export const handler: Handlers<PageData> = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(req);
+        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
       const { data: journal, error } = await supabase
         .from("journals")
