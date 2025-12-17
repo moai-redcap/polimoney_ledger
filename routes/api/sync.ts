@@ -11,6 +11,7 @@ import {
   syncJournals,
   syncLedger,
   recordChangeLog,
+  isTestUser,
   type SyncJournalInput,
   type SyncLedgerInput,
 } from "../../lib/hub-client.ts";
@@ -28,6 +29,31 @@ const SUPABASE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 
 function getSupabase() {
   return createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+/**
+ * リクエストの Cookie からユーザー ID を取得
+ */
+async function getUserIdFromRequest(req: Request): Promise<string | null> {
+  const cookies = req.headers.get("Cookie") || "";
+  const accessTokenMatch = cookies.match(/sb-access-token=([^;]+)/);
+
+  if (!accessTokenMatch) {
+    return null;
+  }
+
+  try {
+    const supabase = getSupabase();
+    const { data: { user }, error } = await supabase.auth.getUser(accessTokenMatch[1]);
+
+    if (error || !user) {
+      return null;
+    }
+
+    return user.id;
+  } catch {
+    return null;
+  }
 }
 
 // ============================================
@@ -145,6 +171,14 @@ export const handler: Handlers = {
       );
     }
 
+    // ユーザー ID を取得してテストユーザーかどうか判定
+    const userId = await getUserIdFromRequest(req);
+    const isTest = isTestUser(userId);
+
+    if (isTest) {
+      console.log("[Sync] Running in test mode (TEST_USER_ID)");
+    }
+
     try {
       const supabase = getSupabase();
 
@@ -211,6 +245,7 @@ export const handler: Handlers = {
             organization_id: ledgerRecord.organization_id || undefined,
             election_id: ledgerRecord.election_id || undefined,
             fiscal_year: ledgerRecord.fiscal_year,
+            is_test: isTest,
             ...totals,
           };
 
@@ -232,7 +267,11 @@ export const handler: Handlers = {
               ledgerSourceId: ledger.id,
             });
 
-            syncInputs.push(transformed);
+            // テストユーザーの場合は is_test フラグを設定
+            syncInputs.push({
+              ...transformed,
+              is_test: isTest,
+            });
           }
 
           // 仕訳を Hub に送信

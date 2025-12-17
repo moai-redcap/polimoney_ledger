@@ -339,6 +339,8 @@ export interface SyncJournalInput {
   public_expense_amount: number | null;
   /** コンテンツハッシュ（重複検知用） */
   content_hash: string;
+  /** テストデータフラグ */
+  is_test?: boolean;
 }
 
 export interface SyncResult {
@@ -376,6 +378,8 @@ export interface SyncLedgerInput {
   total_expense: number;
   /** 仕訳件数 */
   journal_count: number;
+  /** テストデータフラグ */
+  is_test?: boolean;
 }
 
 export interface SyncLedgerResult {
