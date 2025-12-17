@@ -1,7 +1,7 @@
 import { Head } from "$fresh/runtime.ts";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Layout } from "../../components/Layout.tsx";
-import { getSupabaseClient, getServiceRoleClient } from "../../lib/supabase.ts";
+import { getSupabaseClient, getServiceClient } from "../../lib/supabase.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -34,7 +34,8 @@ interface PageData {
 export const handler: Handlers<PageData> = {
   async GET(req, ctx) {
     const url = new URL(req.url);
-    const filter = (url.searchParams.get("filter") as PageData["filter"]) || "all";
+    const filter =
+      (url.searchParams.get("filter") as PageData["filter"]) || "all";
 
     const userId = ctx.state.userId as string;
     if (!userId) {
@@ -46,11 +47,14 @@ export const handler: Handlers<PageData> = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceRoleClient() : getSupabaseClient(req);
+        userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(req);
 
       let query = supabase
         .from("journals")
-        .select(`
+        .select(
+          `
           id,
           journal_date,
           description,
@@ -68,7 +72,8 @@ export const handler: Handlers<PageData> = {
           contacts (
             name
           )
-        `)
+        `
+        )
         .eq("submitted_by_user_id", userId)
         .order("journal_date", { ascending: false });
 

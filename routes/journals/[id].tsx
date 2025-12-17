@@ -1,7 +1,7 @@
 import { Head } from "$fresh/runtime.ts";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Layout } from "../../components/Layout.tsx";
-import { getSupabaseClient, getServiceRoleClient } from "../../lib/supabase.ts";
+import { getSupabaseClient, getServiceClient } from "../../lib/supabase.ts";
 import ApproveButton from "../../islands/ApproveButton.tsx";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -63,11 +63,14 @@ export const handler: Handlers<PageData> = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceRoleClient() : getSupabaseClient(req);
+        userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(req);
 
       const { data: journal, error } = await supabase
         .from("journals")
-        .select(`
+        .select(
+          `
           id,
           journal_date,
           description,
@@ -101,7 +104,8 @@ export const handler: Handlers<PageData> = {
           elections (
             election_name
           )
-        `)
+        `
+        )
         .eq("id", journalId)
         .single();
 
@@ -222,7 +226,9 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
             <a href="/journals" class="btn btn-ghost btn-sm">
               ← 戻る
             </a>
-            <h2 class="text-xl font-bold">{formatDate(journal.journal_date)}</h2>
+            <h2 class="text-xl font-bold">
+              {formatDate(journal.journal_date)}
+            </h2>
             {journal.status === "draft" ? (
               <span class="badge badge-warning">下書き</span>
             ) : (
@@ -252,9 +258,11 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
                   <dd class="font-medium">
                     {journal.contacts.name}
                     <span class="text-sm text-base-content/60 ml-2">
-                      ({journal.contacts.contact_type === "person"
+                      (
+                      {journal.contacts.contact_type === "person"
                         ? "個人"
-                        : "法人"})
+                        : "法人"}
+                      )
                     </span>
                   </dd>
                 </div>
@@ -363,9 +371,7 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
 
                 {journal.is_receipt_hard_to_collect && (
                   <div>
-                    <dt class="text-sm text-base-content/60">
-                      領収書徴収困難
-                    </dt>
+                    <dt class="text-sm text-base-content/60">領収書徴収困難</dt>
                     <dd class="font-medium">
                       {journal.receipt_hard_to_collect_reason || "理由未記載"}
                     </dd>
