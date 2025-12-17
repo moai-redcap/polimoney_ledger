@@ -20,5 +20,7 @@
     "editor.tabCompletion": "onlySnippets",
     "editor.wordBasedSuggestions": "off"
   },
-  "cSpell.words": ["Polimoney", "Supabase", "timestamptz", "signup", "elec"]
+  "cSpell.words": ["Polimoney", "Supabase", "timestamptz", "signup", "elec"],
+  "tailwindCSS.experimental.configFile": null,
+  "tailwindCSS.validate": false
 }

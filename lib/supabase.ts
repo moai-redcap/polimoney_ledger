@@ -4,7 +4,10 @@
  * USE_MOCK_MODE に応じてテストユーザーのデータを取得するためのヘルパー
  */
 
-import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  createClient,
+  SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2";
 import { USE_MOCK_MODE, TEST_USER_ID } from "./hub-client.ts";
 
 // ============================================
@@ -13,7 +16,8 @@ import { USE_MOCK_MODE, TEST_USER_ID } from "./hub-client.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const SUPABASE_SERVICE_ROLE_KEY =
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 // ============================================
 // Supabase クライアント（遅延初期化）
@@ -177,7 +181,9 @@ export async function getJournals(
     query = query.eq("organization_id", filter.organizationId);
   }
 
-  const { data, error } = await query.order("journal_date", { ascending: false });
+  const { data, error } = await query.order("journal_date", {
+    ascending: false,
+  });
 
   if (error) throw error;
   return data || [];

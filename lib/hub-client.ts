@@ -20,8 +20,8 @@ const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
 const HUB_API_URL = USE_MOCK_MODE
   ? Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722"
   : IS_PRODUCTION
-    ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
-    : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
+  ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
+  : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
 
 /**
  * Hub API キー
@@ -31,8 +31,8 @@ const HUB_API_URL = USE_MOCK_MODE
 const HUB_API_KEY = USE_MOCK_MODE
   ? Deno.env.get("HUB_API_KEY_DEV") || ""
   : IS_PRODUCTION
-    ? Deno.env.get("HUB_API_KEY_PROD") || ""
-    : Deno.env.get("HUB_API_KEY_DEV") || "";
+  ? Deno.env.get("HUB_API_KEY_PROD") || ""
+  : Deno.env.get("HUB_API_KEY_DEV") || "";
 
 // ============================================
 // テストユーザー定数（開発用ダミーデータの所有者）

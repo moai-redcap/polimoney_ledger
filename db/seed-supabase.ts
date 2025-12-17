@@ -411,7 +411,11 @@ async function seedJournalEntries() {
     if (error) {
       console.error(`  ❌ ${entry.account_code}:`, error.message);
     } else {
-      console.log(`  ✓ ${entry.account_code} (${entry.debit_amount || entry.credit_amount}円)`);
+      console.log(
+        `  ✓ ${entry.account_code} (${
+          entry.debit_amount || entry.credit_amount
+        }円)`
+      );
     }
   }
 }
