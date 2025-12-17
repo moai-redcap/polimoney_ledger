@@ -14,11 +14,19 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 
-// 認証不要なパス
-const PUBLIC_PATHS = ["/", "/login", "/register", "/api/", "/pending-review"];
+// 認証不要なパス（完全一致）
+const PUBLIC_PATHS_EXACT = ["/", "/privacy", "/elections", "/organizations"];
+
+// 認証不要なパス（前方一致）
+const PUBLIC_PATHS_PREFIX = ["/login", "/register", "/api/", "/pending-review"];
 
 function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.some((path) => pathname.startsWith(path));
+  // 完全一致チェック
+  if (PUBLIC_PATHS_EXACT.includes(pathname)) {
+    return true;
+  }
+  // 前方一致チェック
+  return PUBLIC_PATHS_PREFIX.some((path) => pathname.startsWith(path));
 }
 
 export async function handler(req: Request, ctx: FreshContext) {
