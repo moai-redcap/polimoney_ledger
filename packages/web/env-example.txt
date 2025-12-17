@@ -1,14 +1,37 @@
-# Polimoney Hub API 設定
-# ローカル（非Docker）の場合: http://localhost:8000
-# Docker共有ネットワークの場合: http://app:8000
-HUB_API_URL=http://app:8000
-HUB_API_KEY=dev-api-key-12345
-HUB_ADMIN_KEY=dev-admin-key-67890
+# ===========================================
+# Polimoney Ledger 環境変数
+# ===========================================
 
-# モックデータを使用（Hub 未接続時の開発用）
-# true にすると API を呼ばずにダミーデータを返す
+# -------------------------------------------
+# Polimoney Hub API 設定
+# -------------------------------------------
+# ローカル開発（非Docker）: http://localhost:8000
+# Docker Compose: http://app:8000
+# 本番環境: https://api.polimoney.dd2030.org（または https://polimoney-hub.dd2030-topics.deno.net）
+HUB_API_URL=http://localhost:8000
+
+# Hub API キー（Hub の API_KEY_DEV または API_KEY_PROD と一致させる）
+HUB_API_KEY=your-hub-api-key-here
+
+# -------------------------------------------
+# モックモード（Hub 未接続時の開発用）
+# -------------------------------------------
+# true: API を呼ばずにダミーデータを返す
+# false: 実際に Hub API を呼び出す
 USE_MOCK_DATA=false
 
-# Supabase 設定（証明書類のアップロード用）
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_PUBLISHABLE_KEY=your-publishable-key-here
+# -------------------------------------------
+# Supabase 設定（Ledger DB）
+# -------------------------------------------
+# Supabase Dashboard > Settings > API から取得
+SUPABASE_URL=https://your-ledger-project.supabase.co
+SUPABASE_KEY=your-anon-key-here
+
+# -------------------------------------------
+# 本番環境の設定例
+# -------------------------------------------
+# HUB_API_URL=https://api.polimoney.dd2030.org
+# HUB_API_KEY=prod-api-key-xxxxx
+# USE_MOCK_DATA=false
+# SUPABASE_URL=https://xxxxx.supabase.co
+# SUPABASE_KEY=eyJxxxxx

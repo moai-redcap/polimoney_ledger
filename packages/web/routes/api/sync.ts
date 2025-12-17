@@ -61,11 +61,13 @@ async function getApprovedJournals(
 ): Promise<JournalWithEntries[]> {
   let query = supabase
     .from("journals")
-    .select(`
+    .select(
+      `
       *,
       journal_entries (*),
       contacts (*)
-    `)
+    `
+    )
     .eq("status", "approved");
 
   if (ledger.type === "election") {
@@ -164,10 +166,10 @@ export const handler: Handlers = {
       }
 
       if (!ledgers || ledgers.length === 0) {
-        return new Response(
-          JSON.stringify({ error: "No ledgers found" }),
-          { status: 404, headers: { "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "No ledgers found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       // 結果集計
@@ -259,7 +261,10 @@ export const handler: Handlers = {
             `[Sync] Ledger ${ledger.id}: ${syncInputs.length} journals synced`
           );
         } catch (ledgerError) {
-          console.error(`[Sync] Error processing ledger ${ledger.id}:`, ledgerError);
+          console.error(
+            `[Sync] Error processing ledger ${ledger.id}:`,
+            ledgerError
+          );
           result.errors++;
         }
       }
