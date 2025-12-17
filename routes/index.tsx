@@ -101,8 +101,7 @@ export default function LandingPage() {
                   <span class="text-4xl mb-4">📊</span>
                   <h3 class="card-title">簡単な収支管理</h3>
                   <p class="text-base-content/70">
-                    直感的な UI で収入・支出を記録。
-                    手軽に記録を始められます。
+                    直感的な UI で収入・支出を記録。 手軽に記録を始められます。
                   </p>
                 </div>
               </div>
