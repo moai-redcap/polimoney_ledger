@@ -7,12 +7,13 @@
 // ============================================
 
 /** 本番/開発の判定 */
-const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
+// 注意: DENO_ENV は Deno Deploy で予約済みのため APP_ENV を使用
+const IS_PRODUCTION = Deno.env.get("APP_ENV") === "production";
 
 /**
  * Hub API URL
- * - DENO_ENV=production: 本番環境 URL
- * - DENO_ENV!=production: 開発環境 URL
+ * - APP_ENV=production: 本番環境 URL
+ * - APP_ENV!=production: 開発環境 URL
  */
 const HUB_API_URL = IS_PRODUCTION
   ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
@@ -20,8 +21,8 @@ const HUB_API_URL = IS_PRODUCTION
 
 /**
  * Hub API キー
- * - DENO_ENV=production: 本番環境キー
- * - DENO_ENV!=production: 開発環境キー
+ * - APP_ENV=production: 本番環境キー
+ * - APP_ENV!=production: 開発環境キー
  */
 const HUB_API_KEY = IS_PRODUCTION
   ? Deno.env.get("HUB_API_KEY_PROD") || ""

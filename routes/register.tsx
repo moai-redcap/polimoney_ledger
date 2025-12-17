@@ -8,7 +8,8 @@ const SUPABASE_SERVICE_ROLE_KEY =
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 // Hub API 設定
-const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
+// 注意: DENO_ENV は Deno Deploy で予約済みのため APP_ENV を使用
+const IS_PRODUCTION = Deno.env.get("APP_ENV") === "production";
 const HUB_API_URL = IS_PRODUCTION
   ? Deno.env.get("HUB_API_URL_PROD") || ""
   : Deno.env.get("HUB_API_URL_DEV") || "";
