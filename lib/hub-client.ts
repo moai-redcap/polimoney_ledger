@@ -141,7 +141,10 @@ async function fetchApi<T>(
   const contentType = response.headers.get("content-type");
   if (!contentType || !contentType.includes("application/json")) {
     const text = await response.text();
-    console.error(`[Hub API] Non-JSON response from ${url}:`, text.slice(0, 200));
+    console.error(
+      `[Hub API] Non-JSON response from ${url}:`,
+      text.slice(0, 200)
+    );
     throw new Error(`Hub API returned non-JSON response (${response.status})`);
   }
 

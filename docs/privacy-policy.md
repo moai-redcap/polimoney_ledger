@@ -1,6 +1,6 @@
 # プライバシーポリシー
 
-デジタル民主主義2030（以下「DD2030」）は、Polimoney Ledger（以下「本サービス」）における個人情報の取り扱いについて、以下のとおりプライバシーポリシーを定めます。
+デジタル民主主義 2030（以下「DD2030」）は、Polimoney Ledger（以下「本サービス」）における個人情報の取り扱いについて、以下のとおりプライバシーポリシーを定めます。
 
 **最終更新日: 2025 年 12 月 17 日**
 
@@ -114,6 +114,6 @@ DD2030 は、必要に応じて本ポリシーを変更することがありま�
 本ポリシーに関するお問い合わせは、以下までご連絡ください。
 
 - **お問い合わせフォーム**: [Polimoney 総合お問い合わせ窓口](https://docs.google.com/forms/d/e/1FAIpQLSdJ2h2SHLGBtzNbl8NvQ9CZPl0No3PyrPxk4QUGCEx1EB8J6Q/viewform)
-- **組織名**: デジタル民主主義2030
+- **組織名**: デジタル民主主義 2030
 - **ウェブサイト**: [https://dd2030.org](https://dd2030.org)
 - **GitHub**: [github.com/digitaldemocracy2030](https://github.com/digitaldemocracy2030)

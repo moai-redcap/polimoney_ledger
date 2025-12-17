@@ -19,7 +19,9 @@ HUB_API_KEY_DEV=your-dev-api-key-here
 # -------------------------------------------
 # Polimoney Hub API 設定（本番環境用）
 # -------------------------------------------
-HUB_API_URL_PROD=https://api.polimoney.dd2030.org
+# カスタムドメイン: https://api.polimoney.dd2030.org
+# 暫定 URL: https://polimoney-hub.dd2030-topics.deno.net
+HUB_API_URL_PROD=https://polimoney-hub.dd2030-topics.deno.net
 HUB_API_KEY_PROD=your-prod-api-key-here
 
 # -------------------------------------------
