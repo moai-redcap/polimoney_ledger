@@ -87,10 +87,14 @@ export default function LandingPage() {
               <div class="card bg-base-200">
                 <div class="card-body items-center text-center">
                   <span class="text-4xl mb-4">📄</span>
-                  <h3 class="card-title">報告書の自動生成</h3>
+                  <h3 class="card-title">
+                    報告書出力
+                    <span class="badge badge-outline badge-sm ml-1">予定</span>
+                  </h3>
                   <p class="text-base-content/70">
                     政治資金収支報告書のフォーマットに
-                    対応した帳票を自動生成します。
+                    対応した帳票出力を目指しています。
+                    （選挙種別・届出先により様式が異なるため開発中）
                   </p>
                 </div>
               </div>

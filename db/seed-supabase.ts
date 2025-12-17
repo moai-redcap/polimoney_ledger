@@ -145,7 +145,7 @@ const testContacts = [
 const testJournals = [
   // 選挙台帳: テスト太郎の選挙
   {
-    id: "jjjj1111-1111-1111-1111-111111111111",
+    id: "dddd1111-1111-1111-1111-111111111111",
     organization_id: null,
     election_id: "eeee1111-1111-1111-1111-111111111111",
     journal_date: "2024-10-01",
@@ -158,7 +158,7 @@ const testJournals = [
     notes: "A1サイズ 500枚",
   },
   {
-    id: "jjjj1111-2222-2222-2222-222222222222",
+    id: "dddd1111-2222-2222-2222-222222222222",
     organization_id: null,
     election_id: "eeee1111-1111-1111-1111-111111111111",
     journal_date: "2024-10-05",
@@ -171,7 +171,7 @@ const testJournals = [
     notes: null,
   },
   {
-    id: "jjjj1111-3333-3333-3333-333333333333",
+    id: "dddd1111-3333-3333-3333-333333333333",
     organization_id: null,
     election_id: "eeee1111-1111-1111-1111-111111111111",
     journal_date: "2024-10-15",
@@ -185,7 +185,7 @@ const testJournals = [
   },
   // 政治団体台帳: テスト太郎後援会
   {
-    id: "jjjj2222-1111-1111-1111-111111111111",
+    id: "dddd2222-1111-1111-1111-111111111111",
     organization_id: "aaaa1111-1111-1111-1111-111111111111",
     election_id: null,
     journal_date: "2024-04-15",
@@ -198,7 +198,7 @@ const testJournals = [
     notes: "年会費",
   },
   {
-    id: "jjjj2222-2222-2222-2222-222222222222",
+    id: "dddd2222-2222-2222-2222-222222222222",
     organization_id: "aaaa1111-1111-1111-1111-111111111111",
     election_id: null,
     journal_date: "2024-05-01",
@@ -219,75 +219,75 @@ const testJournals = [
 const testJournalEntries = [
   // ポスター印刷（支出）
   {
-    id: "entry-1111-1111-1111-111111111111",
-    journal_id: "jjjj1111-1111-1111-1111-111111111111",
+    id: "ff001111-1111-1111-1111-111111111111",
+    journal_id: "dddd1111-1111-1111-1111-111111111111",
     account_code: "EXP_PRINTING_ELEC",
     debit_amount: 150000,
     credit_amount: 0,
   },
   {
-    id: "entry-1111-1111-1111-222222222222",
-    journal_id: "jjjj1111-1111-1111-1111-111111111111",
+    id: "ff001111-1111-1111-2222-222222222222",
+    journal_id: "dddd1111-1111-1111-1111-111111111111",
     account_code: "ASSET_CASH",
     debit_amount: 0,
     credit_amount: 150000,
   },
   // 個人寄附（収入）
   {
-    id: "entry-1111-2222-2222-111111111111",
-    journal_id: "jjjj1111-2222-2222-2222-222222222222",
+    id: "ff001111-2222-2222-1111-111111111111",
+    journal_id: "dddd1111-2222-2222-2222-222222222222",
     account_code: "ASSET_CASH",
     debit_amount: 50000,
     credit_amount: 0,
   },
   {
-    id: "entry-1111-2222-2222-222222222222",
-    journal_id: "jjjj1111-2222-2222-2222-222222222222",
+    id: "ff001111-2222-2222-2222-222222222222",
+    journal_id: "dddd1111-2222-2222-2222-222222222222",
     account_code: "REV_DONATION_INDIVIDUAL",
     debit_amount: 0,
     credit_amount: 50000,
   },
   // 事務所借り上げ（支出）
   {
-    id: "entry-1111-3333-3333-111111111111",
-    journal_id: "jjjj1111-3333-3333-3333-333333333333",
+    id: "ff001111-3333-3333-1111-111111111111",
+    journal_id: "dddd1111-3333-3333-3333-333333333333",
     account_code: "EXP_BUILDING_ELEC",
     debit_amount: 80000,
     credit_amount: 0,
   },
   {
-    id: "entry-1111-3333-3333-222222222222",
-    journal_id: "jjjj1111-3333-3333-3333-333333333333",
+    id: "ff001111-3333-3333-2222-222222222222",
+    journal_id: "dddd1111-3333-3333-3333-333333333333",
     account_code: "ASSET_CASH",
     debit_amount: 0,
     credit_amount: 80000,
   },
   // 会費収入
   {
-    id: "entry-2222-1111-1111-111111111111",
-    journal_id: "jjjj2222-1111-1111-1111-111111111111",
+    id: "ff002222-1111-1111-1111-111111111111",
+    journal_id: "dddd2222-1111-1111-1111-111111111111",
     account_code: "ASSET_CASH",
     debit_amount: 10000,
     credit_amount: 0,
   },
   {
-    id: "entry-2222-1111-1111-222222222222",
-    journal_id: "jjjj2222-1111-1111-1111-111111111111",
+    id: "ff002222-1111-1111-2222-222222222222",
+    journal_id: "dddd2222-1111-1111-1111-111111111111",
     account_code: "REV_MEMBERSHIP_FEE",
     debit_amount: 0,
     credit_amount: 10000,
   },
   // 事務用品購入
   {
-    id: "entry-2222-2222-2222-111111111111",
-    journal_id: "jjjj2222-2222-2222-2222-222222222222",
+    id: "ff002222-2222-2222-1111-111111111111",
+    journal_id: "dddd2222-2222-2222-2222-222222222222",
     account_code: "EXP_SUPPLIES_POL",
     debit_amount: 5000,
     credit_amount: 0,
   },
   {
-    id: "entry-2222-2222-2222-222222222222",
-    journal_id: "jjjj2222-2222-2222-2222-222222222222",
+    id: "ff002222-2222-2222-2222-222222222222",
+    journal_id: "dddd2222-2222-2222-2222-222222222222",
     account_code: "ASSET_CASH",
     debit_amount: 0,
     credit_amount: 5000,

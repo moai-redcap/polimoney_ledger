@@ -228,7 +228,10 @@ export function Layout({ children, currentPath, title }: LayoutProps) {
         <aside class="bg-base-100 min-h-screen w-80 flex flex-col">
           {/* ロゴ */}
           <div class="p-4 border-b border-base-300">
-            <a href="/dashboard" class="flex items-center gap-2 hover:opacity-80">
+            <a
+              href="/dashboard"
+              class="flex items-center gap-2 hover:opacity-80"
+            >
               <span class="text-2xl">📒</span>
               <span class="font-bold text-lg">Ledger</span>
             </a>
