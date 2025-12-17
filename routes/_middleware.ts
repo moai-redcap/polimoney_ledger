@@ -95,6 +95,7 @@ export async function handler(req: Request, ctx: FreshContext) {
 
         // ユーザー情報をコンテキストに追加
         ctx.state.user = refreshData.user;
+        ctx.state.userId = refreshData.user?.id;
 
         return new Response(response.body, {
           status: response.status,
@@ -126,6 +127,7 @@ export async function handler(req: Request, ctx: FreshContext) {
 
   // ユーザー情報をコンテキストに追加
   ctx.state.user = user;
+  ctx.state.userId = user.id;
 
   return ctx.next();
 }
