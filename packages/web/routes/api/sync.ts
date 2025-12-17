@@ -24,7 +24,7 @@ import {
 
 // Supabase クライアント
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY") || "";
+const SUPABASE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 
 function getSupabase() {
   return createClient(SUPABASE_URL, SUPABASE_KEY);

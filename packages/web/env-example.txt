@@ -35,4 +35,4 @@ HUB_API_KEY_PROD=your-prod-api-key-here
 # -------------------------------------------
 # Supabase Dashboard > Settings > API から取得
 SUPABASE_URL=https://your-ledger-project.supabase.co
-SUPABASE_KEY=your-anon-key-here
+SUPABASE_PUBLISHABLE_KEY=your-anon-key-here
