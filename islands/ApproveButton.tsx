@@ -11,9 +11,7 @@ export default function ApproveButton({ journalId }: ApproveButtonProps) {
 
   const handleApprove = async () => {
     if (
-      !confirm(
-        "この仕訳を承認しますか？\n承認すると Hub に自動同期されます。"
-      )
+      !confirm("この仕訳を承認しますか？\n承認すると Hub に自動同期されます。")
     ) {
       return;
     }
@@ -101,11 +99,7 @@ export default function ApproveButton({ journalId }: ApproveButtonProps) {
         )}
       </button>
 
-      {error && (
-        <div class="text-error text-sm">
-          {error}
-        </div>
-      )}
+      {error && <div class="text-error text-sm">{error}</div>}
     </div>
   );
 }

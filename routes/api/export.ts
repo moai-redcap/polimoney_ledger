@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { getSupabaseClient, getServiceRoleClient } from "../../lib/supabase.ts";
+import { getSupabaseClient, getServiceClient } from "../../lib/supabase.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -33,7 +33,7 @@ export const handler: Handlers = {
 
     // テストユーザーの場合は service role client を使用
     const supabase =
-      userId === TEST_USER_ID ? getServiceRoleClient() : getSupabaseClient(req);
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
     try {
       // ユーザー情報取得
