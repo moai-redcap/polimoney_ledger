@@ -4,7 +4,8 @@ import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+const SUPABASE_SERVICE_ROLE_KEY =
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 // Hub API 設定
 const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
@@ -102,20 +103,25 @@ export const handler: Handlers<RegisterData> = {
     // （ユーザーはまだメール確認前なので、Service Role が必要）
     let verificationDocUrl = "";
     if (SUPABASE_SERVICE_ROLE_KEY) {
-      const serviceClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      });
+      const serviceClient = createClient(
+        SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY,
+        {
+          auth: { autoRefreshToken: false, persistSession: false },
+        }
+      );
 
       const fileExt = verificationDoc.name.split(".").pop();
       const filePath = `${userId}/${Date.now()}.${fileExt}`;
       const fileBuffer = await verificationDoc.arrayBuffer();
 
-      const { data: uploadData, error: uploadError } = await serviceClient.storage
-        .from("verification-documents")
-        .upload(filePath, fileBuffer, {
-          contentType: verificationDoc.type,
-          upsert: false,
-        });
+      const { data: uploadData, error: uploadError } =
+        await serviceClient.storage
+          .from("verification-documents")
+          .upload(filePath, fileBuffer, {
+            contentType: verificationDoc.type,
+            upsert: false,
+          });
 
       if (uploadError) {
         console.error("[Register] Upload error:", uploadError);
@@ -132,23 +138,26 @@ export const handler: Handlers<RegisterData> = {
     // Hub に登録申請を送信
     if (HUB_API_URL && HUB_API_KEY) {
       try {
-        const hubResponse = await fetch(`${HUB_API_URL}/api/v1/registration-requests`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-Key": HUB_API_KEY,
-          },
-          body: JSON.stringify({
-            email,
-            full_name: fullName,
-            role,
-            ledger_user_id: userId,
-            ledger_supabase_url: SUPABASE_URL,
-            verification_doc_url: verificationDocUrl || `pending:${userId}`,
-            verification_doc_type: getDocType(role),
-            verification_doc_name: verificationDoc.name,
-          }),
-        });
+        const hubResponse = await fetch(
+          `${HUB_API_URL}/api/v1/registration-requests`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-API-Key": HUB_API_KEY,
+            },
+            body: JSON.stringify({
+              email,
+              full_name: fullName,
+              role,
+              ledger_user_id: userId,
+              ledger_supabase_url: SUPABASE_URL,
+              verification_doc_url: verificationDocUrl || `pending:${userId}`,
+              verification_doc_type: getDocType(role),
+              verification_doc_name: verificationDoc.name,
+            }),
+          }
+        );
 
         if (!hubResponse.ok) {
           const errorData = await hubResponse.json().catch(() => ({}));
