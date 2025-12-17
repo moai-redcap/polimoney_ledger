@@ -10,18 +10,9 @@
 DENO_ENV=development
 
 # -------------------------------------------
-# モックモード
-# -------------------------------------------
-# true: テストユーザーのダミーデータを使用（DB に投入済み前提）
-#       Hub 同期時は DEV キーを使用
-# false: 実ユーザーのデータを使用
-USE_MOCK_MODE=false
-
-# -------------------------------------------
 # Polimoney Hub API 設定（開発環境用）
 # -------------------------------------------
-# ローカル: http://localhost:8000
-# Docker Compose: http://app:8000
+# ローカル: http://localhost:3722
 HUB_API_URL_DEV=http://localhost:3722
 HUB_API_KEY_DEV=your-dev-api-key-here
 
@@ -38,6 +29,6 @@ HUB_API_KEY_PROD=your-prod-api-key-here
 SUPABASE_URL=https://your-ledger-project.supabase.co
 SUPABASE_PUBLISHABLE_KEY=your-anon-key-here
 
-# Service Role Key（USE_MOCK_MODE=true 時に必要）
+# Service Role Key（テストユーザーのダミーデータアクセス用）
 # ⚠️ 絶対にクライアントサイドに公開しないこと
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here

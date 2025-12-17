@@ -63,7 +63,9 @@ export const handler: Handlers<PendingReviewData> = {
     if (HUB_API_URL && HUB_API_KEY) {
       try {
         const response = await fetch(
-          `${HUB_API_URL}/api/v1/registration-requests/check/${encodeURIComponent(user.email || "")}`,
+          `${HUB_API_URL}/api/v1/registration-requests/check/${encodeURIComponent(
+            user.email || ""
+          )}`,
           {
             headers: { "X-API-Key": HUB_API_KEY },
           }
@@ -87,7 +89,9 @@ export const handler: Handlers<PendingReviewData> = {
   },
 };
 
-export default function PendingReviewPage({ data }: PageProps<PendingReviewData>) {
+export default function PendingReviewPage({
+  data,
+}: PageProps<PendingReviewData>) {
   return (
     <>
       <Head>
@@ -106,7 +110,9 @@ export default function PendingReviewPage({ data }: PageProps<PendingReviewData>
                 <div class="alert alert-error mt-4 text-left">
                   <div>
                     <p class="font-bold">却下理由</p>
-                    <p class="text-sm">{data.rejectionReason || "理由は記載されていません"}</p>
+                    <p class="text-sm">
+                      {data.rejectionReason || "理由は記載されていません"}
+                    </p>
                   </div>
                 </div>
                 <p class="text-base-content/60 mt-4">
@@ -144,7 +150,8 @@ export default function PendingReviewPage({ data }: PageProps<PendingReviewData>
                       <p class="font-bold">現在、登録申請を審査しています</p>
                       <p class="text-sm">
                         提出いただいた本人確認書類を確認中です。
-                        審査が完了次第、<strong>{data?.email}</strong> 宛にメールでお知らせします。
+                        審査が完了次第、<strong>{data?.email}</strong>{" "}
+                        宛にメールでお知らせします。
                       </p>
                     </div>
                   </div>
@@ -165,10 +172,7 @@ export default function PendingReviewPage({ data }: PageProps<PendingReviewData>
                   <a href="/logout" class="btn btn-ghost">
                     ログアウト
                   </a>
-                  <button
-                    class="btn btn-outline"
-                    onClick="location.reload()"
-                  >
+                  <button class="btn btn-outline" onClick="location.reload()">
                     更新
                   </button>
                 </div>

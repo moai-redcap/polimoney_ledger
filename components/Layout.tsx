@@ -234,6 +234,7 @@ export function Layout({ children, currentPath, title }: LayoutProps) {
             >
               <span class="text-2xl">📒</span>
               <span class="font-bold text-lg">Ledger</span>
+              <span class="badge badge-warning badge-sm">β</span>
             </a>
           </div>
 

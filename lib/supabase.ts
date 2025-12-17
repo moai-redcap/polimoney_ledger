@@ -1,14 +1,15 @@
 /**
  * Supabase クライアント（Ledger 用）
  *
- * USE_MOCK_MODE に応じてテストユーザーのデータを取得するためのヘルパー
+ * テストユーザー（TEST_USER_ID）でログインしている場合は
+ * service_role クライアントを使用してダミーデータにアクセスします。
  */
 
 import {
   createClient,
   SupabaseClient,
 } from "https://esm.sh/@supabase/supabase-js@2";
-import { USE_MOCK_MODE, TEST_USER_ID } from "./hub-client.ts";
+import { TEST_USER_ID, isTestUser } from "./hub-client.ts";
 
 // ============================================
 // 環境変数
@@ -61,24 +62,24 @@ export function getServiceClient(): SupabaseClient {
 }
 
 /**
- * モードに応じた Supabase クライアントを取得
+ * ユーザー ID に応じた Supabase クライアントを取得
  *
- * - USE_MOCK_MODE=true: service_role クライアント（テストユーザーのデータにアクセス）
- * - USE_MOCK_MODE=false: 公開クライアント（RLS 適用）
+ * - テストユーザー: service_role クライアント（RLS バイパス）
+ * - 通常ユーザー: 公開クライアント（RLS 適用）
  */
-export function getSupabaseClient(): SupabaseClient {
-  if (USE_MOCK_MODE) {
+export function getSupabaseClient(userId: string | null): SupabaseClient {
+  if (isTestUser(userId)) {
     return getServiceClient();
   }
   return getPublicClient();
 }
 
 /**
- * テストユーザー ID を取得
- * USE_MOCK_MODE=true の場合は固定のテストユーザー ID を返す
+ * 実際に使用するユーザー ID を取得
+ * テストユーザーの場合は TEST_USER_ID を返す
  */
 export function getEffectiveUserId(actualUserId: string | null): string {
-  if (USE_MOCK_MODE) {
+  if (isTestUser(actualUserId)) {
     return TEST_USER_ID;
   }
   if (!actualUserId) {
@@ -87,15 +88,18 @@ export function getEffectiveUserId(actualUserId: string | null): string {
   return actualUserId;
 }
 
+// Re-export for convenience
+export { TEST_USER_ID, isTestUser };
+
 // ============================================
-// データ取得ヘルパー（USE_MOCK_MODE 対応）
+// データ取得ヘルパー
 // ============================================
 
 /**
  * 政治家一覧を取得
  */
 export async function getPoliticians(userId: string | null) {
-  const client = getSupabaseClient();
+  const client = getSupabaseClient(userId);
   const effectiveUserId = getEffectiveUserId(userId);
 
   const { data, error } = await client
@@ -112,7 +116,7 @@ export async function getPoliticians(userId: string | null) {
  * 政治団体一覧を取得
  */
 export async function getOrganizations(userId: string | null) {
-  const client = getSupabaseClient();
+  const client = getSupabaseClient(userId);
   const effectiveUserId = getEffectiveUserId(userId);
 
   const { data, error } = await client
@@ -129,7 +133,7 @@ export async function getOrganizations(userId: string | null) {
  * 選挙一覧を取得
  */
 export async function getElections(userId: string | null) {
-  const client = getSupabaseClient();
+  const client = getSupabaseClient(userId);
   const effectiveUserId = getEffectiveUserId(userId);
 
   const { data, error } = await client
@@ -146,7 +150,7 @@ export async function getElections(userId: string | null) {
  * 関係者（取引先）一覧を取得
  */
 export async function getContacts(userId: string | null) {
-  const client = getSupabaseClient();
+  const client = getSupabaseClient(userId);
   const effectiveUserId = getEffectiveUserId(userId);
 
   const { data, error } = await client
@@ -166,7 +170,7 @@ export async function getJournals(
   userId: string | null,
   filter: { electionId?: string; organizationId?: string }
 ) {
-  const client = getSupabaseClient();
+  const client = getSupabaseClient(userId);
   const effectiveUserId = getEffectiveUserId(userId);
 
   let query = client
@@ -193,7 +197,7 @@ export async function getJournals(
  * 仕訳詳細を取得
  */
 export async function getJournal(userId: string | null, journalId: string) {
-  const client = getSupabaseClient();
+  const client = getSupabaseClient(userId);
   const effectiveUserId = getEffectiveUserId(userId);
 
   const { data, error } = await client

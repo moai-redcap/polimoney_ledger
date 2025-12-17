@@ -12,7 +12,7 @@
  *
  * 注意:
  *   - このスクリプトは service_role キーを使用します
- *   - 本番環境のダミーデータは USE_MOCK_MODE=true 時のみ表示されます
+ *   - テストユーザー（TEST_USER_ID）でログインすると、このダミーデータが表示されます
  */
 
 import "https://deno.land/std@0.224.0/dotenv/load.ts";

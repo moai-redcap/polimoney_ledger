@@ -15,6 +15,7 @@ export default function LandingPage() {
               <a href="/" class="flex items-center gap-2">
                 <span class="text-2xl">📒</span>
                 <span class="font-bold text-xl">Polimoney Ledger</span>
+                <span class="badge badge-warning badge-sm">β</span>
               </a>
             </div>
             <div class="flex-none gap-2">
@@ -32,17 +33,38 @@ export default function LandingPage() {
         <section class="hero min-h-[70vh]">
           <div class="hero-content text-center">
             <div class="max-w-2xl">
-              <span class="text-8xl mb-6 block">📒</span>
+              <div class="flex items-center justify-center gap-3 mb-6">
+                <span class="text-8xl">📒</span>
+              </div>
+              <div class="badge badge-warning badge-lg mb-4">🚧 ベータ版</div>
               <h1 class="text-4xl md:text-5xl font-bold mb-6">
                 政治資金収支の管理を
                 <br />
                 <span class="text-primary">シンプルに</span>
               </h1>
-              <p class="text-lg text-base-content/70 mb-8">
+              <p class="text-lg text-base-content/70 mb-4">
                 Polimoney Ledger は、政治資金収支報告書の作成・管理を
                 <br class="hidden md:block" />
                 簡単にするオープンソースのツールです。
               </p>
+              <div class="alert alert-warning max-w-lg mx-auto mb-8">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span class="text-sm text-left">
+                  本サービスはベータ版です。予期せぬ動作やデータ損失の可能性があります。重要なデータは別途バックアップをお取りください。
+                </span>
+              </div>
               <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="/register" class="btn btn-primary btn-lg">
                   無料で始める
@@ -134,11 +156,14 @@ export default function LandingPage() {
               Polimoney Ledger
             </p>
             <p class="text-base-content/60">
-              © 2024 Digital Democracy 2030. オープンソースプロジェクト
+              © 2025 Digital Democracy 2030. オープンソースプロジェクト
             </p>
           </div>
           <div>
             <div class="grid grid-flow-col gap-4">
+              <a href="/privacy" class="link link-hover">
+                プライバシーポリシー
+              </a>
               <a
                 href="https://github.com/digitaldemocracy2030/polimoney_ledger"
                 target="_blank"

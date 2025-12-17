@@ -6,31 +6,24 @@
 // 環境変数から Hub API の設定を取得
 // ============================================
 
-/** モックモード: true の場合はテストユーザーのデータを使用 */
-export const USE_MOCK_MODE = Deno.env.get("USE_MOCK_MODE") === "true";
-
 /** 本番/開発の判定 */
 const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
 
 /**
  * Hub API URL
- * - USE_MOCK_MODE=true: 常に開発環境 URL を使用
- * - USE_MOCK_MODE=false: DENO_ENV に応じて切り替え
+ * - DENO_ENV=production: 本番環境 URL
+ * - DENO_ENV!=production: 開発環境 URL
  */
-const HUB_API_URL = USE_MOCK_MODE
-  ? Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722"
-  : IS_PRODUCTION
+const HUB_API_URL = IS_PRODUCTION
   ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
   : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
 
 /**
  * Hub API キー
- * - USE_MOCK_MODE=true: 常に DEV キーを使用（テストデータは Hub の DEV 側に同期）
- * - USE_MOCK_MODE=false: DENO_ENV に応じて切り替え
+ * - DENO_ENV=production: 本番環境キー
+ * - DENO_ENV!=production: 開発環境キー
  */
-const HUB_API_KEY = USE_MOCK_MODE
-  ? Deno.env.get("HUB_API_KEY_DEV") || ""
-  : IS_PRODUCTION
+const HUB_API_KEY = IS_PRODUCTION
   ? Deno.env.get("HUB_API_KEY_PROD") || ""
   : Deno.env.get("HUB_API_KEY_DEV") || "";
 
@@ -40,6 +33,13 @@ const HUB_API_KEY = USE_MOCK_MODE
 
 /** テストユーザー ID（seed-supabase.ts と一致させる） */
 export const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
+
+/**
+ * 指定されたユーザー ID がテストユーザーかどうかを判定
+ */
+export function isTestUser(userId: string | null | undefined): boolean {
+  return userId === TEST_USER_ID;
+}
 
 // ============================================
 // 型定義
@@ -144,78 +144,15 @@ async function fetchApi<T>(
 }
 
 // ============================================
-// モックデータ（開発用）
-// ============================================
-
-const MOCK_ELECTIONS: Election[] = [
-  {
-    id: "mock-election-1",
-    name: "第50回衆議院議員総選挙",
-    type: "HR",
-    area_code: "13101",
-    election_date: "2024-10-27",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: "mock-election-2",
-    name: "令和7年東京都知事選挙",
-    type: "PG",
-    area_code: "13000",
-    election_date: "2025-07-06",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: "mock-election-3",
-    name: "令和7年千代田区議会議員選挙",
-    type: "CM",
-    area_code: "13101",
-    election_date: "2025-04-20",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-];
-
-const MOCK_ORGANIZATIONS: Organization[] = [
-  {
-    id: "mock-org-1",
-    name: "○○後援会",
-    type: "support_group",
-    politician_id: "mock-pol-1",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: "mock-org-2",
-    name: "△△を応援する会",
-    type: "fund_management",
-    politician_id: "mock-pol-1",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-];
-
-// ============================================
 // 選挙 API
 // ============================================
 
 export async function getElections(): Promise<Election[]> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] getElections");
-    return MOCK_ELECTIONS;
-  }
   const result = await fetchApi<ApiResponse<Election[]>>("/api/v1/elections");
   return result.data;
 }
 
 export async function getElection(id: string): Promise<Election> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] getElection:", id);
-    const election = MOCK_ELECTIONS.find((e) => e.id === id);
-    if (!election) throw new Error("Election not found");
-    return election;
-  }
   const result = await fetchApi<ApiResponse<Election>>(
     `/api/v1/elections/${id}`
   );
@@ -227,10 +164,6 @@ export async function getElection(id: string): Promise<Election> {
 // ============================================
 
 export async function getOrganizations(): Promise<Organization[]> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] getOrganizations");
-    return MOCK_ORGANIZATIONS;
-  }
   const result = await fetchApi<ApiResponse<Organization[]>>(
     "/api/v1/organizations"
   );
@@ -238,12 +171,6 @@ export async function getOrganizations(): Promise<Organization[]> {
 }
 
 export async function getOrganization(id: string): Promise<Organization> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] getOrganization:", id);
-    const org = MOCK_ORGANIZATIONS.find((o) => o.id === id);
-    if (!org) throw new Error("Organization not found");
-    return org;
-  }
   const result = await fetchApi<ApiResponse<Organization>>(
     `/api/v1/organizations/${id}`
   );
@@ -412,6 +339,8 @@ export interface SyncJournalInput {
   public_expense_amount: number | null;
   /** コンテンツハッシュ（重複検知用） */
   content_hash: string;
+  /** テストデータフラグ */
+  is_test?: boolean;
 }
 
 export interface SyncResult {
@@ -449,6 +378,8 @@ export interface SyncLedgerInput {
   total_expense: number;
   /** 仕訳件数 */
   journal_count: number;
+  /** テストデータフラグ */
+  is_test?: boolean;
 }
 
 export interface SyncLedgerResult {
@@ -462,10 +393,6 @@ export interface SyncLedgerResult {
 export async function syncJournals(
   journals: SyncJournalInput[]
 ): Promise<SyncResult> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] syncJournals:", journals.length, "件");
-    return { created: journals.length, updated: 0, skipped: 0, errors: 0 };
-  }
   const result = await fetchApi<ApiResponse<SyncResult>>(
     "/api/v1/sync/journals",
     {
@@ -482,10 +409,6 @@ export async function syncJournals(
 export async function syncLedger(
   ledger: SyncLedgerInput
 ): Promise<SyncLedgerResult> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] syncLedger:", ledger.ledger_source_id);
-    return { data: { id: "mock-ledger-id" }, action: "created" };
-  }
   const result = await fetchApi<SyncLedgerResult>("/api/v1/sync/ledger", {
     method: "POST",
     body: JSON.stringify({ ledger }),
@@ -497,10 +420,6 @@ export async function syncLedger(
  * 同期ステータスを確認
  */
 export async function getSyncStatus(): Promise<SyncStatus> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] getSyncStatus");
-    return { status: "ready", message: "Mock mode" };
-  }
   const result = await fetchApi<SyncStatus>("/api/v1/sync/status");
   return result;
 }
@@ -513,10 +432,6 @@ export async function recordChangeLog(data: {
   change_summary: string;
   change_details?: Record<string, unknown>;
 }): Promise<void> {
-  if (USE_MOCK_MODE) {
-    console.log("[Mock] recordChangeLog:", data.change_summary);
-    return;
-  }
   await fetchApi("/api/v1/sync/change-log", {
     method: "POST",
     body: JSON.stringify(data),
