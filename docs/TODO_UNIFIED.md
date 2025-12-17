@@ -52,7 +52,7 @@ SERVICE_POLICY.md Phase 1 に該当。
 | #   | タスク             | 状態      | 詳細                                   |
 | --- | ------------------ | --------- | -------------------------------------- |
 | M-1 | Hub 同期: 自動同期 | ✅ 完了   | POST /api/journals/:id/approve で実装  |
-| M-2 | 領収証添付機能     | 🔲 未着手 | media_assets + Supabase Storage        |
+| M-2 | 領収証添付機能     | ✅ 完了   | API + ReceiptUploader コンポーネント   |
 | M-3 | 仕訳承認画面       | 🔲 未着手 | ApproveJournalScreen                   |
 | M-4 | 収支報告書出力     | 🔲 未着手 | PDF/Excel 出力（選挙種別で様式異なる） |
 
