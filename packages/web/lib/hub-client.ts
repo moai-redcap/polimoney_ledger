@@ -2,10 +2,25 @@
  * Polimoney Hub API クライアント
  */
 
+// ============================================
 // 環境変数から Hub API の設定を取得
-const HUB_API_URL = Deno.env.get("HUB_API_URL") || "http://localhost:8000";
-const HUB_API_KEY = Deno.env.get("HUB_API_KEY") || "";
-const USE_MOCK_DATA = Deno.env.get("USE_MOCK_DATA") === "true";
+// ============================================
+
+/** モックモード: true の場合は API を呼ばずにダミーデータを返す */
+const USE_MOCK_MODE = Deno.env.get("USE_MOCK_MODE") === "true";
+
+/** 本番/開発の判定 */
+const IS_PRODUCTION = Deno.env.get("DENO_ENV") === "production";
+
+/** Hub API URL（本番/開発で自動切り替え） */
+const HUB_API_URL = IS_PRODUCTION
+  ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
+  : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:8000";
+
+/** Hub API キー（本番/開発で自動切り替え） */
+const HUB_API_KEY = IS_PRODUCTION
+  ? Deno.env.get("HUB_API_KEY_PROD") || ""
+  : Deno.env.get("HUB_API_KEY_DEV") || "";
 
 // ============================================
 // 型定義
@@ -167,7 +182,7 @@ const MOCK_ORGANIZATIONS: Organization[] = [
 // ============================================
 
 export async function getElections(): Promise<Election[]> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] getElections");
     return MOCK_ELECTIONS;
   }
@@ -176,7 +191,7 @@ export async function getElections(): Promise<Election[]> {
 }
 
 export async function getElection(id: string): Promise<Election> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] getElection:", id);
     const election = MOCK_ELECTIONS.find((e) => e.id === id);
     if (!election) throw new Error("Election not found");
@@ -193,7 +208,7 @@ export async function getElection(id: string): Promise<Election> {
 // ============================================
 
 export async function getOrganizations(): Promise<Organization[]> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] getOrganizations");
     return MOCK_ORGANIZATIONS;
   }
@@ -204,7 +219,7 @@ export async function getOrganizations(): Promise<Organization[]> {
 }
 
 export async function getOrganization(id: string): Promise<Organization> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] getOrganization:", id);
     const org = MOCK_ORGANIZATIONS.find((o) => o.id === id);
     if (!org) throw new Error("Organization not found");
@@ -428,7 +443,7 @@ export interface SyncLedgerResult {
 export async function syncJournals(
   journals: SyncJournalInput[]
 ): Promise<SyncResult> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] syncJournals:", journals.length, "件");
     return { created: journals.length, updated: 0, skipped: 0, errors: 0 };
   }
@@ -448,7 +463,7 @@ export async function syncJournals(
 export async function syncLedger(
   ledger: SyncLedgerInput
 ): Promise<SyncLedgerResult> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] syncLedger:", ledger.ledger_source_id);
     return { data: { id: "mock-ledger-id" }, action: "created" };
   }
@@ -463,7 +478,7 @@ export async function syncLedger(
  * 同期ステータスを確認
  */
 export async function getSyncStatus(): Promise<SyncStatus> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] getSyncStatus");
     return { status: "ready", message: "Mock mode" };
   }
@@ -479,7 +494,7 @@ export async function recordChangeLog(data: {
   change_summary: string;
   change_details?: Record<string, unknown>;
 }): Promise<void> {
-  if (USE_MOCK_DATA) {
+  if (USE_MOCK_MODE) {
     console.log("[Mock] recordChangeLog:", data.change_summary);
     return;
   }
