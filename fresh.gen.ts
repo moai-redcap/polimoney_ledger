@@ -6,6 +6,7 @@ import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $api_election_requests from "./routes/api/election-requests.ts";
 import * as $api_organization_requests from "./routes/api/organization-requests.ts";
+import * as $api_sync from "./routes/api/sync.ts";
 import * as $api_upload from "./routes/api/upload.ts";
 import * as $elections from "./routes/elections.tsx";
 import * as $index from "./routes/index.tsx";
@@ -23,6 +24,7 @@ const manifest = {
     "./routes/_app.tsx": $_app,
     "./routes/api/election-requests.ts": $api_election_requests,
     "./routes/api/organization-requests.ts": $api_organization_requests,
+    "./routes/api/sync.ts": $api_sync,
     "./routes/api/upload.ts": $api_upload,
     "./routes/elections.tsx": $elections,
     "./routes/index.tsx": $index,
