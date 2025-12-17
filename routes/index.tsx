@@ -45,9 +45,7 @@ export default function DashboardPage({ data }: PageProps<DashboardData>) {
                   <div class="text-4xl">🏛️</div>
                   <div>
                     <h3 class="card-title">政治団体</h3>
-                    <p class="text-base-content/70">
-                      政治団体の台帳を管理
-                    </p>
+                    <p class="text-base-content/70">政治団体の台帳を管理</p>
                   </div>
                 </div>
               </div>
@@ -62,9 +60,7 @@ export default function DashboardPage({ data }: PageProps<DashboardData>) {
                   <div class="text-4xl">🗳️</div>
                   <div>
                     <h3 class="card-title">選挙</h3>
-                    <p class="text-base-content/70">
-                      選挙の台帳を管理
-                    </p>
+                    <p class="text-base-content/70">選挙の台帳を管理</p>
                   </div>
                 </div>
               </div>
