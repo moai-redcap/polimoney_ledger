@@ -25,12 +25,11 @@ export default function PrivacyPage() {
           <article class="prose prose-lg max-w-none">
             <h1>プライバシーポリシー</h1>
             <p class="lead">
-              Digital Democracy 2030（以下「DD2030」）は、Polimoney Ledger（以下「本サービス」）における
+              Digital Democracy 2030（以下「DD2030」）は、Polimoney
+              Ledger（以下「本サービス」）における
               個人情報の取り扱いについて、以下のとおりプライバシーポリシーを定めます。
             </p>
-            <p class="text-base-content/60 text-sm">
-              最終更新日: 2025年1月1日
-            </p>
+            <p class="text-base-content/60 text-sm">最終更新日: 2025年1月1日</p>
 
             <h2>1. 収集する情報</h2>
             <p>本サービスでは、以下の情報を収集します。</p>
@@ -74,7 +73,9 @@ export default function PrivacyPage() {
             <ul>
               <li>政治家名、政治団体名</li>
               <li>収支の金額・日付・目的</li>
-              <li>関係者名（5万円以上の寄附者等、法令で公開が義務付けられているもの）</li>
+              <li>
+                関係者名（5万円以上の寄附者等、法令で公開が義務付けられているもの）
+              </li>
             </ul>
             <p>
               <strong>
@@ -92,14 +93,14 @@ export default function PrivacyPage() {
             </ul>
 
             <h2>4. 情報の第三者提供</h2>
-            <p>
-              DD2030 は、以下の場合を除き、個人情報を第三者に提供しません。
-            </p>
+            <p>DD2030 は、以下の場合を除き、個人情報を第三者に提供しません。</p>
             <ul>
               <li>ユーザーの同意がある場合</li>
               <li>法令に基づく開示請求があった場合</li>
               <li>人の生命・身体・財産の保護に必要な場合</li>
-              <li>サービス運営に必要な業務委託先への提供（適切な管理のもと）</li>
+              <li>
+                サービス運営に必要な業務委託先への提供（適切な管理のもと）
+              </li>
             </ul>
 
             <h2>5. データの保管</h2>
@@ -116,7 +117,10 @@ export default function PrivacyPage() {
             </p>
 
             <h2>6. セキュリティ</h2>
-            <p>DD2030 は、個人情報の漏洩・紛失・改ざんを防ぐため、以下の対策を講じています。</p>
+            <p>
+              DD2030
+              は、個人情報の漏洩・紛失・改ざんを防ぐため、以下の対策を講じています。
+            </p>
             <ul>
               <li>通信の暗号化（HTTPS）</li>
               <li>データベースの暗号化</li>
@@ -134,10 +138,12 @@ export default function PrivacyPage() {
                 <strong>訂正権</strong>: 誤った情報の訂正を請求できます
               </li>
               <li>
-                <strong>削除権</strong>: 個人情報の削除を請求できます（法令上の保存義務がある場合を除く）
+                <strong>削除権</strong>:
+                個人情報の削除を請求できます（法令上の保存義務がある場合を除く）
               </li>
               <li>
-                <strong>データポータビリティ</strong>: 自身のデータをエクスポートできます
+                <strong>データポータビリティ</strong>:
+                自身のデータをエクスポートできます
               </li>
             </ul>
             <p>
@@ -162,8 +168,8 @@ export default function PrivacyPage() {
               >
                 GitHub
               </a>{" "}
-              で確認できます。セキュリティに関する懸念がある場合は、
-              Issue または Security Advisory を通じてご報告ください。
+              で確認できます。セキュリティに関する懸念がある場合は、 Issue
+              または Security Advisory を通じてご報告ください。
             </p>
 
             <h2>10. 未成年者の利用</h2>
@@ -179,16 +185,18 @@ export default function PrivacyPage() {
             </p>
 
             <h2>12. お問い合わせ</h2>
-            <p>
-              本ポリシーに関するお問い合わせは、以下までご連絡ください。
-            </p>
+            <p>本ポリシーに関するお問い合わせは、以下までご連絡ください。</p>
             <ul>
               <li>
                 <strong>組織名</strong>: Digital Democracy 2030
               </li>
               <li>
                 <strong>ウェブサイト</strong>:{" "}
-                <a href="https://dd2030.org" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://dd2030.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   https://dd2030.org
                 </a>
               </li>

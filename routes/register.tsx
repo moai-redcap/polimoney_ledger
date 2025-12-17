@@ -177,8 +177,7 @@ function getDocType(role: string): string {
     default:
       return "other";
   }
-  },
-};
+}
 
 export default function RegisterPage({ data }: PageProps<RegisterData>) {
   if (data?.success) {
