@@ -233,7 +233,10 @@ export function Layout({ children, currentPath, title }: LayoutProps) {
               class="flex items-center gap-2 hover:opacity-80"
             >
               <img src="/logo-ledger.svg" alt="" class="h-8 w-8" />
-              <span class="font-bold text-lg text-emerald-600" style="font-feature-settings: 'palt' 1;">
+              <span
+                class="font-bold text-lg text-emerald-600"
+                style="font-feature-settings: 'palt' 1;"
+              >
                 Polimoney Ledger
               </span>
               <span class="badge badge-warning badge-sm">β</span>
