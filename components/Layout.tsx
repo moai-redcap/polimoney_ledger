@@ -234,16 +234,18 @@ export function Layout({ children, currentPath, title }: LayoutProps) {
           <div class="p-4 border-b border-base-300">
             <a
               href="/dashboard"
-              class="flex items-center gap-2 hover:opacity-80"
+              class="flex items-center gap-3 hover:opacity-80"
             >
-              <img src="/logo-ledger.svg" alt="" class="h-8 w-8" />
-              <span
-                class="font-bold text-lg text-emerald-600"
-                style="font-feature-settings: 'palt' 1;"
-              >
-                Polimoney Ledger
-              </span>
-              <span class="badge badge-warning badge-sm">β</span>
+              <img src="/logo-ledger.svg" alt="" class="h-10 w-10" />
+              <div class="text-left">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-bold text-violet-600">
+                    Polimoney
+                  </span>
+                  <span class="badge badge-warning badge-sm">β</span>
+                </div>
+                <p class="text-sm font-medium text-emerald-600 -mt-1">Ledger</p>
+              </div>
             </a>
           </div>
 
