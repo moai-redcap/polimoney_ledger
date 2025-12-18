@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import AddContactModal from "./AddContactModal.tsx";
 
 // ============================================
 // 型定義
@@ -45,7 +46,7 @@ export default function JournalForm({
   organizationId,
   electionId,
   accountCodes,
-  contacts,
+  contacts: initialContacts,
   subAccounts,
   onSuccess,
 }: JournalFormProps) {
@@ -55,7 +56,8 @@ export default function JournalForm({
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
 
-  // 関係者
+  // 関係者（内部状態として管理）
+  const [contactsList, setContactsList] = useState<Contact[]>(initialContacts);
   const [contactId, setContactId] = useState("");
   const [showAddContact, setShowAddContact] = useState(false);
 
@@ -323,7 +325,7 @@ export default function JournalForm({
                   required
                 >
                   <option value="">選択してください</option>
-                  {contacts.map((c) => (
+                  {contactsList.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}{" "}
                       {c.contact_type === "corporation" ? "（法人）" : ""}
@@ -799,30 +801,17 @@ export default function JournalForm({
         </button>
       </div>
 
-      {/* 関係者追加モーダル（TODO: 別コンポーネントで実装） */}
-      {showAddContact && (
-        <div class="modal modal-open">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg">関係者を追加</h3>
-            <p class="py-4 text-base-content/70">
-              この機能は現在準備中です。管理画面から関係者を追加してください。
-            </p>
-            <div class="modal-action">
-              <button
-                type="button"
-                class="btn"
-                onClick={() => setShowAddContact(false)}
-              >
-                閉じる
-              </button>
-            </div>
-          </div>
-          <div
-            class="modal-backdrop"
-            onClick={() => setShowAddContact(false)}
-          />
-        </div>
-      )}
+      {/* 関係者追加モーダル */}
+      <AddContactModal
+        isOpen={showAddContact}
+        onClose={() => setShowAddContact(false)}
+        onSuccess={(newContact) => {
+          // 新しい関係者をリストに追加
+          setContactsList((prev) => [...prev, newContact]);
+          // 新しく追加した関係者を選択状態にする
+          setContactId(newContact.id);
+        }}
+      />
     </form>
   );
 }

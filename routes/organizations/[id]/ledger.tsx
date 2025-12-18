@@ -248,6 +248,7 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
             <JournalList
               journals={journals}
               basePath={`/organizations/${organization.id}/ledger`}
+              accountCodes={accountCodes}
             />
           </div>
         </div>

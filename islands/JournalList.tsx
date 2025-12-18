@@ -20,37 +20,29 @@ interface Journal {
   } | null;
 }
 
+interface AccountCode {
+  code: string;
+  name: string;
+  type: string;
+}
+
 interface JournalListProps {
   journals: Journal[];
   basePath: string;
+  accountCodes?: AccountCode[];
 }
 
-// 勘定科目コードから名前を取得
-const ACCOUNT_NAMES: Record<string, string> = {
-  // 収入
-  REV_INDIVIDUAL: "個人からの寄附",
-  REV_CORPORATE: "法人からの寄附",
-  REV_POLITICAL_PARTY: "政党からの寄附",
-  REV_OTHER_ORG: "その他団体からの寄附",
-  REV_DUES: "党費・会費",
-  REV_DONATION_IN_KIND: "寄附（金銭以外）",
-  REV_OTHER: "その他の収入",
-  // 支出
-  EXP_PERSONNEL: "人件費",
-  EXP_OFFICE: "事務所費",
-  EXP_UTILITIES: "光熱水費",
-  EXP_COMMUNICATION: "通信費",
-  EXP_TRAVEL: "交通費",
-  EXP_PRINTING: "印刷費",
-  EXP_ADVERTISING: "広告宣伝費",
-  EXP_MEETING: "会議費",
-  EXP_SUPPLIES: "備品・消耗品費",
-  EXP_RESEARCH: "調査研究費",
-  EXP_OTHER: "その他の支出",
-};
-
-function getAccountName(code: string): string {
-  return ACCOUNT_NAMES[code] || code;
+// 勘定科目コードから名前を取得するヘルパー関数を作成
+function createAccountNameGetter(
+  accountCodes?: AccountCode[]
+): (code: string) => string {
+  const accountMap = new Map<string, string>();
+  if (accountCodes) {
+    for (const ac of accountCodes) {
+      accountMap.set(ac.code, ac.name);
+    }
+  }
+  return (code: string) => accountMap.get(code) || code;
 }
 
 // 金額をフォーマット
@@ -83,8 +75,15 @@ function getIncomeExpenseType(entries: JournalEntry[]): "income" | "expense" {
   return totalCredit > totalDebit ? "income" : "expense";
 }
 
-export default function JournalList({ journals, basePath }: JournalListProps) {
+export default function JournalList({
+  journals,
+  basePath,
+  accountCodes,
+}: JournalListProps) {
   const [filter, setFilter] = useState<"all" | "draft" | "approved">("all");
+
+  // 勘定科目コード→名前の変換関数
+  const getAccountName = createAccountNameGetter(accountCodes);
 
   const filteredJournals = journals.filter((j) => {
     if (filter === "all") return true;
@@ -161,7 +160,8 @@ export default function JournalList({ journals, basePath }: JournalListProps) {
               <tr>
                 <th>収支</th>
                 <th>日付</th>
-                <th>勘定科目</th>
+                <th>借方</th>
+                <th>貸方</th>
                 <th>摘要</th>
                 <th>取引先</th>
                 <th class="text-right">金額</th>
@@ -173,7 +173,14 @@ export default function JournalList({ journals, basePath }: JournalListProps) {
               {filteredJournals.map((journal) => {
                 const type = getIncomeExpenseType(journal.journal_entries);
                 const amount = calculateTotal(journal.journal_entries);
-                const accountCode = journal.journal_entries[0]?.account_code;
+
+                // 借方・貸方のエントリを分離
+                const debitEntries = journal.journal_entries.filter(
+                  (e) => e.debit_amount > 0
+                );
+                const creditEntries = journal.journal_entries.filter(
+                  (e) => e.credit_amount > 0
+                );
 
                 return (
                   <tr key={journal.id}>
@@ -187,7 +194,24 @@ export default function JournalList({ journals, basePath }: JournalListProps) {
                     <td class="whitespace-nowrap">
                       {formatDate(journal.journal_date)}
                     </td>
-                    <td>{getAccountName(accountCode)}</td>
+                    <td>
+                      <div class="text-sm">
+                        {debitEntries.map((e, i) => (
+                          <div key={i} class="text-primary">
+                            {getAccountName(e.account_code)}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="text-sm">
+                        {creditEntries.map((e, i) => (
+                          <div key={i} class="text-secondary">
+                            {getAccountName(e.account_code)}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
                     <td>
                       <div class="max-w-xs truncate">{journal.description}</div>
                     </td>

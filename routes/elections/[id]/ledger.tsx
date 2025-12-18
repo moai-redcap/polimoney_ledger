@@ -270,6 +270,7 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
             <JournalList
               journals={journals}
               basePath={`/elections/${election.id}/ledger`}
+              accountCodes={accountCodes}
             />
           </div>
         </div>

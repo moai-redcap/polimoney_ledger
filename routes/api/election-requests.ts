@@ -25,7 +25,7 @@ export const handler: Handlers = {
       }
 
       // 選挙タイプのバリデーション
-      const validTypes = ["HR", "HC", "PG", "CM", "GM"];
+      const validTypes = ["HR", "HC", "PG", "PA", "CM", "GM"];
       if (!validTypes.includes(body.type)) {
         return new Response(
           JSON.stringify({
