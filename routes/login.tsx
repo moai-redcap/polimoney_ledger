@@ -88,10 +88,16 @@ export default function LoginPage({ data }: PageProps<LoginData>) {
           <div class="card-body">
             <div class="text-center mb-6">
               <div class="flex items-center justify-center gap-3">
-                <img src="/logo-ledger.svg" alt="Polimoney Ledger" class="w-12 h-12" />
+                <img
+                  src="/logo-ledger.svg"
+                  alt="Polimoney Ledger"
+                  class="w-12 h-12"
+                />
                 <div class="text-left">
                   <h1 class="text-2xl font-bold text-primary">Polimoney</h1>
-                  <p class="text-sm font-medium text-base-content/70 -mt-1">Ledger</p>
+                  <p class="text-sm font-medium text-base-content/70 -mt-1">
+                    Ledger
+                  </p>
                 </div>
               </div>
               <p class="text-base-content/60 mt-4">ログインしてください</p>
