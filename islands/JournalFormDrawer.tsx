@@ -61,7 +61,7 @@ export default function JournalFormDrawer({
           <div class="absolute inset-0 bg-black/30" />
 
           {/* ドロワーパネル */}
-          <div class="relative w-full max-w-xl bg-base-100 h-full shadow-xl flex flex-col animate-slide-in-right">
+          <div class="relative w-[85%] max-w-4xl bg-base-100 h-full shadow-xl flex flex-col animate-slide-in-right">
             {/* ヘッダー */}
             <div class="flex items-center justify-between p-4 border-b border-base-300">
               <h2 class="text-lg font-bold">仕訳を登録</h2>

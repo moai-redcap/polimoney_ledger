@@ -800,12 +800,8 @@ export default function JournalForm({
       {/* ============================================ */}
       {showFixedButtons ? (
         // ドロワー用：下部固定ボタン
-        <div class="fixed bottom-0 left-0 right-0 max-w-xl ml-auto bg-base-100 border-t border-base-300 p-4 flex justify-end gap-2">
-          <button
-            type="button"
-            class="btn btn-ghost"
-            onClick={onCancel}
-          >
+        <div class="fixed bottom-0 left-0 right-0 w-[85%] max-w-4xl ml-auto bg-base-100 border-t border-base-300 p-4 flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost" onClick={onCancel}>
             キャンセル
           </button>
           <button
