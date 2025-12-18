@@ -93,8 +93,13 @@ export default function LoginPage({ data }: PageProps<LoginData>) {
                   class="w-12 h-12"
                 />
                 <div class="text-left">
-                  <h1 class="text-2xl font-bold text-primary">Polimoney</h1>
-                  <p class="text-sm font-medium text-base-content/70 -mt-1">
+                  <h1
+                    class="text-2xl font-bold"
+                    style="color: #7C3AED;"
+                  >
+                    Polimoney
+                  </h1>
+                  <p class="text-sm font-medium text-emerald-600 -mt-1">
                     Ledger
                   </p>
                 </div>
