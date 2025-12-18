@@ -40,6 +40,7 @@ import * as $ApproveButton from "./islands/ApproveButton.tsx";
 import * as $ElectionRequestForm from "./islands/ElectionRequestForm.tsx";
 import * as $ElectionSelector from "./islands/ElectionSelector.tsx";
 import * as $JournalForm from "./islands/JournalForm.tsx";
+import * as $JournalFormDrawer from "./islands/JournalFormDrawer.tsx";
 import * as $JournalList from "./islands/JournalList.tsx";
 import * as $NewElectionForm from "./islands/NewElectionForm.tsx";
 import * as $NewOrganizationForm from "./islands/NewOrganizationForm.tsx";
@@ -92,6 +93,7 @@ const manifest = {
     "./islands/ElectionRequestForm.tsx": $ElectionRequestForm,
     "./islands/ElectionSelector.tsx": $ElectionSelector,
     "./islands/JournalForm.tsx": $JournalForm,
+    "./islands/JournalFormDrawer.tsx": $JournalFormDrawer,
     "./islands/JournalList.tsx": $JournalList,
     "./islands/NewElectionForm.tsx": $NewElectionForm,
     "./islands/NewOrganizationForm.tsx": $NewOrganizationForm,

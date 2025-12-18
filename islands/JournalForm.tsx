@@ -35,6 +35,8 @@ interface JournalFormProps {
   contacts: Contact[];
   subAccounts: SubAccount[];
   onSuccess?: () => void;
+  onCancel?: () => void;
+  showFixedButtons?: boolean;
 }
 
 // ============================================
@@ -49,6 +51,8 @@ export default function JournalForm({
   contacts: initialContacts,
   subAccounts,
   onSuccess,
+  onCancel,
+  showFixedButtons = false,
 }: JournalFormProps) {
   // 基本情報
   const [entryType, setEntryType] = useState<EntryType>("expense");
@@ -779,7 +783,7 @@ export default function JournalForm({
       </div>
 
       {/* ============================================ */}
-      {/* メッセージ & 送信ボタン */}
+      {/* メッセージ */}
       {/* ============================================ */}
       {message && (
         <div
@@ -791,15 +795,44 @@ export default function JournalForm({
         </div>
       )}
 
-      <div class="flex justify-end gap-2">
-        <button
-          type="submit"
-          class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "登録中..." : "仕訳を登録"}
-        </button>
-      </div>
+      {/* ============================================ */}
+      {/* 送信ボタン（通常表示 or 固定表示） */}
+      {/* ============================================ */}
+      {showFixedButtons ? (
+        // ドロワー用：下部固定ボタン
+        <div class="fixed bottom-0 left-0 right-0 max-w-xl ml-auto bg-base-100 border-t border-base-300 p-4 flex justify-end gap-2">
+          <button
+            type="button"
+            class="btn btn-ghost"
+            onClick={onCancel}
+          >
+            キャンセル
+          </button>
+          <button
+            type="submit"
+            class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "登録中..." : "仕訳を登録"}
+          </button>
+        </div>
+      ) : (
+        // 通常表示
+        <div class="flex justify-end gap-2">
+          {onCancel && (
+            <button type="button" class="btn btn-ghost" onClick={onCancel}>
+              キャンセル
+            </button>
+          )}
+          <button
+            type="submit"
+            class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "登録中..." : "仕訳を登録"}
+          </button>
+        </div>
+      )}
 
       {/* 関係者追加モーダル */}
       <AddContactModal

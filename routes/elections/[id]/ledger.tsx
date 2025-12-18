@@ -3,7 +3,7 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import { Layout } from "../../../components/Layout.tsx";
 import { getSupabaseClient, getServiceClient } from "../../../lib/supabase.ts";
 import { getAccountCodes, type AccountCode } from "../../../lib/hub-client.ts";
-import JournalForm from "../../../islands/JournalForm.tsx";
+import JournalFormDrawer from "../../../islands/JournalFormDrawer.tsx";
 import JournalList from "../../../islands/JournalList.tsx";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -245,28 +245,23 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
           </div>
         )}
 
-        {/* 仕訳入力フォーム */}
-        <div class="card bg-base-100 shadow mb-6">
-          <div class="card-body">
-            <h2 class="card-title text-lg mb-4">仕訳を登録</h2>
-            <JournalForm
-              ledgerType="election"
-              organizationId={null}
-              electionId={election.id}
-              accountCodes={accountCodes}
-              contacts={contacts}
-              subAccounts={subAccounts}
-            />
-          </div>
-        </div>
-
         {/* 仕訳一覧 */}
         <div class="card bg-base-100 shadow">
           <div class="card-body">
-            <h2 class="card-title text-lg mb-4">
-              仕訳一覧
-              <span class="badge badge-ghost">{journals.length}件</span>
-            </h2>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="card-title text-lg">
+                仕訳一覧
+                <span class="badge badge-ghost">{journals.length}件</span>
+              </h2>
+              <JournalFormDrawer
+                ledgerType="election"
+                organizationId={null}
+                electionId={election.id}
+                accountCodes={accountCodes}
+                contacts={contacts}
+                subAccounts={subAccounts}
+              />
+            </div>
             <JournalList
               journals={journals}
               basePath={`/elections/${election.id}/ledger`}
