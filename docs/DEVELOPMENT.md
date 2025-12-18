@@ -37,24 +37,23 @@ deno task start
 | ---------- | ------ | -------------------- |
 | Ledger Web | 3001   | Fresh フロントエンド |
 
-## Hub API への接続
+### Hub API への接続
 
 ### 環境変数の設定
 
-`packages/web/.env` を作成：
+`.env` を作成：
 
 ```bash
-# Hub API（同じネットワーク内のコンテナ名で指定）
-HUB_API_URL=http://app:8000
+# Hub API
+HUB_API_URL=http://localhost:3722
 HUB_API_KEY=dev-api-key-12345
-HUB_ADMIN_KEY=dev-admin-key-67890
 ```
 
 ### 接続確認
 
 ```bash
 # Hub に ping
-curl http://app:8000/health
+curl http://localhost:3722/health
 ```
 
 ## 構成図
@@ -65,12 +64,12 @@ curl http://app:8000/health
 │                                             │
 │  ┌─────────────┐      ┌─────────────────┐  │
 │  │   Ledger    │ ──→  │      Hub        │  │
-│  │   :3001     │      │     :8000       │  │
+│  │   :3001     │      │     :3722       │  │
 │  └─────────────┘      └────────┬────────┘  │
 │                                │            │
 │                       ┌────────┴────────┐  │
-│                       │   PostgreSQL    │  │
-│                       │     :5432       │  │
+│                       │   Supabase      │  │
+│                       │   (PostgreSQL)  │  │
 │                       └─────────────────┘  │
 └─────────────────────────────────────────────┘
 ```
