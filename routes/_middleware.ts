@@ -33,9 +33,30 @@ export async function handler(req: Request, ctx: FreshContext) {
   const url = new URL(req.url);
 
   // 静的ファイルはスキップ
+  // Fresh では static/ 内のファイルはルートから直接提供される（/styles.css など）
+  const staticExtensions = [
+    ".css",
+    ".js",
+    ".svg",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".ico",
+    ".webp",
+    ".woff",
+    ".woff2",
+    ".ttf",
+    ".eot",
+  ];
+  const hasStaticExtension = staticExtensions.some((ext) =>
+    url.pathname.endsWith(ext)
+  );
+
   if (
     url.pathname.startsWith("/_fresh") ||
-    url.pathname.startsWith("/static")
+    url.pathname.startsWith("/static") ||
+    hasStaticExtension
   ) {
     return ctx.next();
   }
