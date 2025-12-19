@@ -11,13 +11,25 @@ export interface AccountCode {
   type: string; // 'asset', 'liability', 'equity', 'revenue', 'expense'
   report_category: string;
   ledger_type: string;
+  is_public_subsidy_eligible?: boolean;
 }
+
+// 公費負担対象の勘定科目コード
+const PUBLIC_SUBSIDY_ELIGIBLE_CODES = [
+  "EXP_PRINTING_ELEC", // 印刷費
+  "EXP_ADVERTISING_ELEC", // 広告費
+];
 
 export interface Contact {
   id: string;
   name: string;
   contact_type: string; // 'person' | 'corporation'
+  address?: string | null;
+  occupation?: string | null;
 }
+
+// 5万円超の基準額
+const THRESHOLD_AMOUNT = 50000;
 
 export interface SubAccount {
   id: string;
@@ -80,6 +92,9 @@ export default function JournalForm({
   const [politicalGrantAmount, setPoliticalGrantAmount] = useState("");
   const [politicalFundAmount, setPoliticalFundAmount] = useState("");
 
+  // 追加情報（選挙台帳・公費負担用）
+  const [publicSubsidyAmount, setPublicSubsidyAmount] = useState("");
+
   // その他
   const [nonMonetaryBasis, setNonMonetaryBasis] = useState("");
   const [notes, setNotes] = useState("");
@@ -114,6 +129,39 @@ export default function JournalForm({
     return subAccounts.filter((s) => s.parent_account_code === accountCode);
   };
 
+  // 公費負担対象科目かどうかを判定
+  const isPublicSubsidyEligible = (accountCode: string) => {
+    return PUBLIC_SUBSIDY_ELIGIBLE_CODES.includes(accountCode);
+  };
+
+  // 現在選択中の科目が公費対象かどうか
+  const showPublicSubsidyField =
+    ledgerType === "election" &&
+    entryType === "expense" &&
+    isPublicSubsidyEligible(debitAccountCode);
+
+  // 選択中の関係者情報を取得
+  const selectedContact = contactsList.find((c) => c.id === contactId);
+
+  // 5万円超の検証警告
+  const amountNum = Number(amount) || 0;
+  const isOver50k = amountNum > THRESHOLD_AMOUNT;
+
+  // 住所未入力警告（支出5万円超 または 収入5万円超）
+  const showAddressWarning =
+    isOver50k &&
+    entryType !== "transfer" &&
+    selectedContact &&
+    !selectedContact.address;
+
+  // 職業未入力警告（収入で個人から5万円超）
+  const showOccupationWarning =
+    isOver50k &&
+    entryType === "revenue" &&
+    selectedContact &&
+    selectedContact.contact_type === "person" &&
+    !selectedContact.occupation;
+
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -129,6 +177,16 @@ export default function JournalForm({
     // 振替以外は関係者が必須
     if (entryType !== "transfer" && !contactId) {
       setMessage({ type: "error", text: "関係者を選択してください" });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // 領収書を添付できない場合は理由が必須
+    if (isReceiptHardToCollect && !receiptHardToCollectReason.trim()) {
+      setMessage({
+        type: "error",
+        text: "領収書を添付できない理由を入力してください",
+      });
       setIsSubmitting(false);
       return;
     }
@@ -151,6 +209,9 @@ export default function JournalForm({
             : 0,
           amount_political_fund: politicalFundAmount
             ? Number(politicalFundAmount)
+            : 0,
+          amount_public_subsidy: publicSubsidyAmount
+            ? Number(publicSubsidyAmount)
             : 0,
           is_receipt_hard_to_collect: isReceiptHardToCollect,
           receipt_hard_to_collect_reason: isReceiptHardToCollect
@@ -193,6 +254,7 @@ export default function JournalForm({
       setNotes("");
       setPoliticalGrantAmount("");
       setPoliticalFundAmount("");
+      setPublicSubsidyAmount("");
       setIsReceiptHardToCollect(false);
       setReceiptHardToCollectReason("");
 
@@ -358,6 +420,53 @@ export default function JournalForm({
                   </svg>
                 </button>
               </div>
+
+              {/* 5万円超の警告表示 */}
+              {showAddressWarning && (
+                <div class="alert alert-warning mt-2 py-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="stroke-current shrink-0 h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <span class="text-sm">
+                    5万円超の{entryType === "expense" ? "支出" : "寄附"}には
+                    <strong>住所</strong>の記載が必要です。
+                    関係者情報を編集して住所を追加してください。
+                  </span>
+                </div>
+              )}
+
+              {showOccupationWarning && (
+                <div class="alert alert-warning mt-2 py-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="stroke-current shrink-0 h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <span class="text-sm">
+                    5万円超の個人からの寄附には<strong>職業</strong>
+                    の記載が必要です。
+                    関係者情報を編集して職業を追加してください。
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -668,6 +777,35 @@ export default function JournalForm({
             </div>
           )}
 
+          {/* 公費負担額（選挙台帳 + 公費対象科目の場合のみ） */}
+          {showPublicSubsidyField && (
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">
+                  公費負担額
+                  <span class="ml-2 badge badge-info badge-sm">
+                    公費対象科目
+                  </span>
+                </span>
+              </label>
+              <input
+                type="number"
+                class="input input-bordered"
+                placeholder="0"
+                min="0"
+                value={publicSubsidyAmount}
+                onChange={(e) =>
+                  setPublicSubsidyAmount((e.target as HTMLInputElement).value)
+                }
+              />
+              <label class="label">
+                <span class="label-text-alt text-base-content/60">
+                  選挙公営による公費負担がある場合に入力
+                </span>
+              </label>
+            </div>
+          )}
+
           {/* 政党交付金/基金（政治団体の場合のみ） */}
           {ledgerType === "organization" && (
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -738,31 +876,78 @@ export default function JournalForm({
             />
           </div>
 
-          {/* 領収証徴収困難 */}
+          {/* 領収書 */}
           <div class="form-control">
-            <label class="label cursor-pointer justify-start gap-2">
-              <input
-                type="checkbox"
-                class="checkbox"
-                checked={isReceiptHardToCollect}
-                onChange={(e) =>
-                  setIsReceiptHardToCollect(
-                    (e.target as HTMLInputElement).checked
-                  )
-                }
-              />
-              <span class="label-text">領収証を徴し難い</span>
-              <span class="label-text-alt text-base-content/60">
-                （自動販売機での購入など）
+            <label class="label">
+              <span class="label-text">
+                領収書 <span class="text-error">*</span>
               </span>
             </label>
+            <div class="flex flex-col gap-2">
+              <label class="label cursor-pointer justify-start gap-2 p-3 border rounded-lg hover:bg-base-200">
+                <input
+                  type="radio"
+                  name="receipt_option"
+                  class="radio radio-primary"
+                  checked={!isReceiptHardToCollect}
+                  onChange={() => setIsReceiptHardToCollect(false)}
+                />
+                <div>
+                  <span class="label-text font-medium">領収書を添付する</span>
+                  <span class="label-text-alt block text-base-content/60">
+                    登録後に添付画面が表示されます
+                  </span>
+                </div>
+              </label>
+              <label class="label cursor-pointer justify-start gap-2 p-3 border rounded-lg hover:bg-base-200">
+                <input
+                  type="radio"
+                  name="receipt_option"
+                  class="radio radio-warning"
+                  checked={isReceiptHardToCollect}
+                  onChange={() => setIsReceiptHardToCollect(true)}
+                />
+                <div>
+                  <span class="label-text font-medium">
+                    領収書を添付できない
+                  </span>
+                  <span class="label-text-alt block text-base-content/60">
+                    自動販売機、交通費など
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
 
+          {/* 領収書添付予定の注意 */}
+          {!isReceiptHardToCollect && (
+            <div class="alert alert-info">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="stroke-current shrink-0 w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span>
+                仕訳登録後に<strong>必ず領収書を添付</strong>してください。
+                添付忘れがあると収支報告書の作成時に問題になります。
+              </span>
+            </div>
+          )}
+
+          {/* 領収書を添付できない理由 */}
           {isReceiptHardToCollect && (
             <div class="form-control">
               <label class="label">
                 <span class="label-text">
-                  領収証を徴し難い理由 <span class="text-error">*</span>
+                  添付できない理由 <span class="text-error">*</span>
                 </span>
               </label>
               <input
@@ -775,8 +960,13 @@ export default function JournalForm({
                     (e.target as HTMLInputElement).value
                   )
                 }
-                required={isReceiptHardToCollect}
+                required
               />
+              <label class="label">
+                <span class="label-text-alt text-base-content/60">
+                  理由は収支報告書に記載されます
+                </span>
+              </label>
             </div>
           )}
         </div>

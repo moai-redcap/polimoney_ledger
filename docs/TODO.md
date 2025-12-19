@@ -153,4 +153,3 @@ Hub に同期する際、`contacts` の情報を匿名化する必要がある�
 
 - 2025-12-17: TODO.md を新規作成（TODO_UNIFIED.md から統合）
 - 2024-12-14: TODO_UNIFIED.md 初版作成
-
