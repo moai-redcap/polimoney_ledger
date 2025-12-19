@@ -1,8 +1,44 @@
 import { Head } from "$fresh/runtime.ts";
+import { Handlers, PageProps } from "$fresh/server.ts";
 import { Layout } from "../components/Layout.tsx";
+import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
 import ReSyncButton from "../islands/ReSyncButton.tsx";
+import ProfileEditor from "../islands/ProfileEditor.tsx";
 
-export default function Settings() {
+const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
+
+interface PageData {
+  email: string;
+  displayName: string;
+}
+
+export const handler: Handlers<PageData> = {
+  async GET(req, ctx) {
+    const userId = ctx.state.userId as string;
+    if (!userId) {
+      return new Response(null, {
+        status: 302,
+        headers: { Location: "/login?redirect=/settings" },
+      });
+    }
+
+    const supabase =
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    return ctx.render({
+      email: user?.email || "",
+      displayName: user?.user_metadata?.display_name || "",
+    });
+  },
+};
+
+export default function Settings({ data }: PageProps<PageData>) {
+  const { email, displayName } = data;
+
   return (
     <>
       <Head>
@@ -10,12 +46,9 @@ export default function Settings() {
       </Head>
       <Layout currentPath="/settings" title="設定">
         <div class="max-w-3xl">
-          {/* 通常設定セクション */}
-          <section class="card bg-base-100 shadow-xl mb-8">
-            <div class="card-body">
-              <h2 class="card-title">一般設定</h2>
-              <p class="text-base-content/70">設定項目は今後追加予定です。</p>
-            </div>
+          {/* プロフィールセクション */}
+          <section class="mb-8">
+            <ProfileEditor initialDisplayName={displayName} email={email} />
           </section>
 
           {/* 同期ステータス */}
@@ -28,7 +61,6 @@ export default function Settings() {
                   仕訳承認時に自動で Hub に同期されます
                 </span>
               </div>
-              {/* TODO: 最終同期日時を表示 */}
             </div>
           </section>
 

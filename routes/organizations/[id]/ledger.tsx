@@ -66,9 +66,8 @@ export const handler: Handlers<PageData> = {
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
       // 政治団体情報を取得
       const { data: organization, error: orgError } = await supabase
@@ -111,7 +110,7 @@ export const handler: Handlers<PageData> = {
               contacts (
                 name
               )
-            `,
+            `
             )
             .eq("organization_id", organizationId)
             .order("journal_date", { ascending: false }),
@@ -208,6 +207,9 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
           <a class="tab tab-active">仕訳一覧</a>
           <a href={`/organizations/${organization.id}/assets`} class="tab">
             資産一覧
+          </a>
+          <a href={`/organizations/${organization.id}/members`} class="tab">
+            メンバー
           </a>
         </div>
 

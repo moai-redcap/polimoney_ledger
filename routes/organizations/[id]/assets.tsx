@@ -299,3 +299,4 @@ export default function OrganizationAssetsPage({ data }: PageProps<PageData>) {
     </>
   );
 }
+

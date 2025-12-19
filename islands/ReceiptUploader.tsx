@@ -71,7 +71,7 @@ export default function ReceiptUploader({
     } catch (err) {
       console.error("Upload error:", err);
       setError(
-        err instanceof Error ? err.message : "アップロードに失敗しました",
+        err instanceof Error ? err.message : "アップロードに失敗しました"
       );
     } finally {
       setIsUploading(false);
@@ -193,137 +193,131 @@ export default function ReceiptUploader({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          {isUploading
-            ? (
-              <div class="flex flex-col items-center gap-2">
-                <span class="loading loading-spinner loading-lg"></span>
-                <span class="text-sm text-base-content/70">
-                  アップロード中...
-                </span>
-              </div>
-            )
-            : (
-              <>
-                <div class="text-4xl mb-2">📎</div>
-                <p class="text-base-content/70 mb-2">
-                  ファイルをドラッグ＆ドロップ
-                </p>
-                <p class="text-sm text-base-content/50 mb-4">または</p>
-                <label class="btn btn-outline btn-primary">
-                  <input
-                    type="file"
-                    class="hidden"
-                    accept="image/jpeg,image/png,image/gif,application/pdf"
-                    onChange={handleFileSelect}
-                  />
-                  ファイルを選択
-                </label>
-                <p class="text-xs text-base-content/50 mt-3">
-                  JPEG, PNG, GIF, PDF（最大5MB）
-                </p>
-              </>
-            )}
+          {isUploading ? (
+            <div class="flex flex-col items-center gap-2">
+              <span class="loading loading-spinner loading-lg"></span>
+              <span class="text-sm text-base-content/70">
+                アップロード中...
+              </span>
+            </div>
+          ) : (
+            <>
+              <div class="text-4xl mb-2">📎</div>
+              <p class="text-base-content/70 mb-2">
+                ファイルをドラッグ＆ドロップ
+              </p>
+              <p class="text-sm text-base-content/50 mb-4">または</p>
+              <label class="btn btn-outline btn-primary">
+                <input
+                  type="file"
+                  class="hidden"
+                  accept="image/jpeg,image/png,image/gif,application/pdf"
+                  onChange={handleFileSelect}
+                />
+                ファイルを選択
+              </label>
+              <p class="text-xs text-base-content/50 mt-3">
+                JPEG, PNG, GIF, PDF（最大5MB）
+              </p>
+            </>
+          )}
         </div>
       )}
 
       {/* 証憑一覧 */}
-      {receipts.length > 0
-        ? (
-          <div class="space-y-2">
-            <h4 class="font-medium text-sm text-base-content/70">
-              添付ファイル ({receipts.length})
-            </h4>
-            <ul class="divide-y divide-base-200">
-              {receipts.map((receipt) => (
-                <li key={receipt.id} class="py-2 flex items-center gap-3">
-                  {/* サムネイル or アイコン */}
-                  <div class="flex-shrink-0 w-12 h-12 bg-base-200 rounded flex items-center justify-center overflow-hidden">
-                    {receipt.mime_type.startsWith("image/") && receipt.url
-                      ? (
-                        <img
-                          src={receipt.url}
-                          alt={receipt.file_name}
-                          class="w-full h-full object-cover"
+      {receipts.length > 0 ? (
+        <div class="space-y-2">
+          <h4 class="font-medium text-sm text-base-content/70">
+            添付ファイル ({receipts.length})
+          </h4>
+          <ul class="divide-y divide-base-200">
+            {receipts.map((receipt) => (
+              <li key={receipt.id} class="py-2 flex items-center gap-3">
+                {/* サムネイル or アイコン */}
+                <div class="flex-shrink-0 w-12 h-12 bg-base-200 rounded flex items-center justify-center overflow-hidden">
+                  {receipt.mime_type.startsWith("image/") && receipt.url ? (
+                    <img
+                      src={receipt.url}
+                      alt={receipt.file_name}
+                      class="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span class="text-2xl">
+                      {getFileIcon(receipt.mime_type)}
+                    </span>
+                  )}
+                </div>
+
+                {/* ファイル情報 */}
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium truncate">
+                    {receipt.file_name}
+                  </p>
+                  <p class="text-xs text-base-content/60">
+                    {formatFileSize(receipt.file_size)}
+                  </p>
+                </div>
+
+                {/* アクションボタン */}
+                <div class="flex-shrink-0 flex gap-1">
+                  {receipt.url && (
+                    <a
+                      href={receipt.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn btn-ghost btn-sm btn-square"
+                      title="開く"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
                         />
-                      )
-                      : (
-                        <span class="text-2xl">
-                          {getFileIcon(receipt.mime_type)}
-                        </span>
-                      )}
-                  </div>
-
-                  {/* ファイル情報 */}
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium truncate">
-                      {receipt.file_name}
-                    </p>
-                    <p class="text-xs text-base-content/60">
-                      {formatFileSize(receipt.file_size)}
-                    </p>
-                  </div>
-
-                  {/* アクションボタン */}
-                  <div class="flex-shrink-0 flex gap-1">
-                    {receipt.url && (
-                      <a
-                        href={receipt.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn btn-ghost btn-sm btn-square"
-                        title="開く"
+                      </svg>
+                    </a>
+                  )}
+                  {!readOnly && (
+                    <button
+                      class="btn btn-ghost btn-sm btn-square text-error"
+                      onClick={() => deleteReceipt(receipt.id)}
+                      title="削除"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="w-4 h-4"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                    {!readOnly && (
-                      <button
-                        class="btn btn-ghost btn-sm btn-square text-error"
-                        onClick={() => deleteReceipt(receipt.id)}
-                        title="削除"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="w-4 h-4"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                          />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        !readOnly && (
+          <p class="text-center text-sm text-base-content/50 py-4">
+            証憑がまだ添付されていません
+          </p>
         )
-        : (
-          !readOnly && (
-            <p class="text-center text-sm text-base-content/50 py-4">
-              証憑がまだ添付されていません
-            </p>
-          )
-        )}
+      )}
     </div>
   );
 }

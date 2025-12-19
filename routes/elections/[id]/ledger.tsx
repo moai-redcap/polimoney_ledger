@@ -70,9 +70,8 @@ export const handler: Handlers<PageData> = {
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
       // 選挙情報を取得
       const { data: election, error: electionError } = await supabase
@@ -115,7 +114,7 @@ export const handler: Handlers<PageData> = {
               contacts (
                 name
               )
-            `,
+            `
             )
             .eq("election_id", electionId)
             .order("journal_date", { ascending: false }),
@@ -230,6 +229,9 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
           <a class="tab tab-active">仕訳一覧</a>
           <a href={`/elections/${election.id}/assets`} class="tab">
             資産一覧
+          </a>
+          <a href={`/elections/${election.id}/members`} class="tab">
+            メンバー
           </a>
         </div>
 
