@@ -47,7 +47,7 @@ export const handler: Handlers = {
 
       const supabase = userId === TEST_USER_ID
         ? getServiceClient()
-        : getSupabaseClient(req);
+        : getSupabaseClient(userId);
 
       // まず政治家を作成
       const { data: politician, error: politicianError } = await supabase

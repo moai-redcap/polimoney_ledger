@@ -18,7 +18,7 @@ const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 const PUBLIC_PATHS_EXACT = ["/welcome", "/privacy"];
 
 // 認証不要なパス（前方一致）
-const PUBLIC_PATHS_PREFIX = ["/login", "/register", "/api/", "/pending-review"];
+const PUBLIC_PATHS_PREFIX = ["/login", "/register", "/pending-review"];
 
 function isPublicPath(pathname: string): boolean {
   // 完全一致チェック

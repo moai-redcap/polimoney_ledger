@@ -26,7 +26,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // 譲渡申請を取得
       const { data: transfer, error: fetchError } = await supabase

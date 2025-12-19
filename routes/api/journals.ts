@@ -113,7 +113,7 @@ export const handler: Handlers = {
 
       const supabase = userId === TEST_USER_ID
         ? getServiceClient()
-        : getSupabaseClient(req);
+        : getSupabaseClient(userId);
 
       // 仕訳を作成
       const { data: journal, error: journalError } = await supabase

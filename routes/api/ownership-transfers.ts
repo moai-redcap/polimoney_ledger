@@ -29,7 +29,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // 自分宛ての pending 申請を取得
       const { data: transfers, error } = await supabase
@@ -123,7 +123,7 @@ export const handler: Handlers = {
       }
 
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // オーナー権限の確認と既存申請チェック
       if (body.organization_id) {

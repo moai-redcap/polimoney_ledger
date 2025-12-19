@@ -30,7 +30,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       const { data, error } = await supabase
         .from("sub_accounts")
@@ -90,7 +90,7 @@ export const handler: Handlers = {
       }
 
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // 更新対象が自分の所有かチェック
       const { data: existing } = await supabase
@@ -150,7 +150,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // 削除前に仕訳明細での使用をチェック
       const { data: usedInEntries } = await supabase

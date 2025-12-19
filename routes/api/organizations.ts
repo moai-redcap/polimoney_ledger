@@ -30,7 +30,7 @@ export const handler: Handlers = {
 
       const supabase = userId === TEST_USER_ID
         ? getServiceClient()
-        : getSupabaseClient(req);
+        : getSupabaseClient(userId);
 
       // 政治団体を作成
       const { data: organization, error: orgError } = await supabase

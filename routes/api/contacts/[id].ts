@@ -38,7 +38,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       const { data, error } = await supabase
         .from("contacts")
@@ -104,7 +104,7 @@ export const handler: Handlers = {
       }
 
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // 更新対象が自分の所有かチェック
       const { data: existing } = await supabase
@@ -183,7 +183,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // 削除前に仕訳での使用をチェック
       const { data: usedInJournals } = await supabase

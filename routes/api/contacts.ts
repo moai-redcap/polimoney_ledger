@@ -49,7 +49,7 @@ export const handler: Handlers = {
 
       const supabase = userId === TEST_USER_ID
         ? getServiceClient()
-        : getSupabaseClient(req);
+        : getSupabaseClient(userId);
 
       const { data, error } = await supabase
         .from("contacts")
@@ -101,7 +101,7 @@ export const handler: Handlers = {
     try {
       const supabase = userId === TEST_USER_ID
         ? getServiceClient()
-        : getSupabaseClient(req);
+        : getSupabaseClient(userId);
 
       const { data, error } = await supabase
         .from("contacts")

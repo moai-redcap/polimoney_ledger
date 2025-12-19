@@ -609,16 +609,14 @@ export default function MemberManager({
                     class="select select-bordered"
                     value={selectedMemberId}
                     onChange={(e) =>
-                      setSelectedMemberId(
-                        (e.target as HTMLSelectElement).value
-                      )
+                      setSelectedMemberId((e.target as HTMLSelectElement).value)
                     }
                   >
                     <option value="">選択してください</option>
                     {members.map((member) => (
                       <option key={member.user_id} value={member.user_id}>
-                        {member.display_name || member.email || "未設定"}{" "}
-                        ({roleDisplayNames[member.role]})
+                        {member.display_name || member.email || "未設定"} (
+                        {roleDisplayNames[member.role]})
                       </option>
                     ))}
                   </select>

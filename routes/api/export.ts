@@ -34,7 +34,7 @@ export const handler: Handlers = {
     // テストユーザーの場合は service role client を使用
     const supabase = userId === TEST_USER_ID
       ? getServiceClient()
-      : getSupabaseClient(req);
+      : getSupabaseClient(userId);
 
     try {
       // ユーザー情報取得

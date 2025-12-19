@@ -46,7 +46,7 @@ export const handler: Handlers = {
       }
 
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // メンバー情報を取得
       const { data: member, error: fetchError } = await supabase
@@ -132,7 +132,7 @@ export const handler: Handlers = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        getSupabaseClient(userId);
 
       // メンバー情報を取得
       const { data: member, error: fetchError } = await supabase
