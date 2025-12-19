@@ -783,7 +783,9 @@ export default function JournalForm({
               <label class="label">
                 <span class="label-text">
                   公費負担額
-                  <span class="ml-2 badge badge-info badge-sm">公費対象科目</span>
+                  <span class="ml-2 badge badge-info badge-sm">
+                    公費対象科目
+                  </span>
                 </span>
               </label>
               <input
@@ -906,7 +908,9 @@ export default function JournalForm({
                   onChange={() => setIsReceiptHardToCollect(true)}
                 />
                 <div>
-                  <span class="label-text font-medium">領収書を添付できない</span>
+                  <span class="label-text font-medium">
+                    領収書を添付できない
+                  </span>
                   <span class="label-text-alt block text-base-content/60">
                     自動販売機、交通費など
                   </span>

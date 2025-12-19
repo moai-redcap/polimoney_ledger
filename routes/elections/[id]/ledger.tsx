@@ -5,6 +5,7 @@ import { getSupabaseClient, getServiceClient } from "../../../lib/supabase.ts";
 import { getAccountCodes, type AccountCode } from "../../../lib/hub-client.ts";
 import JournalFormDrawer from "../../../islands/JournalFormDrawer.tsx";
 import JournalList from "../../../islands/JournalList.tsx";
+import ExportCSVButton from "../../../islands/ExportCSVButton.tsx";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -253,14 +254,17 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
                 仕訳一覧
                 <span class="badge badge-ghost">{journals.length}件</span>
               </h2>
-              <JournalFormDrawer
-                ledgerType="election"
-                organizationId={null}
-                electionId={election.id}
-                accountCodes={accountCodes}
-                contacts={contacts}
-                subAccounts={subAccounts}
-              />
+              <div class="flex items-center gap-2">
+                <ExportCSVButton electionId={election.id} />
+                <JournalFormDrawer
+                  ledgerType="election"
+                  organizationId={null}
+                  electionId={election.id}
+                  accountCodes={accountCodes}
+                  contacts={contacts}
+                  subAccounts={subAccounts}
+                />
+              </div>
             </div>
             <JournalList
               journals={journals}
