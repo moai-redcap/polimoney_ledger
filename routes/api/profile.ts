@@ -26,8 +26,7 @@ export const handler: Handlers = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+      const supabase = getSupabaseClient(userId);
 
       const {
         data: { user },
@@ -87,8 +86,7 @@ export const handler: Handlers = {
         });
       }
 
-      const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+      const supabase = getSupabaseClient(userId);
 
       // Supabase Auth Dashboard で "Display name" として表示されるのは full_name
       const { data, error } = await supabase.auth.updateUser({

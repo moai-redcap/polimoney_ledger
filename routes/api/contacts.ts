@@ -32,7 +32,7 @@ export const handler: Handlers = {
       if (!body.contact_type || !body.name) {
         return new Response(
           JSON.stringify({ error: "contact_type と name は必須です" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
 
@@ -43,13 +43,14 @@ export const handler: Handlers = {
             error:
               "contact_type は 'person' または 'corporation' である必要があります",
           }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
 
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(userId);
 
       const { data, error } = await supabase
         .from("contacts")
@@ -72,7 +73,7 @@ export const handler: Handlers = {
         console.error("Failed to create contact:", error);
         return new Response(
           JSON.stringify({ error: "関係者の登録に失敗しました" }),
-          { status: 500, headers: { "Content-Type": "application/json" } },
+          { status: 500, headers: { "Content-Type": "application/json" } }
         );
       }
 
@@ -84,7 +85,7 @@ export const handler: Handlers = {
       console.error("Error creating contact:", error);
       return new Response(
         JSON.stringify({ error: "サーバーエラーが発生しました" }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
   },
@@ -99,9 +100,10 @@ export const handler: Handlers = {
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(userId);
 
       const { data, error } = await supabase
         .from("contacts")
@@ -113,7 +115,7 @@ export const handler: Handlers = {
         console.error("Failed to fetch contacts:", error);
         return new Response(
           JSON.stringify({ error: "関係者の取得に失敗しました" }),
-          { status: 500, headers: { "Content-Type": "application/json" } },
+          { status: 500, headers: { "Content-Type": "application/json" } }
         );
       }
 
@@ -125,7 +127,7 @@ export const handler: Handlers = {
       console.error("Error fetching contacts:", error);
       return new Response(
         JSON.stringify({ error: "サーバーエラーが発生しました" }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
   },

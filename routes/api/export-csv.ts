@@ -348,8 +348,7 @@ export const handler: Handlers = {
 
     const ledgerType = electionId ? "election" : "organization";
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+    const supabase = getSupabaseClient(userId);
 
     try {
       // 勘定科目マスタを取得

@@ -69,16 +69,16 @@ export const handler: Handlers = {
       // 借方・貸方の合計が一致するかチェック
       const totalDebit = body.entries.reduce(
         (sum, e) => sum + e.debit_amount,
-        0,
+        0
       );
       const totalCredit = body.entries.reduce(
         (sum, e) => sum + e.credit_amount,
-        0,
+        0
       );
       if (totalDebit !== totalCredit) {
         return new Response(
           JSON.stringify({ error: "借方と貸方の合計が一致しません" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
 
@@ -88,7 +88,7 @@ export const handler: Handlers = {
           {
             status: 400,
             headers: { "Content-Type": "application/json" },
-          },
+          }
         );
       }
 
@@ -99,7 +99,7 @@ export const handler: Handlers = {
       ) {
         return new Response(
           JSON.stringify({ error: "領収証を徴し難い理由を入力してください" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
 
@@ -107,13 +107,14 @@ export const handler: Handlers = {
       if (body.is_asset_acquisition && !body.asset_type) {
         return new Response(
           JSON.stringify({ error: "資産種別を選択してください" }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
+          { status: 400, headers: { "Content-Type": "application/json" } }
         );
       }
 
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(userId);
 
       // 仕訳を作成
       const { data: journal, error: journalError } = await supabase
@@ -131,8 +132,8 @@ export const handler: Handlers = {
           amount_political_fund: body.amount_political_fund || 0,
           amount_public_subsidy: body.amount_public_subsidy || 0,
           is_receipt_hard_to_collect: body.is_receipt_hard_to_collect || false,
-          receipt_hard_to_collect_reason: body.receipt_hard_to_collect_reason ||
-            null,
+          receipt_hard_to_collect_reason:
+            body.receipt_hard_to_collect_reason || null,
           status: status,
           is_asset_acquisition: body.is_asset_acquisition || false,
           asset_type: body.asset_type || null,
@@ -148,7 +149,7 @@ export const handler: Handlers = {
           {
             status: 500,
             headers: { "Content-Type": "application/json" },
-          },
+          }
         );
       }
 
@@ -174,7 +175,7 @@ export const handler: Handlers = {
           {
             status: 500,
             headers: { "Content-Type": "application/json" },
-          },
+          }
         );
       }
 
@@ -183,7 +184,7 @@ export const handler: Handlers = {
         {
           status: 201,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     } catch (error) {
       console.error("Error creating journal:", error);
@@ -192,7 +193,7 @@ export const handler: Handlers = {
         {
           status: 500,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     }
   },

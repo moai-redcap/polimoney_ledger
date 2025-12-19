@@ -28,9 +28,10 @@ export const handler: Handlers = {
         });
       }
 
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(userId);
 
       // 政治団体を作成
       const { data: organization, error: orgError } = await supabase
@@ -46,7 +47,7 @@ export const handler: Handlers = {
         console.error("Failed to create organization:", orgError);
         return new Response(
           JSON.stringify({ error: "政治団体の作成に失敗しました" }),
-          { status: 500, headers: { "Content-Type": "application/json" } },
+          { status: 500, headers: { "Content-Type": "application/json" } }
         );
       }
 
@@ -58,13 +59,13 @@ export const handler: Handlers = {
         {
           status: 201,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     } catch (error) {
       console.error("Error creating organization:", error);
       return new Response(
         JSON.stringify({ error: "サーバーエラーが発生しました" }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
   },

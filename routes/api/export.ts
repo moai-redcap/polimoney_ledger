@@ -32,9 +32,8 @@ export const handler: Handlers = {
     }
 
     // テストユーザーの場合は service role client を使用
-    const supabase = userId === TEST_USER_ID
-      ? getServiceClient()
-      : getSupabaseClient(req);
+    const supabase =
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
 
     try {
       // ユーザー情報取得
@@ -67,7 +66,7 @@ export const handler: Handlers = {
 
       // 仕訳IDを収集
       const journalIds = (journalsResult.data || []).map(
-        (j: { id: string }) => j.id,
+        (j: { id: string }) => j.id
       );
 
       // 仕訳明細と添付ファイルを取得
@@ -125,7 +124,7 @@ export const handler: Handlers = {
         {
           status: 500,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     }
   },
