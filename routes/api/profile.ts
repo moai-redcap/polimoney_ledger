@@ -77,10 +77,10 @@ export const handler: Handlers = {
       const body: UpdateProfileRequest = await req.json();
 
       if (!body.display_name?.trim()) {
-        return new Response(
-          JSON.stringify({ error: "表示名は必須です" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "表示名は必須です" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       const supabase =

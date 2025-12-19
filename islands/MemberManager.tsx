@@ -40,7 +40,13 @@ export default function MemberManager({
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<AppRole>("viewer");
 
-  const roles: AppRole[] = ["admin", "accountant", "approver", "submitter", "viewer"];
+  const roles: AppRole[] = [
+    "admin",
+    "accountant",
+    "approver",
+    "submitter",
+    "viewer",
+  ];
 
   const handleInvite = async (e: Event) => {
     e.preventDefault();
@@ -100,7 +106,9 @@ export default function MemberManager({
       }
 
       const { data } = await res.json();
-      setMembers(members.map((m) => (m.id === memberId ? { ...m, ...data } : m)));
+      setMembers(
+        members.map((m) => (m.id === memberId ? { ...m, ...data } : m))
+      );
       setSuccess("権限を更新しました");
     } catch (err) {
       setError(err instanceof Error ? err.message : "エラーが発生しました");
@@ -112,7 +120,9 @@ export default function MemberManager({
   const handleDelete = async (member: Member) => {
     if (
       !confirm(
-        `${member.display_name || member.email || "このメンバー"} を削除しますか？`
+        `${
+          member.display_name || member.email || "このメンバー"
+        } を削除しますか？`
       )
     ) {
       return;
@@ -267,7 +277,9 @@ export default function MemberManager({
                         )}
                       </td>
                       <td class="text-sm text-base-content/70">
-                        {new Date(member.created_at).toLocaleDateString("ja-JP")}
+                        {new Date(member.created_at).toLocaleDateString(
+                          "ja-JP"
+                        )}
                       </td>
                       {canManageMembers && (
                         <td>
@@ -354,7 +366,9 @@ export default function MemberManager({
                   class="select select-bordered"
                   value={inviteRole}
                   onChange={(e) =>
-                    setInviteRole((e.target as HTMLSelectElement).value as AppRole)
+                    setInviteRole(
+                      (e.target as HTMLSelectElement).value as AppRole
+                    )
                   }
                 >
                   {roles.map((role) => (

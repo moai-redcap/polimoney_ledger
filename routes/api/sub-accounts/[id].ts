@@ -83,10 +83,10 @@ export const handler: Handlers = {
 
       // バリデーション
       if (!body.name?.trim()) {
-        return new Response(
-          JSON.stringify({ error: "name は必須です" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "name は必須です" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       const supabase =

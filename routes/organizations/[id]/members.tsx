@@ -115,7 +115,10 @@ export default function OrganizationMembersPage({ data }: PageProps<PageData>) {
       <Head>
         <title>メンバー管理 - {organization.name} - Polimoney Ledger</title>
       </Head>
-      <Layout currentPath="/organizations" title={`${organization.name} - メンバー管理`}>
+      <Layout
+        currentPath="/organizations"
+        title={`${organization.name} - メンバー管理`}
+      >
         <div class="max-w-4xl">
           {/* 戻るリンク */}
           <div class="mb-4">

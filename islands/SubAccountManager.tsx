@@ -30,8 +30,9 @@ export default function SubAccountManager({
   const [subAccounts, setSubAccounts] =
     useState<SubAccount[]>(initialSubAccounts);
   const [modalMode, setModalMode] = useState<ModalMode>("closed");
-  const [editingSubAccount, setEditingSubAccount] =
-    useState<SubAccount | null>(null);
+  const [editingSubAccount, setEditingSubAccount] = useState<SubAccount | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -266,7 +267,9 @@ export default function SubAccountManager({
                 d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
               />
             </svg>
-            <h3 class="text-lg font-semibold">補助科目がまだ登録されていません</h3>
+            <h3 class="text-lg font-semibold">
+              補助科目がまだ登録されていません
+            </h3>
             <p class="text-base-content/70">
               「新規登録」ボタンから補助科目を追加してください。
             </p>
@@ -364,7 +367,9 @@ export default function SubAccountManager({
                       type="radio"
                       name="ledger_type"
                       aria-label="政治団体"
-                      checked={formData.ledger_type === "political_organization"}
+                      checked={
+                        formData.ledger_type === "political_organization"
+                      }
                       onChange={() => {
                         setFormData({
                           ...formData,
@@ -411,11 +416,13 @@ export default function SubAccountManager({
                     }
                   >
                     <option value="">選択してください</option>
-                    {getFilteredAccounts(formData.ledger_type).map((account) => (
-                      <option key={account.code} value={account.code}>
-                        {account.name}
-                      </option>
-                    ))}
+                    {getFilteredAccounts(formData.ledger_type).map(
+                      (account) => (
+                        <option key={account.code} value={account.code}>
+                          {account.name}
+                        </option>
+                      )
+                    )}
                   </select>
                 </div>
               )}
@@ -429,7 +436,9 @@ export default function SubAccountManager({
                   <input
                     type="text"
                     class="input input-bordered"
-                    value={getAccountName(editingSubAccount.parent_account_code)}
+                    value={getAccountName(
+                      editingSubAccount.parent_account_code
+                    )}
                     disabled
                   />
                 </div>

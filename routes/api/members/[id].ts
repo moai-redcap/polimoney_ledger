@@ -51,7 +51,9 @@ export const handler: Handlers = {
       // メンバー情報を取得
       const { data: member, error: fetchError } = await supabase
         .from("ledger_members")
-        .select("*, political_organizations(owner_user_id), elections(owner_user_id)")
+        .select(
+          "*, political_organizations(owner_user_id), elections(owner_user_id)"
+        )
         .eq("id", memberId)
         .single();
 
@@ -135,7 +137,9 @@ export const handler: Handlers = {
       // メンバー情報を取得
       const { data: member, error: fetchError } = await supabase
         .from("ledger_members")
-        .select("*, political_organizations(owner_user_id), elections(owner_user_id)")
+        .select(
+          "*, political_organizations(owner_user_id), elections(owner_user_id)"
+        )
         .eq("id", memberId)
         .single();
 

@@ -127,7 +127,8 @@ export const handler: Handlers = {
         updateData.contact_type = body.contact_type;
       if (body.name !== undefined) updateData.name = body.name;
       if (body.address !== undefined) updateData.address = body.address;
-      if (body.occupation !== undefined) updateData.occupation = body.occupation;
+      if (body.occupation !== undefined)
+        updateData.occupation = body.occupation;
       if (body.is_name_private !== undefined)
         updateData.is_name_private = body.is_name_private;
       if (body.is_address_private !== undefined)

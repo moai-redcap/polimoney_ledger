@@ -66,9 +66,8 @@ export const handler: Handlers<PageData> = {
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase =
+        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
       // 政治団体情報を取得
       const { data: organization, error: orgError } = await supabase
@@ -111,7 +110,7 @@ export const handler: Handlers<PageData> = {
               contacts (
                 name
               )
-            `,
+            `
             )
             .eq("organization_id", organizationId)
             .order("journal_date", { ascending: false }),

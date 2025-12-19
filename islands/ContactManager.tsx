@@ -72,7 +72,8 @@ export default function ContactManager({
       is_name_private: contact.is_name_private,
       is_address_private: contact.is_address_private,
       is_occupation_private: contact.is_occupation_private,
-      privacy_reason_type: (contact.privacy_reason_type as "" | "personal_info" | "other") || "",
+      privacy_reason_type:
+        (contact.privacy_reason_type as "" | "personal_info" | "other") || "",
       privacy_reason_other: contact.privacy_reason_other || "",
     });
     setEditingContact(contact);
@@ -154,9 +155,9 @@ export default function ContactManager({
         }
 
         const { data } = await res.json();
-        setContacts([...contacts, data].sort((a, b) =>
-          a.name.localeCompare(b.name)
-        ));
+        setContacts(
+          [...contacts, data].sort((a, b) => a.name.localeCompare(b.name))
+        );
       } else if (modalMode === "edit" && editingContact) {
         const res = await fetch(`/api/contacts/${editingContact.id}`, {
           method: "PUT",
@@ -255,7 +256,9 @@ export default function ContactManager({
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <h3 class="text-lg font-semibold">関係者がまだ登録されていません</h3>
+            <h3 class="text-lg font-semibold">
+              関係者がまだ登録されていません
+            </h3>
             <p class="text-base-content/70">
               「新規登録」ボタンから関係者を追加してください。
             </p>
@@ -485,8 +488,9 @@ export default function ContactManager({
                         onChange={(e) =>
                           setFormData({
                             ...formData,
-                            is_occupation_private: (e.target as HTMLInputElement)
-                              .checked,
+                            is_occupation_private: (
+                              e.target as HTMLInputElement
+                            ).checked,
                           })
                         }
                       />
@@ -531,8 +535,9 @@ export default function ContactManager({
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          privacy_reason_other: (e.target as HTMLTextAreaElement)
-                            .value,
+                          privacy_reason_other: (
+                            e.target as HTMLTextAreaElement
+                          ).value,
                         })
                       }
                     />

@@ -113,9 +113,14 @@ export default function ElectionMembersPage({ data }: PageProps<PageData>) {
   return (
     <>
       <Head>
-        <title>メンバー管理 - {election.election_name} - Polimoney Ledger</title>
+        <title>
+          メンバー管理 - {election.election_name} - Polimoney Ledger
+        </title>
       </Head>
-      <Layout currentPath="/elections" title={`${election.election_name} - メンバー管理`}>
+      <Layout
+        currentPath="/elections"
+        title={`${election.election_name} - メンバー管理`}
+      >
         <div class="max-w-4xl">
           {/* 戻るリンク */}
           <div class="mb-4">

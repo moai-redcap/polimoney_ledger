@@ -151,10 +151,10 @@ export const handler: Handlers = {
         "viewer",
       ];
       if (!validRoles.includes(body.role)) {
-        return new Response(
-          JSON.stringify({ error: "無効な role です" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "無効な role です" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       const supabase =
