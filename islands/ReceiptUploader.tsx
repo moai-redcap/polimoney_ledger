@@ -25,12 +25,12 @@ export default function ReceiptUploader({
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
-  // 領収書一覧を取得
+  // 証憑一覧を取得
   const fetchReceipts = useCallback(async () => {
     try {
       const response = await fetch(`/api/journals/${journalId}/receipts`);
       if (!response.ok) {
-        throw new Error("領収書の取得に失敗しました");
+        throw new Error("証憑の取得に失敗しました");
       }
       const json = await response.json();
       setReceipts(json.data || []);
@@ -80,7 +80,7 @@ export default function ReceiptUploader({
 
   // ファイル削除
   const deleteReceipt = async (id: string) => {
-    if (!confirm("この領収書を削除しますか？")) {
+    if (!confirm("この証憑を削除しますか？")) {
       return;
     }
 
@@ -226,7 +226,7 @@ export default function ReceiptUploader({
         </div>
       )}
 
-      {/* 領収書一覧 */}
+      {/* 証憑一覧 */}
       {receipts.length > 0
         ? (
           <div class="space-y-2">
@@ -320,7 +320,7 @@ export default function ReceiptUploader({
         : (
           !readOnly && (
             <p class="text-center text-sm text-base-content/50 py-4">
-              領収書がまだ添付されていません
+              証憑がまだ添付されていません
             </p>
           )
         )}

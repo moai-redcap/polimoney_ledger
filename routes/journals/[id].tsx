@@ -368,7 +368,7 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
 
                 {journal.is_receipt_hard_to_collect && (
                   <div>
-                    <dt class="text-sm text-base-content/60">領収書徴収困難</dt>
+                    <dt class="text-sm text-base-content/60">証憑添付不可</dt>
                     <dd class="font-medium">
                       {journal.receipt_hard_to_collect_reason || "理由未記載"}
                     </dd>

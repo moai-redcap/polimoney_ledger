@@ -76,7 +76,7 @@
 | V003 | 収入 & 個人 & 金額 > 50,000  | contacts.occupation            | 5万円超の個人寄附には職業が必要です    | 警告   |
 | V004 | 選挙 & 公費対象科目          | amount_public_subsidy          | 公費負担額を入力してください           | 情報   |
 | V005 | 収入 & 法人 & 金額 > 50,000  | contacts.address               | 5万円超の法人寄附には住所が必要です    | 警告   |
-| V006 | 支出 & 領収証なし & 理由なし | receipt_hard_to_collect_reason | 領収証を徴し難い理由を入力してください | エラー |
+| V006 | 支出 & 証憑なし & 理由なし | receipt_hard_to_collect_reason | 証憑を添付できない理由を入力してください | エラー |
 
 ### 重要度の定義
 
@@ -144,7 +144,7 @@ CSV エクスポート前の検証:
 | 補助科目         | sub_account.name           |                        |
 | 政党交付金充当額 | amount_political_grant     | 政治団体のみ           |
 | 公費負担額       | amount_public_subsidy      | 選挙のみ               |
-| 領収証なし       | is_receipt_hard_to_collect | ○ or 空欄              |
+| 証憑なし       | is_receipt_hard_to_collect | ○ or 空欄              |
 | 備考             | notes                      |                        |
 
 ### 収入一覧 CSV フォーマット

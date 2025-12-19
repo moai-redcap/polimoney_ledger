@@ -104,7 +104,7 @@ export default function JournalForm({
     "",
   );
 
-  // 領収書ファイル
+  // 証憑ファイル
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
   // 資産取得
@@ -234,21 +234,21 @@ export default function JournalForm({
       return;
     }
 
-    // 領収書を添付できない場合は理由が必須
+    // 証憑を添付できない場合は理由が必須
     if (isReceiptHardToCollect && !receiptHardToCollectReason.trim()) {
       setMessage({
         type: "error",
-        text: "領収書を添付できない理由を入力してください",
+        text: "証憑を添付できない理由を入力してください",
       });
       setIsSubmitting(false);
       return;
     }
 
-    // 領収書を添付する場合はファイルが必須（下書きでない場合）
+    // 証憑を添付する場合はファイルが必須（下書きでない場合）
     if (status === "approved" && !isReceiptHardToCollect && !receiptFile) {
       setMessage({
         type: "error",
-        text: "領収書ファイルを選択してください",
+        text: "証憑ファイルを選択してください",
       });
       setIsSubmitting(false);
       return;
@@ -309,7 +309,7 @@ export default function JournalForm({
       const result = await response.json();
       const journalId = result.data?.id;
 
-      // 領収書ファイルがある場合はアップロード
+      // 証憑ファイルがある場合はアップロード
       if (receiptFile && journalId) {
         try {
           const formData = new FormData();
@@ -322,19 +322,19 @@ export default function JournalForm({
           });
 
           if (!uploadResponse.ok) {
-            console.error("領収書のアップロードに失敗しました");
+            console.error("証憑のアップロードに失敗しました");
             setMessage({
               type: "success",
               text: status === "draft"
-                ? "下書きを保存しました（領収書のアップロードに失敗）"
-                : "仕訳を登録しました（領収書のアップロードに失敗）",
+                ? "下書きを保存しました（証憑のアップロードに失敗）"
+                : "仕訳を登録しました（証憑のアップロードに失敗）",
             });
           } else {
             setMessage({
               type: "success",
               text: status === "draft"
                 ? "下書きを保存しました"
-                : "仕訳と領収書を登録しました",
+                : "仕訳と証憑を登録しました",
             });
           }
         } catch (uploadErr) {
@@ -342,8 +342,8 @@ export default function JournalForm({
           setMessage({
             type: "success",
             text: status === "draft"
-              ? "下書きを保存しました（領収書のアップロードに失敗）"
-              : "仕訳を登録しました（領収書のアップロードに失敗）",
+              ? "下書きを保存しました（証憑のアップロードに失敗）"
+              : "仕訳を登録しました（証憑のアップロードに失敗）",
           });
         }
       } else {
@@ -1139,11 +1139,11 @@ export default function JournalForm({
             />
           </div>
 
-          {/* 領収書 */}
+          {/* 証憑 */}
           <div class="form-control">
             <label class="label">
               <span class="label-text">
-                領収書 <span class="text-error">*</span>
+                証憑 <span class="text-error">*</span>
               </span>
             </label>
             <div class="flex flex-col gap-2">
@@ -1156,9 +1156,9 @@ export default function JournalForm({
                   onChange={() => setIsReceiptHardToCollect(false)}
                 />
                 <div>
-                  <span class="label-text font-medium">領収書を添付する</span>
+                  <span class="label-text font-medium">証憑を添付する</span>
                   <span class="label-text-alt block text-base-content/60">
-                    登録後に添付画面が表示されます
+                    領収書、契約書、利用明細書など
                   </span>
                 </div>
               </label>
@@ -1172,7 +1172,7 @@ export default function JournalForm({
                 />
                 <div>
                   <span class="label-text font-medium">
-                    領収書を添付できない
+                    証憑を添付できない
                   </span>
                   <span class="label-text-alt block text-base-content/60">
                     自動販売機、交通費など
@@ -1182,12 +1182,12 @@ export default function JournalForm({
             </div>
           </div>
 
-          {/* 領収書ファイル選択 */}
+          {/* 証憑ファイル選択 */}
           {!isReceiptHardToCollect && (
             <div class="form-control">
               <label class="label">
                 <span class="label-text">
-                  領収書ファイル <span class="text-error">*</span>
+                  証憑ファイル <span class="text-error">*</span>
                 </span>
               </label>
               <input
@@ -1230,14 +1230,14 @@ export default function JournalForm({
               {!receiptFile && (
                 <label class="label">
                   <span class="label-text-alt text-warning">
-                    領収書のスキャン画像またはPDFを選択してください
+                    証憑のスキャン画像またはPDFを選択してください
                   </span>
                 </label>
               )}
             </div>
           )}
 
-          {/* 領収書を添付できない理由 */}
+          {/* 証憑を添付できない理由 */}
           {isReceiptHardToCollect && (
             <div class="form-control">
               <label class="label">
