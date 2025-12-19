@@ -7,14 +7,16 @@ interface Election {
   election_date: string;
 }
 
-interface Politician {
+interface VerifiedPolitician {
   id: string;
   name: string;
   name_kana: string | null;
+  party: string | null;
 }
 
 interface NewElectionFormProps {
   hubElections: Election[];
+  verifiedPolitician: VerifiedPolitician | null;
 }
 
 const ELECTION_TYPES: Record<string, string> = {
@@ -40,17 +42,13 @@ function groupByYear(elections: Election[]): Record<string, Election[]> {
 
 export default function NewElectionForm({
   hubElections,
+  verifiedPolitician,
 }: NewElectionFormProps) {
   const [selectedElectionId, setSelectedElectionId] = useState<string | null>(
     null
   );
-  const [politicianId, setPoliticianId] = useState("");
-  const [verifiedPolitician, setVerifiedPolitician] =
-    useState<Politician | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [politicianError, setPoliticianError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
@@ -70,36 +68,6 @@ export default function NewElectionForm({
 
   const filteredGroupedByYear = groupByYear(filteredElections);
 
-  // 政治家IDを検証
-  const handleVerifyPolitician = async () => {
-    if (!politicianId.trim()) {
-      setPoliticianError("政治家IDを入力してください");
-      return;
-    }
-
-    setIsVerifying(true);
-    setPoliticianError(null);
-    setVerifiedPolitician(null);
-
-    try {
-      const response = await fetch(`/api/politicians/${politicianId.trim()}`);
-
-      if (!response.ok) {
-        const json = await response.json();
-        throw new Error(json.error || "政治家の検証に失敗しました");
-      }
-
-      const { data } = await response.json();
-      setVerifiedPolitician(data);
-    } catch (err) {
-      setPoliticianError(
-        err instanceof Error ? err.message : "政治家IDが見つかりません"
-      );
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
 
@@ -109,7 +77,7 @@ export default function NewElectionForm({
     }
 
     if (!verifiedPolitician) {
-      setError("政治家IDを検証してください");
+      setError("政治家として認証されていません");
       return;
     }
 
@@ -255,101 +223,6 @@ export default function NewElectionForm({
               登録をリクエスト
             </a>
             してください。
-          </span>
-        </div>
-      </div>
-
-      {/* Step 2: 政治家IDを入力 */}
-      <div class="mb-6">
-        <h3 class="font-bold text-lg mb-4">2. 政治家を選択</h3>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">
-              政治家ID <span class="text-error">*</span>
-            </span>
-          </label>
-          <div class="flex gap-2">
-            <input
-              type="text"
-              placeholder="例: 00000000-0000-0000-0000-000000000000"
-              class={`input input-bordered flex-1 ${
-                politicianError ? "input-error" : ""
-              }`}
-              value={politicianId}
-              onInput={(e) => {
-                setPoliticianId((e.target as HTMLInputElement).value);
-                setVerifiedPolitician(null);
-                setPoliticianError(null);
-              }}
-            />
-            <button
-              type="button"
-              class={`btn ${
-                verifiedPolitician ? "btn-success" : "btn-primary"
-              }`}
-              onClick={handleVerifyPolitician}
-              disabled={isVerifying || !politicianId.trim()}
-            >
-              {isVerifying && (
-                <span class="loading loading-spinner loading-sm" />
-              )}
-              {verifiedPolitician ? "✓ 検証済み" : "検証"}
-            </button>
-          </div>
-          {politicianError && (
-            <label class="label">
-              <span class="label-text-alt text-error">{politicianError}</span>
-            </label>
-          )}
-          <label class="label">
-            <span class="label-text-alt text-base-content/70">
-              Hubに登録されている政治家のIDを入力し、検証ボタンをクリックしてください
-            </span>
-          </label>
-        </div>
-
-        {/* 検証済みの政治家情報を表示 */}
-        {verifiedPolitician && (
-          <div class="alert alert-success mt-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div>
-              <p class="font-bold">{verifiedPolitician.name}</p>
-              {verifiedPolitician.name_kana && (
-                <p class="text-sm">{verifiedPolitician.name_kana}</p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* 政治家が登録されていない場合の案内 */}
-        <div class="alert alert-info mt-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="stroke-current shrink-0 w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>
-            政治家がHubに登録されていない場合は、先にHubで登録を行ってください。
           </span>
         </div>
       </div>
