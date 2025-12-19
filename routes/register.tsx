@@ -36,10 +36,20 @@ export const handler: Handlers<RegisterData> = {
     const fullName = form.get("fullName")?.toString() || "";
     const role = form.get("role")?.toString() || "";
     const verificationDoc = form.get("verificationDoc") as File | null;
+    const tosAccepted = form.get("tosAccepted") === "on";
+    const privacyPolicyAccepted = form.get("privacyPolicyAccepted") === "on";
 
     // バリデーション
     if (!email || !password || !fullName || !role) {
       return ctx.render({ error: "すべての必須項目を入力してください" });
+    }
+
+    if (!tosAccepted) {
+      return ctx.render({ error: "利用規約への同意が必要です" });
+    }
+
+    if (!privacyPolicyAccepted) {
+      return ctx.render({ error: "プライバシーポリシーへの同意が必要です" });
     }
 
     if (password !== confirmPassword) {
@@ -422,6 +432,75 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
                 <label class="label">
                   <span class="label-text-alt text-base-content/40">
                     JPG, PNG, GIF, PDF / 5MB以下
+                  </span>
+                </label>
+              </div>
+
+              {/* 利用規約・プライバシーポリシー同意 */}
+              <div class="divider text-sm text-base-content/60">同意事項</div>
+
+              {/* フィッシング注意 */}
+              <div class="alert alert-info">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div class="text-xs">
+                  <p class="font-bold">フィッシングサイトにご注意ください</p>
+                  <p>
+                    Polimoney Ledger
+                    はオープンソースソフトウェアです。偽サイトに個人情報を入力しないよう、URLをご確認ください。
+                  </p>
+                </div>
+              </div>
+
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start gap-3">
+                  <input
+                    type="checkbox"
+                    name="tosAccepted"
+                    class="checkbox checkbox-primary"
+                    required
+                  />
+                  <span class="label-text">
+                    <a
+                      href="/terms"
+                      target="_blank"
+                      class="link link-primary"
+                    >
+                      利用規約
+                    </a>
+                    に同意する <span class="text-error">*</span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start gap-3">
+                  <input
+                    type="checkbox"
+                    name="privacyPolicyAccepted"
+                    class="checkbox checkbox-primary"
+                    required
+                  />
+                  <span class="label-text">
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      class="link link-primary"
+                    >
+                      プライバシーポリシー
+                    </a>
+                    に同意する <span class="text-error">*</span>
                   </span>
                 </label>
               </div>

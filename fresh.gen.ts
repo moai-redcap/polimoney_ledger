@@ -52,6 +52,7 @@ import * as $privacy from "./routes/privacy.tsx";
 import * as $register from "./routes/register.tsx";
 import * as $settings from "./routes/settings.tsx";
 import * as $sub_accounts from "./routes/sub-accounts.tsx";
+import * as $terms from "./routes/terms.tsx";
 import * as $welcome from "./routes/welcome.tsx";
 import * as $AddContactModal from "./islands/AddContactModal.tsx";
 import * as $ApproveButton from "./islands/ApproveButton.tsx";
@@ -129,6 +130,7 @@ const manifest = {
     "./routes/register.tsx": $register,
     "./routes/settings.tsx": $settings,
     "./routes/sub-accounts.tsx": $sub_accounts,
+    "./routes/terms.tsx": $terms,
     "./routes/welcome.tsx": $welcome,
   },
   islands: {

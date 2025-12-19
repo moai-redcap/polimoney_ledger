@@ -1,82 +1,124 @@
 import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
-import { CSS, render as renderMarkdown } from "@deno/gfm";
 
-interface PageData {
-  content: string;
-}
-
-export const handler: Handlers<PageData> = {
-  async GET(_req, ctx) {
-    const markdown = await Deno.readTextFile("docs/privacy-policy.md");
-    const content = renderMarkdown(markdown);
-    return ctx.render({ content });
-  },
-};
-
-export default function PrivacyPage({ data }: PageProps<PageData>) {
+export default function PrivacyPage() {
   return (
     <>
       <Head>
         <title>プライバシーポリシー - Polimoney Ledger</title>
         <link href="/styles.css" rel="stylesheet" />
-        <style dangerouslySetInnerHTML={{ __html: CSS }} />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              .markdown-body {
-                background-color: transparent;
-              }
-              .markdown-body h1 {
-                border-bottom: 1px solid oklch(var(--bc) / 0.2);
-                padding-bottom: 0.5rem;
-              }
-              .markdown-body h2 {
-                border-bottom: 1px solid oklch(var(--bc) / 0.1);
-                padding-bottom: 0.3rem;
-              }
-            `,
-          }}
-        />
       </Head>
-      <div class="min-h-screen bg-base-200">
-        {/* ヘッダー */}
-        <header class="navbar bg-base-100 border-b border-base-300">
-          <div class="container mx-auto">
-            <div class="flex-1">
-              <a href="/" class="flex items-center gap-2">
-                <img src="/logo-ledger.svg" alt="" class="h-8 w-8" />
-                <span
-                  class="font-bold text-xl text-emerald-600"
-                  style="font-feature-settings: 'palt' 1;"
-                >
-                  Polimoney Ledger
-                </span>
-              </a>
+      <div class="min-h-screen bg-base-200 py-8 px-4">
+        <div class="max-w-3xl mx-auto">
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body prose max-w-none">
+              <h1>プライバシーポリシー</h1>
+
+              <p class="text-sm text-base-content/60">
+                最終更新日: 2024年12月17日
+              </p>
+
+              <h2>1. 収集する情報</h2>
+              <p>
+                本サービスでは、以下の情報を収集します。
+              </p>
+
+              <h3>1.1 アカウント情報</h3>
+              <ul>
+                <li>氏名</li>
+                <li>メールアドレス</li>
+                <li>役割（政治家/会計責任者）</li>
+              </ul>
+
+              <h3>1.2 本人確認書類</h3>
+              <ul>
+                <li>議員証、選任届出書等の画像</li>
+              </ul>
+
+              <h3>1.3 収支データ</h3>
+              <ul>
+                <li>仕訳データ（日付、金額、摘要等）</li>
+                <li>関係者情報（寄附者、支払先等）</li>
+                <li>証憑（領収書等の画像）</li>
+              </ul>
+
+              <h2>2. 情報の利用目的</h2>
+              <p>収集した情報は、以下の目的で利用します。</p>
+              <ul>
+                <li>本サービスの提供・運営</li>
+                <li>ユーザーの本人確認</li>
+                <li>サービスの改善・新機能の開発</li>
+                <li>お問い合わせへの対応</li>
+              </ul>
+
+              <h2>3. 情報の共有</h2>
+              <p>
+                ユーザーの個人情報を、以下の場合を除き、第三者に提供することはありません。
+              </p>
+              <ul>
+                <li>ユーザーの同意がある場合</li>
+                <li>法令に基づく場合</li>
+                <li>
+                  本サービスの運営に必要な範囲で、業務委託先に提供する場合（Supabase等のインフラサービス）
+                </li>
+              </ul>
+
+              <h2>4. データの公開</h2>
+              <p>
+                本サービスに登録された収支データは、ユーザーの選択により、
+                Polimoney（政治資金可視化サービス）で公開される場合があります。
+                公開される情報は匿名化処理を行い、個人を特定できない形式で提供されます。
+              </p>
+
+              <h2>5. データの保存</h2>
+              <p>
+                ユーザーのデータは、Supabase（クラウドサービス）のサーバーに保存されます。
+                データは暗号化され、安全に管理されます。
+              </p>
+
+              <h2>6. ユーザーの権利</h2>
+              <p>ユーザーは、以下の権利を有します。</p>
+              <ul>
+                <li>自己のデータへのアクセス</li>
+                <li>データの訂正・削除の要求</li>
+                <li>アカウントの削除</li>
+              </ul>
+              <p>
+                これらの権利を行使する場合は、お問い合わせください。
+              </p>
+
+              <h2>7. Cookie の使用</h2>
+              <p>
+                本サービスでは、認証情報の管理のためにCookieを使用しています。
+                ブラウザの設定でCookieを無効にすることができますが、
+                その場合、本サービスの一部機能が利用できなくなる場合があります。
+              </p>
+
+              <h2>8. セキュリティ</h2>
+              <p>
+                本サービスは、ユーザーのデータを保護するために適切なセキュリティ対策を講じています。
+                ただし、インターネット上の通信は完全に安全ではないため、
+                絶対的なセキュリティを保証するものではありません。
+              </p>
+
+              <h2>9. 本ポリシーの変更</h2>
+              <p>
+                本ポリシーは、必要に応じて変更されることがあります。
+                重要な変更がある場合は、本サービス上でお知らせします。
+              </p>
+
+              <h2>10. お問い合わせ</h2>
+              <p>
+                本ポリシーに関するお問い合わせは、本サービスのお問い合わせフォームよりご連絡ください。
+              </p>
+
+              <div class="mt-8">
+                <a href="/register" class="btn btn-ghost">
+                  ← 登録画面に戻る
+                </a>
+              </div>
             </div>
           </div>
-        </header>
-
-        {/* コンテンツ */}
-        <main class="container mx-auto px-4 py-12 max-w-4xl">
-          <article
-            class="markdown-body bg-base-100 p-8 rounded-lg shadow"
-            dangerouslySetInnerHTML={{ __html: data.content }}
-          />
-
-          <div class="mt-12 text-center">
-            <a href="/" class="btn btn-outline">
-              トップページに戻る
-            </a>
-          </div>
-        </main>
-
-        {/* フッター */}
-        <footer class="footer footer-center p-6 bg-base-100 text-base-content border-t border-base-300">
-          <p class="text-base-content/60">
-            © 2025 Digital Democracy 2030. オープンソースプロジェクト
-          </p>
-        </footer>
+        </div>
       </div>
     </>
   );
