@@ -29,9 +29,15 @@ export const handler: Handlers<PageData> = {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Supabase Auth では display_name または full_name で保存される場合がある
+    const displayName =
+      user?.user_metadata?.display_name ||
+      user?.user_metadata?.full_name ||
+      "";
+
     return ctx.render({
       email: user?.email || "",
-      displayName: user?.user_metadata?.display_name || "",
+      displayName,
     });
   },
 };
