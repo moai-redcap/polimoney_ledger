@@ -74,7 +74,7 @@ export default function ExportCSVButton({
     <div class="dropdown dropdown-end">
       <button
         type="button"
-        class="btn btn-outline btn-sm gap-2"
+        class="btn btn-outline gap-2"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isLoading !== null}
       >
@@ -84,7 +84,7 @@ export default function ExportCSVButton({
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          class="w-4 h-4"
+          class="w-5 h-5"
         >
           <path
             strokeLinecap="round"
