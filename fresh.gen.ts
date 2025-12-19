@@ -8,6 +8,7 @@ import * as $_middleware from "./routes/_middleware.ts";
 import * as $api_contacts from "./routes/api/contacts.ts";
 import * as $api_election_requests from "./routes/api/election-requests.ts";
 import * as $api_elections from "./routes/api/elections.ts";
+import * as $api_export_csv from "./routes/api/export-csv.ts";
 import * as $api_export from "./routes/api/export.ts";
 import * as $api_journals from "./routes/api/journals.ts";
 import * as $api_journals_id_approve from "./routes/api/journals/[id]/approve.ts";
@@ -39,6 +40,7 @@ import * as $AddContactModal from "./islands/AddContactModal.tsx";
 import * as $ApproveButton from "./islands/ApproveButton.tsx";
 import * as $ElectionRequestForm from "./islands/ElectionRequestForm.tsx";
 import * as $ElectionSelector from "./islands/ElectionSelector.tsx";
+import * as $ExportCSVButton from "./islands/ExportCSVButton.tsx";
 import * as $JournalForm from "./islands/JournalForm.tsx";
 import * as $JournalFormDrawer from "./islands/JournalFormDrawer.tsx";
 import * as $JournalList from "./islands/JournalList.tsx";
@@ -59,6 +61,7 @@ const manifest = {
     "./routes/api/contacts.ts": $api_contacts,
     "./routes/api/election-requests.ts": $api_election_requests,
     "./routes/api/elections.ts": $api_elections,
+    "./routes/api/export-csv.ts": $api_export_csv,
     "./routes/api/export.ts": $api_export,
     "./routes/api/journals.ts": $api_journals,
     "./routes/api/journals/[id]/approve.ts": $api_journals_id_approve,
@@ -92,6 +95,7 @@ const manifest = {
     "./islands/ApproveButton.tsx": $ApproveButton,
     "./islands/ElectionRequestForm.tsx": $ElectionRequestForm,
     "./islands/ElectionSelector.tsx": $ElectionSelector,
+    "./islands/ExportCSVButton.tsx": $ExportCSVButton,
     "./islands/JournalForm.tsx": $JournalForm,
     "./islands/JournalFormDrawer.tsx": $JournalFormDrawer,
     "./islands/JournalList.tsx": $JournalList,

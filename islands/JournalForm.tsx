@@ -181,6 +181,16 @@ export default function JournalForm({
       return;
     }
 
+    // 領収書を添付できない場合は理由が必須
+    if (isReceiptHardToCollect && !receiptHardToCollectReason.trim()) {
+      setMessage({
+        type: "error",
+        text: "領収書を添付できない理由を入力してください",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/journals", {
         method: "POST",
@@ -864,31 +874,76 @@ export default function JournalForm({
             />
           </div>
 
-          {/* 領収証徴収困難 */}
+          {/* 領収書 */}
           <div class="form-control">
-            <label class="label cursor-pointer justify-start gap-2">
-              <input
-                type="checkbox"
-                class="checkbox"
-                checked={isReceiptHardToCollect}
-                onChange={(e) =>
-                  setIsReceiptHardToCollect(
-                    (e.target as HTMLInputElement).checked
-                  )
-                }
-              />
-              <span class="label-text">領収証を徴し難い</span>
-              <span class="label-text-alt text-base-content/60">
-                （自動販売機での購入など）
+            <label class="label">
+              <span class="label-text">
+                領収書 <span class="text-error">*</span>
               </span>
             </label>
+            <div class="flex flex-col gap-2">
+              <label class="label cursor-pointer justify-start gap-2 p-3 border rounded-lg hover:bg-base-200">
+                <input
+                  type="radio"
+                  name="receipt_option"
+                  class="radio radio-primary"
+                  checked={!isReceiptHardToCollect}
+                  onChange={() => setIsReceiptHardToCollect(false)}
+                />
+                <div>
+                  <span class="label-text font-medium">領収書を添付する</span>
+                  <span class="label-text-alt block text-base-content/60">
+                    登録後に添付画面が表示されます
+                  </span>
+                </div>
+              </label>
+              <label class="label cursor-pointer justify-start gap-2 p-3 border rounded-lg hover:bg-base-200">
+                <input
+                  type="radio"
+                  name="receipt_option"
+                  class="radio radio-warning"
+                  checked={isReceiptHardToCollect}
+                  onChange={() => setIsReceiptHardToCollect(true)}
+                />
+                <div>
+                  <span class="label-text font-medium">領収書を添付できない</span>
+                  <span class="label-text-alt block text-base-content/60">
+                    自動販売機、交通費など
+                  </span>
+                </div>
+              </label>
+            </div>
           </div>
 
+          {/* 領収書添付予定の注意 */}
+          {!isReceiptHardToCollect && (
+            <div class="alert alert-info">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="stroke-current shrink-0 w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span>
+                仕訳登録後に<strong>必ず領収書を添付</strong>してください。
+                添付忘れがあると収支報告書の作成時に問題になります。
+              </span>
+            </div>
+          )}
+
+          {/* 領収書を添付できない理由 */}
           {isReceiptHardToCollect && (
             <div class="form-control">
               <label class="label">
                 <span class="label-text">
-                  領収証を徴し難い理由 <span class="text-error">*</span>
+                  添付できない理由 <span class="text-error">*</span>
                 </span>
               </label>
               <input
@@ -901,8 +956,13 @@ export default function JournalForm({
                     (e.target as HTMLInputElement).value
                   )
                 }
-                required={isReceiptHardToCollect}
+                required
               />
+              <label class="label">
+                <span class="label-text-alt text-base-content/60">
+                  理由は収支報告書に記載されます
+                </span>
+              </label>
             </div>
           )}
         </div>
