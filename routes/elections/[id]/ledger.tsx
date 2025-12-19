@@ -225,12 +225,22 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
         </div>
 
         {/* タブナビゲーション */}
-        <div class="tabs tabs-boxed mb-6">
-          <a class="tab tab-active">仕訳一覧</a>
-          <a href={`/elections/${election.id}/assets`} class="tab">
+        <div role="tablist" class="tabs tabs-bordered mb-6">
+          <a role="tab" class="tab tab-active">
+            仕訳一覧
+          </a>
+          <a
+            role="tab"
+            href={`/elections/${election.id}/assets`}
+            class="tab hover:text-primary"
+          >
             資産一覧
           </a>
-          <a href={`/elections/${election.id}/members`} class="tab">
+          <a
+            role="tab"
+            href={`/elections/${election.id}/members`}
+            class="tab hover:text-primary"
+          >
             メンバー
           </a>
         </div>

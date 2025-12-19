@@ -121,31 +121,38 @@ export default function ElectionMembersPage({ data }: PageProps<PageData>) {
         currentPath="/elections"
         title={`${election.election_name} - メンバー管理`}
       >
-        <div class="max-w-4xl">
-          {/* 戻るリンク */}
-          <div class="mb-4">
-            <a
-              href={`/elections/${election.id}/ledger`}
-              class="btn btn-ghost btn-sm"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4 mr-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              台帳に戻る
-            </a>
-          </div>
+        {/* パンくずリスト */}
+        <div class="text-sm breadcrumbs mb-4">
+          <ul>
+            <li>
+              <a href="/elections">選挙一覧</a>
+            </li>
+            <li>{election.election_name}</li>
+          </ul>
+        </div>
 
+        {/* タブナビゲーション */}
+        <div role="tablist" class="tabs tabs-bordered mb-6">
+          <a
+            role="tab"
+            href={`/elections/${election.id}/ledger`}
+            class="tab hover:text-primary"
+          >
+            仕訳一覧
+          </a>
+          <a
+            role="tab"
+            href={`/elections/${election.id}/assets`}
+            class="tab hover:text-primary"
+          >
+            資産一覧
+          </a>
+          <a role="tab" class="tab tab-active">
+            メンバー
+          </a>
+        </div>
+
+        <div class="max-w-4xl">
           <MemberManager
             electionId={election.id}
             initialMembers={members}

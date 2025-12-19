@@ -41,12 +41,16 @@ export const handler: Handlers = {
         );
       }
 
+      // Supabase Auth では display_name または full_name で保存される場合がある
+      const displayName =
+        user.user_metadata?.display_name || user.user_metadata?.full_name || "";
+
       return new Response(
         JSON.stringify({
           data: {
             id: user.id,
             email: user.email,
-            display_name: user.user_metadata?.display_name || "",
+            display_name: displayName,
           },
         }),
         {
@@ -86,8 +90,9 @@ export const handler: Handlers = {
       const supabase =
         userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
 
+      // Supabase Auth Dashboard で "Display name" として表示されるのは full_name
       const { data, error } = await supabase.auth.updateUser({
-        data: { display_name: body.display_name.trim() },
+        data: { full_name: body.display_name.trim() },
       });
 
       if (error) {
@@ -98,12 +103,17 @@ export const handler: Handlers = {
         );
       }
 
+      const updatedDisplayName =
+        data.user.user_metadata?.display_name ||
+        data.user.user_metadata?.full_name ||
+        "";
+
       return new Response(
         JSON.stringify({
           data: {
             id: data.user.id,
             email: data.user.email,
-            display_name: data.user.user_metadata?.display_name || "",
+            display_name: updatedDisplayName,
           },
         }),
         {

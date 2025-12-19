@@ -203,11 +203,24 @@ export default function ElectionAssetsPage({ data }: PageProps<PageData>) {
         </div>
 
         {/* タブナビゲーション */}
-        <div class="tabs tabs-boxed mb-6">
-          <a href={`/elections/${election.id}/ledger`} class="tab">
+        <div role="tablist" class="tabs tabs-bordered mb-6">
+          <a
+            role="tab"
+            href={`/elections/${election.id}/ledger`}
+            class="tab hover:text-primary"
+          >
             仕訳一覧
           </a>
-          <a class="tab tab-active">資産一覧</a>
+          <a role="tab" class="tab tab-active">
+            資産一覧
+          </a>
+          <a
+            role="tab"
+            href={`/elections/${election.id}/members`}
+            class="tab hover:text-primary"
+          >
+            メンバー
+          </a>
         </div>
 
         {/* 資産サマリーカード */}
