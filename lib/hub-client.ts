@@ -431,6 +431,32 @@ export async function createPolitician(data: {
   return result.data;
 }
 
+/** 政治家更新用入力 */
+export interface UpdatePoliticianInput {
+  name?: string;
+  name_kana?: string | null;
+  official_url?: string | null;
+  party?: string | null;
+  photo_url?: string | null;
+}
+
+/**
+ * 政治家情報を更新（認証済み政治家のみ）
+ */
+export async function updatePolitician(
+  id: string,
+  data: UpdatePoliticianInput
+): Promise<Politician> {
+  const result = await fetchApi<ApiResponse<Politician>>(
+    `/api/v1/politicians/${id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }
+  );
+  return result.data;
+}
+
 /**
  * 認証済み政治家かどうかをチェック
  * ledger_user_id で Hub を検索し、認証済みの政治家を返す
