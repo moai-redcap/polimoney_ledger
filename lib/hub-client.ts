@@ -11,22 +11,21 @@
 const IS_PRODUCTION = Deno.env.get("APP_ENV") === "production";
 
 /**
- * Hub API URL
- * - APP_ENV=production: 本番環境 URL
- * - APP_ENV!=production: 開発環境 URL
+ * Hub API URL / API Key
+ * - 本番環境 (APP_ENV=production): PROD 設定を使用
+ * - 開発環境 (APP_ENV!=production): DEV 設定を使用
+ * - テストユーザー: 常に DEV 設定を使用
  */
-const HUB_API_URL = IS_PRODUCTION
-  ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
-  : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
+const HUB_API_URL_PROD =
+  Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org";
+const HUB_API_URL_DEV =
+  Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
+const HUB_API_KEY_PROD = Deno.env.get("HUB_API_KEY_PROD") || "";
+const HUB_API_KEY_DEV = Deno.env.get("HUB_API_KEY_DEV") || "";
 
-/**
- * Hub API キー
- * - APP_ENV=production: 本番環境キー
- * - APP_ENV!=production: 開発環境キー
- */
-const HUB_API_KEY = IS_PRODUCTION
-  ? Deno.env.get("HUB_API_KEY_PROD") || ""
-  : Deno.env.get("HUB_API_KEY_DEV") || "";
+// デフォルト URL/Key（後方互換性のため）
+const HUB_API_URL = IS_PRODUCTION ? HUB_API_URL_PROD : HUB_API_URL_DEV;
+const HUB_API_KEY = IS_PRODUCTION ? HUB_API_KEY_PROD : HUB_API_KEY_DEV;
 
 // API キーが設定されていない場合は起動時に警告
 if (!HUB_API_KEY) {
@@ -232,28 +231,40 @@ export interface ApiError {
 // ヘルパー関数
 // ============================================
 
+interface FetchApiOptions extends RequestInit {
+  /** テストユーザー判定用の userId（指定時はDEV環境を使用） */
+  userId?: string;
+}
+
 async function fetchApi<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: FetchApiOptions = {}
 ): Promise<T> {
+  const { userId, ...fetchOptions } = options;
+
+  // テストユーザーの場合は常に DEV 環境を使用
+  const useDevEnv = userId ? isTestUser(userId) : !IS_PRODUCTION;
+  const apiUrl = useDevEnv ? HUB_API_URL_DEV : HUB_API_URL_PROD;
+  const apiKey = useDevEnv ? HUB_API_KEY_DEV : HUB_API_KEY_PROD;
+
   // API キーのバリデーション
-  if (!HUB_API_KEY) {
+  if (!apiKey) {
     throw new Error(
       `Hub API key is not configured. Set ${
-        IS_PRODUCTION ? "HUB_API_KEY_PROD" : "HUB_API_KEY_DEV"
+        useDevEnv ? "HUB_API_KEY_DEV" : "HUB_API_KEY_PROD"
       } environment variable.`
     );
   }
 
-  const headers = new Headers(options.headers);
+  const headers = new Headers(fetchOptions.headers);
   headers.set("Content-Type", "application/json");
-  headers.set("X-API-Key", HUB_API_KEY);
+  headers.set("X-API-Key", apiKey);
 
-  const url = `${HUB_API_URL}${endpoint}`;
-  console.log(`[Hub API] Fetching: ${url}`);
+  const url = `${apiUrl}${endpoint}`;
+  console.log(`[Hub API] Fetching: ${url} (env: ${useDevEnv ? "DEV" : "PROD"})`);
 
   const response = await fetch(url, {
-    ...options,
+    ...fetchOptions,
     headers,
   });
 
@@ -343,7 +354,8 @@ export async function getManagedOrganizations(
 ): Promise<ManagedOrganization[]> {
   try {
     const result = await fetchApi<ApiResponse<ManagedOrganization[]>>(
-      `/api/v1/organizations/managed?ledger_user_id=${ledgerUserId}`
+      `/api/v1/organizations/managed?ledger_user_id=${ledgerUserId}`,
+      { userId: ledgerUserId }
     );
     return result.data;
   } catch (error) {

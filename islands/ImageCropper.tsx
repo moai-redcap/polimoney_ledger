@@ -145,7 +145,10 @@ export default function ImageCropper({
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        setMessage({ type: "error", text: "ファイルサイズは5MB以下にしてください" });
+        setMessage({
+          type: "error",
+          text: "ファイルサイズは5MB以下にしてください",
+        });
         return;
       }
 
@@ -226,7 +229,8 @@ export default function ImageCropper({
     } catch (error) {
       setMessage({
         type: "error",
-        text: error instanceof Error ? error.message : "アップロードに失敗しました",
+        text:
+          error instanceof Error ? error.message : "アップロードに失敗しました",
       });
     } finally {
       setIsUploading(false);
@@ -255,7 +259,9 @@ export default function ImageCropper({
       {message && (
         <div
           role="alert"
-          class={`alert ${message.type === "success" ? "alert-success" : "alert-error"}`}
+          class={`alert ${
+            message.type === "success" ? "alert-success" : "alert-error"
+          }`}
         >
           <span>{message.text}</span>
         </div>
