@@ -2,12 +2,10 @@ import { useState } from "preact/hooks";
 
 interface ProfileEditorProps {
   initialDisplayName: string;
-  email: string;
 }
 
 export default function ProfileEditor({
   initialDisplayName,
-  email,
 }: ProfileEditorProps) {
   const [displayName, setDisplayName] = useState(initialDisplayName);
   const [isEditing, setIsEditing] = useState(false);
@@ -70,24 +68,6 @@ export default function ProfileEditor({
         )}
 
         <div class="space-y-4 mt-4">
-          {/* メールアドレス */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">メールアドレス</span>
-            </label>
-            <input
-              type="email"
-              class="input input-bordered bg-base-200"
-              value={email}
-              disabled
-            />
-            <label class="label">
-              <span class="label-text-alt text-base-content/60">
-                メールアドレスは変更できません
-              </span>
-            </label>
-          </div>
-
           {/* 表示名 */}
           <div class="form-control">
             <label class="label">

@@ -46,19 +46,15 @@ export const handler: Handlers = {
       // Hub の政治家情報を更新
       const updated = await updatePolitician(politician.id, body);
 
-      return new Response(
-        JSON.stringify({ success: true, data: updated }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ success: true, data: updated }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     } catch (error) {
       console.error("Error updating politician profile:", error);
       return new Response(
         JSON.stringify({
-          error:
-            error instanceof Error ? error.message : "更新に失敗しました",
+          error: error instanceof Error ? error.message : "更新に失敗しました",
         }),
         {
           status: 500,

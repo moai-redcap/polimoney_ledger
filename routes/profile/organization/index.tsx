@@ -68,9 +68,7 @@ export default function OrganizationProfileListPage({
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span>
-                  編集したい政治団体を選択してください。
-                </span>
+                <span>編集したい政治団体を選択してください。</span>
               </div>
 
               <div class="card bg-base-100 shadow-xl">

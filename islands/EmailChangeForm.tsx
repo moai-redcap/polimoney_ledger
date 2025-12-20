@@ -17,7 +17,10 @@ export default function EmailChangeForm({ currentEmail }: Props) {
     e.preventDefault();
 
     if (!newEmail || newEmail === currentEmail) {
-      setMessage({ type: "error", text: "新しいメールアドレスを入力してください" });
+      setMessage({
+        type: "error",
+        text: "新しいメールアドレスを入力してください",
+      });
       return;
     }
 
@@ -116,16 +119,16 @@ export default function EmailChangeForm({ currentEmail }: Props) {
                 required
               />
               <label class="label">
-                <span class="label-text-alt">
-                  確認メールが送信されます
-                </span>
+                <span class="label-text-alt">確認メールが送信されます</span>
               </label>
             </div>
             <div class="flex gap-2">
               <button
                 type="submit"
                 class="btn btn-primary"
-                disabled={isSubmitting || !newEmail || newEmail === currentEmail}
+                disabled={
+                  isSubmitting || !newEmail || newEmail === currentEmail
+                }
               >
                 {isSubmitting ? "送信中..." : "変更を申請"}
               </button>

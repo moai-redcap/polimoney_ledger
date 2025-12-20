@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import ImageCropper from "./ImageCropper.tsx";
 
 interface Politician {
   id: string;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function PoliticianProfileForm({ politician }: Props) {
+  const [photoUrl, setPhotoUrl] = useState(politician.photo_url);
   const [name, setName] = useState(politician.name);
   const [nameKana, setNameKana] = useState(politician.name_kana || "");
   const [officialUrl, setOfficialUrl] = useState(politician.official_url || "");
@@ -110,10 +112,28 @@ export default function PoliticianProfileForm({ politician }: Props) {
         </div>
       )}
 
+      {/* プロフィール写真 */}
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title text-base">プロフィール写真</h3>
+          <p class="text-sm text-base-content/70 mb-4">
+            Polimoney の政治家ページで表示される顔写真です。円形で表示されます。
+          </p>
+          <ImageCropper
+            currentImageUrl={photoUrl}
+            shape="circle"
+            previewSize={128}
+            uploadType="politician_photo"
+            entityId={politician.id}
+            onUploadComplete={(url) => setPhotoUrl(url)}
+          />
+        </div>
+      </div>
+
       {/* 編集フォーム */}
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-          <h3 class="card-title text-base">公開プロフィール</h3>
+          <h3 class="card-title text-base">基本情報</h3>
           <p class="text-sm text-base-content/70 mb-4">
             この情報は公開ページで表示されます。
           </p>

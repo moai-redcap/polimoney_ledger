@@ -191,6 +191,7 @@ export default function OrganizationProfileEditPage({
                   sns_facebook: organization.sns_facebook || "",
                   sns_tiktok: organization.sns_tiktok || "",
                 }}
+                currentLogoUrl={organization.logo_url}
               />
             </>
           )}

@@ -49,7 +49,7 @@ export default function AccountPage({ data }: PageProps<PageData>) {
       <Layout currentPath="/account" title="アカウント">
         <div class="max-w-2xl space-y-6">
           {/* プロフィール編集 */}
-          <ProfileEditor initialDisplayName={displayName} email={email} />
+          <ProfileEditor initialDisplayName={displayName} />
 
           {/* メールアドレス変更 */}
           <EmailChangeForm currentEmail={email} />
