@@ -10,6 +10,11 @@ interface Politician {
   photo_url: string | null;
   verified_at: string | null;
   verified_domain: string | null;
+  // SNS
+  sns_x: string | null;
+  sns_instagram: string | null;
+  sns_facebook: string | null;
+  sns_tiktok: string | null;
 }
 
 interface Props {
@@ -22,6 +27,11 @@ export default function PoliticianProfileForm({ politician }: Props) {
   const [nameKana, setNameKana] = useState(politician.name_kana || "");
   const [officialUrl, setOfficialUrl] = useState(politician.official_url || "");
   const [party, setParty] = useState(politician.party || "");
+  // SNS
+  const [snsX, setSnsX] = useState(politician.sns_x || "");
+  const [snsInstagram, setSnsInstagram] = useState(politician.sns_instagram || "");
+  const [snsFacebook, setSnsFacebook] = useState(politician.sns_facebook || "");
+  const [snsTiktok, setSnsTiktok] = useState(politician.sns_tiktok || "");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
@@ -43,6 +53,10 @@ export default function PoliticianProfileForm({ politician }: Props) {
           name_kana: nameKana.trim() || null,
           official_url: officialUrl.trim() || null,
           party: party.trim() || null,
+          sns_x: snsX.trim() || null,
+          sns_instagram: snsInstagram.trim() || null,
+          sns_facebook: snsFacebook.trim() || null,
+          sns_tiktok: snsTiktok.trim() || null,
         }),
       });
 
@@ -134,18 +148,18 @@ export default function PoliticianProfileForm({ politician }: Props) {
       </div>
 
       {/* 編集フォーム */}
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h3 class="card-title text-base">基本情報</h3>
-          <p class="text-sm text-base-content/70 mb-4">
-            この情報は公開ページで表示されます。
-          </p>
+      <form onSubmit={handleSubmit} class="space-y-6">
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h3 class="card-title text-base">基本情報</h3>
+            <p class="text-sm text-base-content/70 mb-4">
+              <span class="text-error">*</span> は必須項目です。この情報は公開ページで表示されます。
+            </p>
 
-          <form onSubmit={handleSubmit} class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="form-control">
                 <label class="label">
-                  <span class="label-text">氏名 *</span>
+                  <span class="label-text">氏名 <span class="text-error">*</span></span>
                 </label>
                 <input
                   type="text"
@@ -198,21 +212,120 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   class="input input-bordered"
                   placeholder="https://"
                 />
+                <label class="label">
+                  <span class="label-text-alt text-base-content/60">
+                    認証済みドメイン ({politician.verified_domain}) のURLを推奨
+                  </span>
+                </label>
               </div>
             </div>
-
-            <div class="card-actions justify-end mt-6">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                disabled={isSubmitting || !name.trim()}
-              >
-                {isSubmitting ? "保存中..." : "変更を保存"}
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
-      </div>
+
+        {/* SNS リンク */}
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body">
+            <h3 class="card-title text-base">SNS リンク</h3>
+            <p class="text-sm text-base-content/70 mb-4">
+              公式アカウントのURLを入力してください。すべて任意項目です。
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">X (Twitter)</span>
+                </label>
+                <input
+                  type="url"
+                  value={snsX}
+                  onChange={(e) =>
+                    setSnsX((e.target as HTMLInputElement).value)
+                  }
+                  class="input input-bordered"
+                  placeholder="https://x.com/username"
+                />
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Instagram</span>
+                </label>
+                <input
+                  type="url"
+                  value={snsInstagram}
+                  onChange={(e) =>
+                    setSnsInstagram((e.target as HTMLInputElement).value)
+                  }
+                  class="input input-bordered"
+                  placeholder="https://instagram.com/username"
+                />
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Facebook</span>
+                </label>
+                <input
+                  type="url"
+                  value={snsFacebook}
+                  onChange={(e) =>
+                    setSnsFacebook((e.target as HTMLInputElement).value)
+                  }
+                  class="input input-bordered"
+                  placeholder="https://facebook.com/pagename"
+                />
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">TikTok</span>
+                </label>
+                <input
+                  type="url"
+                  value={snsTiktok}
+                  onChange={(e) =>
+                    setSnsTiktok((e.target as HTMLInputElement).value)
+                  }
+                  class="input input-bordered"
+                  placeholder="https://tiktok.com/@username"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 認証ドメイン変更 */}
+        {politician.verified_domain && (
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h3 class="card-title text-base">認証ドメイン</h3>
+              <p class="text-sm text-base-content/70 mb-4">
+                公式サイト URL は認証済みドメインである必要があります。
+              </p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-base-content/70">現在の認証ドメイン</p>
+                  <p class="font-mono text-lg">{politician.verified_domain}</p>
+                </div>
+                <a
+                  href="/verify/politician?change_domain=true"
+                  class="btn btn-outline btn-sm"
+                >
+                  ドメインを変更
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 送信ボタン */}
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            disabled={isSubmitting || !name.trim()}
+          >
+            {isSubmitting ? "保存中..." : "変更を保存"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
