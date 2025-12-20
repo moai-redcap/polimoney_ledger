@@ -41,7 +41,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
 
       setMessage({
         type: "success",
-        text: "確認メールを送信しました。メール内のリンクをクリックして変更を完了してください。",
+        text: "確認メールを送信しました。メール内の「メールアドレスを確認する」ボタンをクリックして変更を完了してください。",
       });
       setIsEditing(false);
       setNewEmail("");

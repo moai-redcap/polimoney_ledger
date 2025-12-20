@@ -93,7 +93,7 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
                   <strong>{data.email}</strong> 宛に確認メールを送信しました。
                 </p>
                 <p class="text-base-content/60 text-sm">
-                  メール内のリンクをクリックして、メールアドレスの確認を完了してください。
+                  メール内の「メールアドレスを確認する」ボタンをクリックして、確認を完了してください。
                   確認が完了すると、ログインできるようになります。
                 </p>
                 <div class="alert alert-info mt-4">
