@@ -256,7 +256,11 @@ async function fetchApi<T>(
   if (!apiKey) {
     throw new Error(
       `Hub API key is not configured. Set ${
-        useDevKey ? "HUB_API_KEY_DEV" : IS_PRODUCTION ? "HUB_API_KEY_PROD" : "HUB_API_KEY_DEV"
+        useDevKey
+          ? "HUB_API_KEY_DEV"
+          : IS_PRODUCTION
+          ? "HUB_API_KEY_PROD"
+          : "HUB_API_KEY_DEV"
       } environment variable.`
     );
   }
@@ -266,7 +270,9 @@ async function fetchApi<T>(
   headers.set("X-API-Key", apiKey);
 
   const url = `${apiUrl}${endpoint}`;
-  console.log(`[Hub API] Fetching: ${url} (key: ${useDevKey ? "DEV" : "default"})`);
+  console.log(
+    `[Hub API] Fetching: ${url} (key: ${useDevKey ? "DEV" : "default"})`
+  );
 
   const response = await fetch(url, {
     ...fetchOptions,
