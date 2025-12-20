@@ -17,6 +17,42 @@ interface Props {
   label?: string;
 }
 
+// Cropper.js の型定義（CDNから読み込むため）
+interface CropperInstance {
+  destroy(): void;
+  getCroppedCanvas(options?: {
+    width?: number;
+    height?: number;
+    imageSmoothingEnabled?: boolean;
+    imageSmoothingQuality?: "low" | "medium" | "high";
+  }): HTMLCanvasElement;
+}
+
+interface CropperConstructor {
+  new (
+    element: HTMLImageElement,
+    options?: {
+      aspectRatio?: number;
+      viewMode?: number;
+      dragMode?: string;
+      autoCropArea?: number;
+      restore?: boolean;
+      guides?: boolean;
+      center?: boolean;
+      highlight?: boolean;
+      cropBoxMovable?: boolean;
+      cropBoxResizable?: boolean;
+      toggleDragModeOnDblclick?: boolean;
+    }
+  ): CropperInstance;
+}
+
+declare global {
+  interface Window {
+    Cropper: CropperConstructor;
+  }
+}
+
 export default function ImageCropper({
   currentImageUrl,
   shape,
@@ -28,20 +64,74 @@ export default function ImageCropper({
 }: Props) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [cropPosition, setCropPosition] = useState({ x: 0, y: 0 });
-  const [scale, setScale] = useState(1);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [cropperLoaded, setCropperLoaded] = useState(false);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const cropperRef = useRef<CropperInstance | null>(null);
+
+  // Cropper.js を CDN から読み込み
+  useEffect(() => {
+    // CSS
+    if (!document.getElementById("cropper-css")) {
+      const link = document.createElement("link");
+      link.id = "cropper-css";
+      link.rel = "stylesheet";
+      link.href =
+        "https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css";
+      document.head.appendChild(link);
+    }
+
+    // JS
+    if (!window.Cropper) {
+      const script = document.createElement("script");
+      script.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js";
+      script.onload = () => setCropperLoaded(true);
+      document.head.appendChild(script);
+    } else {
+      setCropperLoaded(true);
+    }
+  }, []);
+
+  // Cropper インスタンスを初期化
+  useEffect(() => {
+    if (!previewUrl || !imageRef.current || !cropperLoaded || !window.Cropper) {
+      return;
+    }
+
+    // 既存の Cropper を破棄
+    if (cropperRef.current) {
+      cropperRef.current.destroy();
+    }
+
+    // 新しい Cropper を作成
+    cropperRef.current = new window.Cropper(imageRef.current, {
+      aspectRatio: 1,
+      viewMode: 1,
+      dragMode: "move",
+      autoCropArea: 0.8,
+      restore: false,
+      guides: true,
+      center: true,
+      highlight: false,
+      cropBoxMovable: true,
+      cropBoxResizable: true,
+      toggleDragModeOnDblclick: false,
+      // 円形プレビューはCSSで対応
+    });
+
+    return () => {
+      if (cropperRef.current) {
+        cropperRef.current.destroy();
+        cropperRef.current = null;
+      }
+    };
+  }, [previewUrl, cropperLoaded]);
 
   // ファイル選択時
   const handleFileChange = (e: Event) => {
@@ -54,143 +144,20 @@ export default function ImageCropper({
         return;
       }
 
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage({
+          type: "error",
+          text: "ファイルサイズは5MB以下にしてください",
+        });
+        return;
+      }
+
       setSelectedFile(file);
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-      setCropPosition({ x: 0, y: 0 });
-      setScale(1);
       setMessage(null);
     }
   };
-
-  // 画像読み込み完了時
-  const handleImageLoad = () => {
-    if (imageRef.current) {
-      setImageSize({
-        width: imageRef.current.naturalWidth,
-        height: imageRef.current.naturalHeight,
-      });
-      // 画像の中心に初期位置を設定
-      setCropPosition({
-        x: (imageRef.current.naturalWidth - previewSize / scale) / 2,
-        y: (imageRef.current.naturalHeight - previewSize / scale) / 2,
-      });
-    }
-  };
-
-  // ドラッグ開始
-  const handleMouseDown = (e: MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - cropPosition.x * scale,
-      y: e.clientY - cropPosition.y * scale,
-    });
-  };
-
-  // ドラッグ中
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-
-    const newX = (e.clientX - dragStart.x) / scale;
-    const newY = (e.clientY - dragStart.y) / scale;
-
-    // 境界チェック
-    const maxX = Math.max(0, imageSize.width - previewSize / scale);
-    const maxY = Math.max(0, imageSize.height - previewSize / scale);
-
-    setCropPosition({
-      x: Math.max(0, Math.min(maxX, newX)),
-      y: Math.max(0, Math.min(maxY, newY)),
-    });
-  };
-
-  // ドラッグ終了
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  // タッチイベント用
-  const handleTouchStart = (e: TouchEvent) => {
-    if (e.touches.length === 1) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      setIsDragging(true);
-      setDragStart({
-        x: touch.clientX - cropPosition.x * scale,
-        y: touch.clientY - cropPosition.y * scale,
-      });
-    }
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-
-    const touch = e.touches[0];
-    const newX = (touch.clientX - dragStart.x) / scale;
-    const newY = (touch.clientY - dragStart.y) / scale;
-
-    const maxX = Math.max(0, imageSize.width - previewSize / scale);
-    const maxY = Math.max(0, imageSize.height - previewSize / scale);
-
-    setCropPosition({
-      x: Math.max(0, Math.min(maxX, newX)),
-      y: Math.max(0, Math.min(maxY, newY)),
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
-  // スケール変更
-  const handleScaleChange = (e: Event) => {
-    const newScale = parseFloat((e.target as HTMLInputElement).value);
-    setScale(newScale);
-  };
-
-  // Canvas にプレビューを描画
-  useEffect(() => {
-    if (!canvasRef.current || !imageRef.current || !previewUrl) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = previewSize;
-    canvas.height = previewSize;
-
-    // 背景をクリア
-    ctx.clearRect(0, 0, previewSize, previewSize);
-
-    // 円形の場合はクリップ
-    if (shape === "circle") {
-      ctx.beginPath();
-      ctx.arc(
-        previewSize / 2,
-        previewSize / 2,
-        previewSize / 2,
-        0,
-        Math.PI * 2
-      );
-      ctx.closePath();
-      ctx.clip();
-    }
-
-    // 画像を描画
-    const sourceSize = previewSize / scale;
-    ctx.drawImage(
-      imageRef.current,
-      cropPosition.x,
-      cropPosition.y,
-      sourceSize,
-      sourceSize,
-      0,
-      0,
-      previewSize,
-      previewSize
-    );
-  }, [previewUrl, cropPosition, scale, previewSize, shape]);
 
   // クリーンアップ
   useEffect(() => {
@@ -203,17 +170,24 @@ export default function ImageCropper({
 
   // アップロード
   const handleUpload = async () => {
-    if (!selectedFile || !canvasRef.current) return;
+    if (!selectedFile || !cropperRef.current) return;
 
     setIsUploading(true);
     setMessage(null);
 
     try {
-      // Canvas からトリミング済み画像を取得
-      const canvas = canvasRef.current;
+      // Cropper からトリミング済み Canvas を取得
+      const canvas = cropperRef.current.getCroppedCanvas({
+        width: 512, // 出力サイズ
+        height: 512,
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: "high",
+      });
+
+      // Canvas を Blob に変換
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob(
-          (b) => {
+          (b: Blob | null) => {
             if (b) resolve(b);
             else reject(new Error("Failed to create blob"));
           },
@@ -265,6 +239,10 @@ export default function ImageCropper({
 
   // キャンセル
   const handleCancel = () => {
+    if (cropperRef.current) {
+      cropperRef.current.destroy();
+      cropperRef.current = null;
+    }
     setSelectedFile(null);
     setPreviewUrl(null);
     setMessage(null);
@@ -295,7 +273,7 @@ export default function ImageCropper({
           <div
             class={`${
               shape === "circle" ? "rounded-full" : "rounded-lg"
-            } bg-base-200 flex items-center justify-center overflow-hidden`}
+            } bg-base-200 flex items-center justify-center overflow-hidden border-2 border-base-300`}
             style={{ width: previewSize, height: previewSize }}
           >
             {currentImageUrl ? (
@@ -335,95 +313,40 @@ export default function ImageCropper({
         </div>
       )}
 
-      {/* トリミングエディタ */}
+      {/* Cropper エディタ */}
       {previewUrl && (
         <div class="space-y-4">
-          <div class="flex flex-col sm:flex-row gap-4 items-start">
-            {/* 元画像エリア */}
-            <div
-              ref={containerRef}
-              class="relative overflow-hidden border rounded-lg cursor-move"
-              style={{
-                width: Math.min(300, imageSize.width * scale),
-                height: Math.min(300, imageSize.height * scale),
-              }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              {/* 非表示の元画像 */}
-              <img
-                ref={imageRef}
-                src={previewUrl}
-                alt="Source"
-                class="hidden"
-                onLoad={handleImageLoad}
-              />
-
-              {/* 表示用画像 */}
-              <img
-                src={previewUrl}
-                alt="Preview"
-                class="pointer-events-none"
-                style={{
-                  transform: `scale(${scale})`,
-                  transformOrigin: "top left",
-                }}
-                draggable={false}
-              />
-
-              {/* クリップ領域表示 */}
-              <div
-                class={`absolute border-2 border-white shadow-lg pointer-events-none ${
-                  shape === "circle" ? "rounded-full" : ""
-                }`}
-                style={{
-                  width: previewSize,
-                  height: previewSize,
-                  left: cropPosition.x * scale,
-                  top: cropPosition.y * scale,
-                  boxShadow:
-                    "0 0 0 9999px rgba(0, 0, 0, 0.5), inset 0 0 0 2px white",
-                }}
-              />
-            </div>
-
-            {/* プレビュー */}
-            <div class="flex flex-col items-center gap-2">
-              <p class="text-sm text-base-content/70">プレビュー</p>
-              <canvas
-                ref={canvasRef}
-                class={`border ${
-                  shape === "circle" ? "rounded-full" : "rounded-lg"
-                }`}
-                style={{ width: previewSize, height: previewSize }}
-              />
-            </div>
-          </div>
-
-          {/* ズームスライダー */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">ズーム</span>
-              <span class="label-text-alt">{Math.round(scale * 100)}%</span>
-            </label>
-            <input
-              type="range"
-              min="0.5"
-              max="3"
-              step="0.1"
-              value={scale}
-              onChange={handleScaleChange}
-              class="range range-sm"
+          {/* Cropper コンテナ */}
+          <div
+            class="w-full max-w-md mx-auto bg-base-200 rounded-lg overflow-hidden"
+            style={{ maxHeight: "400px" }}
+          >
+            <img
+              ref={imageRef}
+              src={previewUrl}
+              alt="Crop target"
+              class="block max-w-full"
+              style={{ display: "block" }}
             />
           </div>
 
+          {/* 操作ガイド */}
+          <p class="text-sm text-base-content/70 text-center">
+            ドラッグで位置調整、スクロールでズーム、四隅をドラッグでサイズ変更
+          </p>
+
+          {/* 円形プレビュー用のCSS追加 */}
+          {shape === "circle" && (
+            <style>{`
+              .cropper-view-box,
+              .cropper-face {
+                border-radius: 50%;
+              }
+            `}</style>
+          )}
+
           {/* 操作ボタン */}
-          <div class="flex gap-2">
+          <div class="flex justify-center gap-2">
             <button
               type="button"
               class="btn btn-primary"
