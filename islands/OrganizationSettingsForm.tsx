@@ -10,8 +10,6 @@ interface OrganizationFormData {
   office_address: string;
   representative_name: string;
   accountant_name: string;
-  contact_email: string;
-  description: string;
   sns_x: string;
   sns_instagram: string;
   sns_facebook: string;
@@ -77,8 +75,6 @@ export default function OrganizationSettingsForm({
           office_address: formData.office_address || null,
           representative_name: formData.representative_name || null,
           accountant_name: formData.accountant_name || null,
-          contact_email: formData.contact_email || null,
-          description: formData.description || null,
           sns_x: formData.sns_x || null,
           sns_instagram: formData.sns_instagram || null,
           sns_facebook: formData.sns_facebook || null,
@@ -273,44 +269,6 @@ export default function OrganizationSettingsForm({
                 value={formData.accountant_name}
                 onChange={handleChange}
                 class="input input-bordered"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 連絡先・活動概要 */}
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title">連絡先・活動概要</h2>
-
-          <div class="grid grid-cols-1 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">
-                  問い合わせ先メールアドレス（公開用）
-                </span>
-              </label>
-              <input
-                type="email"
-                name="contact_email"
-                value={formData.contact_email}
-                onChange={handleChange}
-                class="input input-bordered"
-                placeholder="contact@example.com"
-              />
-            </div>
-
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">活動概要</span>
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                class="textarea textarea-bordered h-24"
-                placeholder="団体の活動内容や目標などを記載してください"
               />
             </div>
           </div>

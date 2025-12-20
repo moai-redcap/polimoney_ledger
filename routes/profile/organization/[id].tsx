@@ -192,8 +192,6 @@ export default function OrganizationProfileEditPage({
                   office_address: organization.office_address || "",
                   representative_name: organization.representative_name || "",
                   accountant_name: organization.accountant_name || "",
-                  contact_email: organization.contact_email || "",
-                  description: organization.description || "",
                   sns_x: organization.sns_x || "",
                   sns_instagram: organization.sns_instagram || "",
                   sns_facebook: organization.sns_facebook || "",
