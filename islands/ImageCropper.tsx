@@ -166,7 +166,13 @@ export default function ImageCropper({
     // 円形の場合はクリップ
     if (shape === "circle") {
       ctx.beginPath();
-      ctx.arc(previewSize / 2, previewSize / 2, previewSize / 2, 0, Math.PI * 2);
+      ctx.arc(
+        previewSize / 2,
+        previewSize / 2,
+        previewSize / 2,
+        0,
+        Math.PI * 2
+      );
       ctx.closePath();
       ctx.clip();
     }
@@ -249,7 +255,8 @@ export default function ImageCropper({
     } catch (error) {
       setMessage({
         type: "error",
-        text: error instanceof Error ? error.message : "アップロードに失敗しました",
+        text:
+          error instanceof Error ? error.message : "アップロードに失敗しました",
       });
     } finally {
       setIsUploading(false);
@@ -390,7 +397,9 @@ export default function ImageCropper({
               <p class="text-sm text-base-content/70">プレビュー</p>
               <canvas
                 ref={canvasRef}
-                class={`border ${shape === "circle" ? "rounded-full" : "rounded-lg"}`}
+                class={`border ${
+                  shape === "circle" ? "rounded-full" : "rounded-lg"
+                }`}
                 style={{ width: previewSize, height: previewSize }}
               />
             </div>

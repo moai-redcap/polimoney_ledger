@@ -85,6 +85,8 @@ export interface Organization {
   sns_instagram: string | null;
   sns_facebook: string | null;
   sns_tiktok: string | null;
+  // ロゴ【v2.2 追加】
+  logo_url: string | null;
   // 認証情報【v2.1 追加】
   is_verified: boolean;
   is_active: boolean;
@@ -92,7 +94,7 @@ export interface Organization {
   updated_at: string;
 }
 
-/** 政治団体更新用入力【v2.1 追加】 */
+/** 政治団体更新用入力【v2.1 追加, v2.2 logo_url追加】 */
 export interface UpdateOrganizationInput {
   name?: string;
   type?: string;
@@ -109,6 +111,7 @@ export interface UpdateOrganizationInput {
   sns_instagram?: string | null;
   sns_facebook?: string | null;
   sns_tiktok?: string | null;
+  logo_url?: string | null;
 }
 
 export interface Politician {

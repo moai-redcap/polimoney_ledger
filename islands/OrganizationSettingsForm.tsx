@@ -1,4 +1,5 @@
 import { useState } from "preact/hooks";
+import ImageCropper from "./ImageCropper.tsx";
 
 interface OrganizationFormData {
   name: string;
@@ -20,6 +21,8 @@ interface OrganizationFormData {
 interface Props {
   organizationId: string;
   initialData: OrganizationFormData;
+  /** 現在のロゴURL */
+  currentLogoUrl?: string | null;
 }
 
 const organizationTypes: { value: string; label: string }[] = [
@@ -32,8 +35,10 @@ const organizationTypes: { value: string; label: string }[] = [
 export default function OrganizationSettingsForm({
   organizationId,
   initialData,
+  currentLogoUrl,
 }: Props) {
   const [formData, setFormData] = useState<OrganizationFormData>(initialData);
+  const [logoUrl, setLogoUrl] = useState<string | null>(currentLogoUrl || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -107,6 +112,24 @@ export default function OrganizationSettingsForm({
           <span>{message.text}</span>
         </div>
       )}
+
+      {/* ロゴ */}
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title">団体ロゴ</h2>
+          <p class="text-sm text-base-content/70 mb-4">
+            政治団体のロゴ画像を設定できます。正方形で表示されます。
+          </p>
+          <ImageCropper
+            currentImageUrl={logoUrl}
+            shape="square"
+            previewSize={96}
+            uploadType="organization_logo"
+            entityId={organizationId}
+            onUploadComplete={(url) => setLogoUrl(url)}
+          />
+        </div>
+      </div>
 
       {/* 基本情報 */}
       <div class="card bg-base-100 shadow">
