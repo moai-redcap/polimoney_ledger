@@ -8,6 +8,8 @@ import {
   createOrganizationManagerVerification,
   sendOrganizationManagerVerificationCode,
   verifyOrganizationManagerEmail,
+  verifyOrganizationManagerDns,
+  type PoliticalFundReportInfo,
 } from "../../../lib/hub-client.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -124,23 +126,34 @@ organizationsRouter.post("/manager-verify", async (c) => {
   }
 
   try {
+    // ユーザーのメールアドレスを取得
+    const supabase =
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const { data: userData } = await supabase.auth.getUser();
+    const userEmail = userData?.user?.email || "";
+
     const body = await c.req.json<{
       organization_id?: string;
       organization_name: string;
+      organization_type?: string;
       official_email: string;
       role_in_organization?: string;
       request_type?: "new" | "domain_change";
       previous_domain?: string;
+      political_fund_report_info: PoliticalFundReportInfo;
     }>();
 
     const result = await createOrganizationManagerVerification({
       ledger_user_id: userId,
+      ledger_user_email: userEmail,
       organization_id: body.organization_id,
       organization_name: body.organization_name,
+      organization_type: body.organization_type,
       official_email: body.official_email,
       role_in_organization: body.role_in_organization,
       request_type: body.request_type,
       previous_domain: body.previous_domain,
+      political_fund_report_info: body.political_fund_report_info,
     });
 
     return c.json({ data: result }, 201);
@@ -209,6 +222,32 @@ organizationsRouter.post("/manager-verify/:id/verify-code", async (c) => {
     return c.json(
       {
         error: error instanceof Error ? error.message : "認証に失敗しました",
+      },
+      500
+    );
+  }
+});
+
+// POST /organizations/manager-verify/:id/verify-dns - DNS TXT認証確認
+organizationsRouter.post("/manager-verify/:id/verify-dns", async (c) => {
+  const userId = c.get("userId");
+  if (!userId) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  const verificationId = c.req.param("id");
+
+  try {
+    const result = await verifyOrganizationManagerDns(verificationId, {
+      userId,
+    });
+    return c.json(result);
+  } catch (error) {
+    console.error("Error verifying DNS TXT:", error);
+    return c.json(
+      {
+        error:
+          error instanceof Error ? error.message : "DNS TXT認証に失敗しました",
       },
       500
     );

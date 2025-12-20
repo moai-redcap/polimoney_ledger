@@ -143,16 +143,44 @@ export interface Politician {
 // 政治家認証申請 API【v2 追加】
 // ============================================
 
+/** 立候補届出情報 */
+export interface CandidateRegistrationInfo {
+  election_name: string;
+  district: string;
+  candidate_name: string;
+  registration_date: string;
+}
+
+/** 政治資金収支報告書情報 */
+export interface PoliticalFundReportInfo {
+  organization_name: string;
+  representative_name: string;
+  registration_authority: string;
+}
+
 export interface PoliticianVerification {
   id: string;
   ledger_user_id: string;
   politician_id: string | null;
-  name: string;
+  politician_name: string;
   official_email: string;
+  official_domain: string;
   official_url: string | null;
   party: string | null;
-  email_verified: boolean;
-  status: "pending" | "email_sent" | "email_verified" | "approved" | "rejected";
+  status:
+    | "pending"
+    | "email_sent"
+    | "email_verified"
+    | "dns_verified"
+    | "approved"
+    | "rejected";
+  request_type: string;
+  previous_domain: string | null;
+  verification_method: string;
+  is_lg_domain: boolean;
+  dns_txt_token: string | null;
+  candidate_registration_info: CandidateRegistrationInfo | null;
+  political_fund_report_info: PoliticalFundReportInfo | null;
   rejection_reason: string | null;
   created_at: string;
   updated_at: string;
@@ -160,6 +188,7 @@ export interface PoliticianVerification {
 
 export interface CreatePoliticianVerificationInput {
   ledger_user_id: string;
+  ledger_user_email: string;
   name: string;
   official_email: string;
   official_url?: string;
@@ -169,6 +198,10 @@ export interface CreatePoliticianVerificationInput {
   request_type?: "new" | "domain_change";
   /** ドメイン変更時の変更前ドメイン */
   previous_domain?: string;
+  /** 立候補届出情報（どちらか必須） */
+  candidate_registration_info?: CandidateRegistrationInfo;
+  /** 政治資金収支報告書情報（どちらか必須） */
+  political_fund_report_info?: PoliticalFundReportInfo;
 }
 
 // ============================================
@@ -181,9 +214,21 @@ export interface OrganizationManagerVerification {
   organization_id: string | null;
   organization_name: string;
   official_email: string;
+  official_domain: string;
   role_in_organization: string | null;
-  email_verified: boolean;
-  status: "pending" | "email_sent" | "email_verified" | "approved" | "rejected";
+  status:
+    | "pending"
+    | "email_sent"
+    | "email_verified"
+    | "dns_verified"
+    | "approved"
+    | "rejected";
+  request_type: string;
+  previous_domain: string | null;
+  verification_method: string;
+  is_lg_domain: boolean;
+  dns_txt_token: string | null;
+  political_fund_report_info: PoliticalFundReportInfo | null;
   rejection_reason: string | null;
   created_at: string;
   updated_at: string;
@@ -191,14 +236,18 @@ export interface OrganizationManagerVerification {
 
 export interface CreateOrganizationManagerVerificationInput {
   ledger_user_id: string;
+  ledger_user_email: string;
   organization_id?: string;
   organization_name: string;
+  organization_type?: string;
   official_email: string;
   role_in_organization?: string;
   /** 申請種別: new=新規, domain_change=ドメイン変更 */
   request_type?: "new" | "domain_change";
   /** ドメイン変更時の変更前ドメイン */
   previous_domain?: string;
+  /** 政治資金収支報告書情報（必須） */
+  political_fund_report_info: PoliticalFundReportInfo;
 }
 
 export interface ElectionRequest {
@@ -608,6 +657,23 @@ export async function verifyPoliticianEmail(
   return result;
 }
 
+/**
+ * DNS TXT認証を検証
+ */
+export async function verifyPoliticianDns(
+  verificationId: string,
+  options: { userId?: string } = {}
+): Promise<{ message: string }> {
+  const result = await fetchApi<{ message: string }>(
+    `/api/v1/politician-verifications/${verificationId}/verify-dns`,
+    {
+      method: "POST",
+      userId: options.userId,
+    }
+  );
+  return result;
+}
+
 // ============================================
 // 政治団体管理者認証申請 API【v2 追加】
 // ============================================
@@ -669,6 +735,23 @@ export async function verifyOrganizationManagerEmail(
     {
       method: "POST",
       body: JSON.stringify({ code }),
+      userId: options.userId,
+    }
+  );
+  return result;
+}
+
+/**
+ * DNS TXT認証を検証
+ */
+export async function verifyOrganizationManagerDns(
+  verificationId: string,
+  options: { userId?: string } = {}
+): Promise<{ message: string }> {
+  const result = await fetchApi<{ message: string }>(
+    `/api/v1/organization-manager-verifications/${verificationId}/verify-dns`,
+    {
+      method: "POST",
       userId: options.userId,
     }
   );
