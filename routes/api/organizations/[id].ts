@@ -23,7 +23,7 @@ export const handler: Handlers = {
       const body: UpdateOrganizationInput = await req.json();
 
       // Hub API に転送
-      const updated = await updateOrganization(organizationId, body, { userId });
+      const updated = await updateOrganization(organizationId, body);
 
       return new Response(
         JSON.stringify({

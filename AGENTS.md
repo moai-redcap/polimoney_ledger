@@ -79,7 +79,29 @@ python make_docs_context_v2.py
 
 ---
 
-## 5. 開発環境とツール (Environment & Tooling)
+## 5. テストアカウントとテストデータ (TEST_DATA)
+
+開発・テスト用のダミーデータの仕様を定義します。
+
+### 重要なポイント
+
+- **テストユーザー ID:** `00000000-0000-0000-0000-000000000001`
+- **テストデータは本番 Hub に保存** - `is_test = true` フラグで識別
+- **公開 API からは除外** - `is_test = false` のデータのみ返却
+
+### 参照タイミング
+
+以下のタイミングで `docs/TEST_DATA.md` を参照してください：
+
+- **テストアカウントでの動作確認時** - テストデータの構成を確認
+- **Hub API 連携の実装時** - テストデータフラグの扱いを確認
+- **同期機能（sync API）の修正時** - `is_test` フラグの設定を確認
+
+@./docs/TEST_DATA.md
+
+---
+
+## 6. 開発環境とツール (Environment & Tooling)
 
 - **IDE:** VS Code / Cursor (推奨)
 - **Configuration:** `.vscode/` ディレクトリ内の設定ファイルに従ってください。
@@ -103,7 +125,7 @@ Flutter 版のコードは `legacy/flutter/` にあります。 詳細は
 
 ---
 
-## 6. レガシーコードについて
+## 7. レガシーコードについて
 
 `legacy/flutter/` ディレクトリには Flutter 版のコードが保存されています。
 新規機能開発は Fresh (Deno) で行いますが、Flutter 版の保守作業が必要な場合は

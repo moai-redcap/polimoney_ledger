@@ -18,8 +18,7 @@ export const handler: Handlers = {
 
     try {
       const result = await sendOrganizationManagerVerificationCode(
-        verificationId,
-        { userId }
+        verificationId
       );
 
       return new Response(JSON.stringify({ success: true, ...result }), {

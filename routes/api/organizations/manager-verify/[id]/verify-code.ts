@@ -20,8 +20,7 @@ export const handler: Handlers = {
       const body = await req.json();
       const result = await verifyOrganizationManagerEmail(
         verificationId,
-        body.code,
-        { userId }
+        body.code
       );
 
       return new Response(JSON.stringify({ success: true, ...result }), {

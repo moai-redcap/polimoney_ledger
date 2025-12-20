@@ -14,18 +14,17 @@ const IS_PRODUCTION = Deno.env.get("APP_ENV") === "production";
  * Hub API URL / API Key
  * - 本番環境 (APP_ENV=production): PROD 設定を使用
  * - 開発環境 (APP_ENV!=production): DEV 設定を使用
- * - テストユーザー: 常に DEV 設定を使用
+ *
+ * 注意: テストユーザーのデータも本番 Hub に保存され、is_test フラグで区別されます。
+ * 環境による Hub の切り替えは行いません。
  */
-const HUB_API_URL_PROD =
-  Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org";
-const HUB_API_URL_DEV =
-  Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
-const HUB_API_KEY_PROD = Deno.env.get("HUB_API_KEY_PROD") || "";
-const HUB_API_KEY_DEV = Deno.env.get("HUB_API_KEY_DEV") || "";
+const HUB_API_URL = IS_PRODUCTION
+  ? Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org"
+  : Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
 
-// デフォルト URL/Key（後方互換性のため）
-const HUB_API_URL = IS_PRODUCTION ? HUB_API_URL_PROD : HUB_API_URL_DEV;
-const HUB_API_KEY = IS_PRODUCTION ? HUB_API_KEY_PROD : HUB_API_KEY_DEV;
+const HUB_API_KEY = IS_PRODUCTION
+  ? Deno.env.get("HUB_API_KEY_PROD") || ""
+  : Deno.env.get("HUB_API_KEY_DEV") || "";
 
 // API キーが設定されていない場合は起動時に警告
 if (!HUB_API_KEY) {
@@ -231,42 +230,28 @@ export interface ApiError {
 // ヘルパー関数
 // ============================================
 
-interface FetchApiOptions extends RequestInit {
-  /** テストユーザー判定用の userId（指定時はDEV環境を使用） */
-  userId?: string;
-}
-
 async function fetchApi<T>(
   endpoint: string,
-  options: FetchApiOptions = {}
+  options: RequestInit = {}
 ): Promise<T> {
-  const { userId, ...fetchOptions } = options;
-
-  // テストユーザーの場合は常に DEV 環境を使用
-  const useDevEnv = userId ? isTestUser(userId) : !IS_PRODUCTION;
-  const apiUrl = useDevEnv ? HUB_API_URL_DEV : HUB_API_URL_PROD;
-  const apiKey = useDevEnv ? HUB_API_KEY_DEV : HUB_API_KEY_PROD;
-
   // API キーのバリデーション
-  if (!apiKey) {
+  if (!HUB_API_KEY) {
     throw new Error(
       `Hub API key is not configured. Set ${
-        useDevEnv ? "HUB_API_KEY_DEV" : "HUB_API_KEY_PROD"
+        IS_PRODUCTION ? "HUB_API_KEY_PROD" : "HUB_API_KEY_DEV"
       } environment variable.`
     );
   }
 
-  const headers = new Headers(fetchOptions.headers);
+  const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
-  headers.set("X-API-Key", apiKey);
+  headers.set("X-API-Key", HUB_API_KEY);
 
-  const url = `${apiUrl}${endpoint}`;
-  console.log(
-    `[Hub API] Fetching: ${url} (env: ${useDevEnv ? "DEV" : "PROD"})`
-  );
+  const url = `${HUB_API_URL}${endpoint}`;
+  console.log(`[Hub API] Fetching: ${url}`);
 
   const response = await fetch(url, {
-    ...fetchOptions,
+    ...options,
     headers,
   });
 
@@ -317,13 +302,9 @@ export async function getOrganizations(): Promise<Organization[]> {
   return result.data;
 }
 
-export async function getOrganization(
-  id: string,
-  options: { userId?: string } = {}
-): Promise<Organization> {
+export async function getOrganization(id: string): Promise<Organization> {
   const result = await fetchApi<ApiResponse<Organization>>(
-    `/api/v1/organizations/${id}`,
-    { userId: options.userId }
+    `/api/v1/organizations/${id}`
   );
   return result.data;
 }
@@ -333,15 +314,13 @@ export async function getOrganization(
  */
 export async function updateOrganization(
   id: string,
-  data: UpdateOrganizationInput,
-  options: { userId?: string } = {}
+  data: UpdateOrganizationInput
 ): Promise<Organization> {
   const result = await fetchApi<ApiResponse<Organization>>(
     `/api/v1/organizations/${id}`,
     {
       method: "PUT",
       body: JSON.stringify(data),
-      userId: options.userId,
     }
   );
   return result.data;
@@ -362,8 +341,7 @@ export async function getManagedOrganizations(
 ): Promise<ManagedOrganization[]> {
   try {
     const result = await fetchApi<ApiResponse<ManagedOrganization[]>>(
-      `/api/v1/organizations/managed?ledger_user_id=${ledgerUserId}`,
-      { userId: ledgerUserId }
+      `/api/v1/organizations/managed?ledger_user_id=${ledgerUserId}`
     );
     return result.data;
   } catch (error) {
@@ -426,40 +404,29 @@ export async function getAccountCode(code: string): Promise<AccountCode> {
 // 政治家 API
 // ============================================
 
-export async function getPoliticians(
-  options: { userId?: string } = {}
-): Promise<Politician[]> {
+export async function getPoliticians(): Promise<Politician[]> {
   const result = await fetchApi<ApiResponse<Politician[]>>(
-    "/api/v1/politicians",
-    { userId: options.userId }
+    "/api/v1/politicians"
   );
   return result.data;
 }
 
-export async function getPolitician(
-  id: string,
-  options: { userId?: string } = {}
-): Promise<Politician> {
+export async function getPolitician(id: string): Promise<Politician> {
   const result = await fetchApi<ApiResponse<Politician>>(
-    `/api/v1/politicians/${id}`,
-    { userId: options.userId }
+    `/api/v1/politicians/${id}`
   );
   return result.data;
 }
 
-export async function createPolitician(
-  data: {
-    name: string;
-    name_kana?: string;
-  },
-  options: { userId?: string } = {}
-): Promise<Politician> {
+export async function createPolitician(data: {
+  name: string;
+  name_kana?: string;
+}): Promise<Politician> {
   const result = await fetchApi<ApiResponse<Politician>>(
     "/api/v1/politicians",
     {
       method: "POST",
       body: JSON.stringify(data),
-      userId: options.userId,
     }
   );
   return result.data;
@@ -479,15 +446,13 @@ export interface UpdatePoliticianInput {
  */
 export async function updatePolitician(
   id: string,
-  data: UpdatePoliticianInput,
-  options: { userId?: string } = {}
+  data: UpdatePoliticianInput
 ): Promise<Politician> {
   const result = await fetchApi<ApiResponse<Politician>>(
     `/api/v1/politicians/${id}`,
     {
       method: "PUT",
       body: JSON.stringify(data),
-      userId: options.userId,
     }
   );
   return result.data;
@@ -501,7 +466,7 @@ export async function getVerifiedPoliticianByUserId(
   ledgerUserId: string
 ): Promise<Politician | null> {
   try {
-    const politicians = await getPoliticians({ userId: ledgerUserId });
+    const politicians = await getPoliticians();
     const verified = politicians.find(
       (p) => p.ledger_user_id === ledgerUserId && p.is_verified
     );
@@ -527,7 +492,6 @@ export async function createPoliticianVerification(
     {
       method: "POST",
       body: JSON.stringify(data),
-      userId: data.ledger_user_id,
     }
   );
   return result.data;
@@ -540,8 +504,7 @@ export async function getPoliticianVerificationsByUser(
   ledgerUserId: string
 ): Promise<PoliticianVerification[]> {
   const result = await fetchApi<ApiResponse<PoliticianVerification[]>>(
-    `/api/v1/politician-verifications/user/${ledgerUserId}`,
-    { userId: ledgerUserId }
+    `/api/v1/politician-verifications/user/${ledgerUserId}`
   );
   return result.data;
 }
@@ -550,12 +513,11 @@ export async function getPoliticianVerificationsByUser(
  * メール認証コードを送信
  */
 export async function sendPoliticianVerificationCode(
-  verificationId: string,
-  options: { userId?: string } = {}
+  verificationId: string
 ): Promise<{ message: string; code?: string }> {
   const result = await fetchApi<{ message: string; code?: string }>(
     `/api/v1/politician-verifications/${verificationId}/send-verification`,
-    { method: "POST", userId: options.userId }
+    { method: "POST" }
   );
   return result;
 }
@@ -565,15 +527,13 @@ export async function sendPoliticianVerificationCode(
  */
 export async function verifyPoliticianEmail(
   verificationId: string,
-  code: string,
-  options: { userId?: string } = {}
+  code: string
 ): Promise<{ message: string }> {
   const result = await fetchApi<{ message: string }>(
     `/api/v1/politician-verifications/${verificationId}/verify-email`,
     {
       method: "POST",
       body: JSON.stringify({ code }),
-      userId: options.userId,
     }
   );
   return result;
@@ -594,7 +554,6 @@ export async function createOrganizationManagerVerification(
     {
       method: "POST",
       body: JSON.stringify(data),
-      userId: data.ledger_user_id,
     }
   );
   return result.data;
@@ -607,8 +566,7 @@ export async function getOrganizationManagerVerificationsByUser(
   ledgerUserId: string
 ): Promise<OrganizationManagerVerification[]> {
   const result = await fetchApi<ApiResponse<OrganizationManagerVerification[]>>(
-    `/api/v1/organization-manager-verifications/user/${ledgerUserId}`,
-    { userId: ledgerUserId }
+    `/api/v1/organization-manager-verifications/user/${ledgerUserId}`
   );
   return result.data;
 }
@@ -617,12 +575,11 @@ export async function getOrganizationManagerVerificationsByUser(
  * メール認証コードを送信
  */
 export async function sendOrganizationManagerVerificationCode(
-  verificationId: string,
-  options: { userId?: string } = {}
+  verificationId: string
 ): Promise<{ message: string; code?: string }> {
   const result = await fetchApi<{ message: string; code?: string }>(
     `/api/v1/organization-manager-verifications/${verificationId}/send-verification`,
-    { method: "POST", userId: options.userId }
+    { method: "POST" }
   );
   return result;
 }
@@ -632,15 +589,13 @@ export async function sendOrganizationManagerVerificationCode(
  */
 export async function verifyOrganizationManagerEmail(
   verificationId: string,
-  code: string,
-  options: { userId?: string } = {}
+  code: string
 ): Promise<{ message: string }> {
   const result = await fetchApi<{ message: string }>(
     `/api/v1/organization-manager-verifications/${verificationId}/verify-email`,
     {
       method: "POST",
       body: JSON.stringify({ code }),
-      userId: options.userId,
     }
   );
   return result;
@@ -837,15 +792,13 @@ export interface SyncLedgerResult {
  * 仕訳データを Hub に同期
  */
 export async function syncJournals(
-  journals: SyncJournalInput[],
-  options: { userId?: string } = {}
+  journals: SyncJournalInput[]
 ): Promise<SyncResult> {
   const result = await fetchApi<ApiResponse<SyncResult>>(
     "/api/v1/sync/journals",
     {
       method: "POST",
       body: JSON.stringify({ journals }),
-      userId: options.userId,
     }
   );
   return result.data;
@@ -854,14 +807,10 @@ export async function syncJournals(
 /**
  * 台帳データを Hub に同期
  */
-export async function syncLedger(
-  ledger: SyncLedgerInput,
-  options: { userId?: string } = {}
-): Promise<SyncLedgerResult> {
+export async function syncLedger(ledger: SyncLedgerInput): Promise<SyncLedgerResult> {
   const result = await fetchApi<SyncLedgerResult>("/api/v1/sync/ledger", {
     method: "POST",
     body: JSON.stringify({ ledger }),
-    userId: options.userId,
   });
   return result;
 }
@@ -869,29 +818,21 @@ export async function syncLedger(
 /**
  * 同期ステータスを確認
  */
-export async function getSyncStatus(
-  options: { userId?: string } = {}
-): Promise<SyncStatus> {
-  const result = await fetchApi<SyncStatus>("/api/v1/sync/status", {
-    userId: options.userId,
-  });
+export async function getSyncStatus(): Promise<SyncStatus> {
+  const result = await fetchApi<SyncStatus>("/api/v1/sync/status");
   return result;
 }
 
 /**
  * 変更ログを記録
  */
-export async function recordChangeLog(
-  data: {
-    ledger_source_id: string;
-    change_summary: string;
-    change_details?: Record<string, unknown>;
-  },
-  options: { userId?: string } = {}
-): Promise<void> {
+export async function recordChangeLog(data: {
+  ledger_source_id: string;
+  change_summary: string;
+  change_details?: Record<string, unknown>;
+}): Promise<void> {
   await fetchApi("/api/v1/sync/change-log", {
     method: "POST",
     body: JSON.stringify(data),
-    userId: options.userId,
   });
 }

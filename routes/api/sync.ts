@@ -86,7 +86,7 @@ interface JournalWithEntries extends LedgerJournal {
  */
 async function getApprovedJournals(
   supabase: ReturnType<typeof getSupabase>,
-  ledger: LedgerRecord,
+  ledger: LedgerRecord
 ): Promise<JournalWithEntries[]> {
   let query = supabase
     .from("journals")
@@ -95,7 +95,7 @@ async function getApprovedJournals(
       *,
       journal_entries (*),
       contacts (*)
-    `,
+    `
     )
     .eq("status", "approved");
 
@@ -170,7 +170,7 @@ export const handler: Handlers = {
     if (!ledgerType && !ledgerId) {
       return new Response(
         JSON.stringify({ error: "type or ledger_id is required" }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -252,7 +252,7 @@ export const handler: Handlers = {
             ...totals,
           };
 
-          await syncLedger(ledgerInput, { userId: userId || undefined });
+          await syncLedger(ledgerInput);
 
           // 仕訳を変換
           const syncInputs: SyncJournalInput[] = [];
@@ -279,9 +279,7 @@ export const handler: Handlers = {
 
           // 仕訳を Hub に送信
           if (syncInputs.length > 0) {
-            const syncResult = await syncJournals(syncInputs, {
-              userId: userId || undefined,
-            });
+            const syncResult = await syncJournals(syncInputs);
             result.created += syncResult.created;
             result.updated += syncResult.updated;
             result.skipped += syncResult.skipped;
@@ -291,26 +289,23 @@ export const handler: Handlers = {
           result.ledgers_synced++;
 
           // 変更ログを記録
-          await recordChangeLog(
-            {
-              ledger_source_id: ledger.id,
-              change_summary: force ? "強制再同期" : "同期",
-              change_details: {
-                journal_count: syncInputs.length,
-                created: result.created,
-                updated: result.updated,
-              },
+          await recordChangeLog({
+            ledger_source_id: ledger.id,
+            change_summary: force ? "強制再同期" : "同期",
+            change_details: {
+              journal_count: syncInputs.length,
+              created: result.created,
+              updated: result.updated,
             },
-            { userId: userId || undefined }
-          );
+          });
 
           console.log(
-            `[Sync] Ledger ${ledger.id}: ${syncInputs.length} journals synced`,
+            `[Sync] Ledger ${ledger.id}: ${syncInputs.length} journals synced`
           );
         } catch (ledgerError) {
           console.error(
             `[Sync] Error processing ledger ${ledger.id}:`,
-            ledgerError,
+            ledgerError
           );
           result.errors++;
         }
@@ -326,7 +321,7 @@ export const handler: Handlers = {
         JSON.stringify({
           error: error instanceof Error ? error.message : "Sync failed",
         }),
-        { status: 500, headers: { "Content-Type": "application/json" } },
+        { status: 500, headers: { "Content-Type": "application/json" } }
       );
     }
   },
