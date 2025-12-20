@@ -280,7 +280,11 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
                     required
                   />
                   <span class="label-text">
-                    <a href="/privacy" target="_blank" class="link link-primary">
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      class="link link-primary"
+                    >
                       プライバシーポリシー
                     </a>
                     に同意する <span class="text-error">*</span>

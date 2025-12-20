@@ -9,11 +9,16 @@ import {
   type Organization,
 } from "../../../lib/hub-client.ts";
 
+interface PageOrganization extends Organization {
+  manager_verified_domain?: string;
+}
+
 interface PageData {
   userId: string;
   organizationId: string;
-  organization: Organization | null;
+  organization: PageOrganization | null;
   isManager: boolean;
+  verifiedDomain: string | null;
 }
 
 export const handler: Handlers<PageData> = {
@@ -32,10 +37,12 @@ export const handler: Handlers<PageData> = {
 
     // 管理権限があるかチェック
     const managedOrgs = await getManagedOrganizations(userId).catch(() => []);
-    const isManager = managedOrgs.some((org) => org.id === organizationId);
+    const managedOrg = managedOrgs.find((org) => org.id === organizationId);
+    const isManager = !!managedOrg;
+    const verifiedDomain = managedOrg?.manager_verified_domain || null;
 
     // 政治団体情報を取得
-    let organization: Organization | null = null;
+    let organization: PageOrganization | null = null;
     if (isManager) {
       try {
         organization = await getOrganization(organizationId, { userId });
@@ -49,6 +56,7 @@ export const handler: Handlers<PageData> = {
       organizationId,
       organization,
       isManager,
+      verifiedDomain,
     });
   },
 };
@@ -56,7 +64,7 @@ export const handler: Handlers<PageData> = {
 export default function OrganizationProfileEditPage({
   data,
 }: PageProps<PageData>) {
-  const { organization, isManager, organizationId } = data;
+  const { organization, isManager, organizationId, verifiedDomain } = data;
 
   return (
     <>
@@ -192,6 +200,7 @@ export default function OrganizationProfileEditPage({
                   sns_tiktok: organization.sns_tiktok || "",
                 }}
                 currentLogoUrl={organization.logo_url}
+                verifiedDomain={verifiedDomain}
               />
             </>
           )}

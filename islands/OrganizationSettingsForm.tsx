@@ -23,6 +23,8 @@ interface Props {
   initialData: OrganizationFormData;
   /** 現在のロゴURL */
   currentLogoUrl?: string | null;
+  /** 認証済みドメイン */
+  verifiedDomain?: string | null;
 }
 
 const organizationTypes: { value: string; label: string }[] = [
@@ -36,6 +38,7 @@ export default function OrganizationSettingsForm({
   organizationId,
   initialData,
   currentLogoUrl,
+  verifiedDomain,
 }: Props) {
   const [formData, setFormData] = useState<OrganizationFormData>(initialData);
   const [logoUrl, setLogoUrl] = useState<string | null>(currentLogoUrl || null);
@@ -135,11 +138,14 @@ export default function OrganizationSettingsForm({
       <div class="card bg-base-100 shadow">
         <div class="card-body">
           <h2 class="card-title">基本情報</h2>
+          <p class="text-sm text-base-content/70 mb-4">
+            <span class="text-error">*</span> は必須項目です。
+          </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-control">
               <label class="label">
-                <span class="label-text">団体名</span>
+                <span class="label-text">団体名 <span class="text-error">*</span></span>
               </label>
               <input
                 type="text"
@@ -153,7 +159,7 @@ export default function OrganizationSettingsForm({
 
             <div class="form-control">
               <label class="label">
-                <span class="label-text">団体種別</span>
+                <span class="label-text">団体種別 <span class="text-error">*</span></span>
               </label>
               <select
                 name="type"
@@ -215,6 +221,25 @@ export default function OrganizationSettingsForm({
                 </span>
               </label>
             </div>
+
+            <div class="form-control md:col-span-2">
+              <label class="label">
+                <span class="label-text">公式サイト URL</span>
+              </label>
+              <input
+                type="url"
+                name="official_url"
+                value={formData.official_url}
+                onChange={handleChange}
+                class="input input-bordered"
+                placeholder="https://example.com"
+              />
+              <label class="label">
+                <span class="label-text-alt text-base-content/60">
+                  認証済みドメインのURLを入力してください
+                </span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -254,26 +279,12 @@ export default function OrganizationSettingsForm({
         </div>
       </div>
 
-      {/* 公開情報 */}
+      {/* 連絡先・活動概要 */}
       <div class="card bg-base-100 shadow">
         <div class="card-body">
-          <h2 class="card-title">公開情報</h2>
+          <h2 class="card-title">連絡先・活動概要</h2>
 
           <div class="grid grid-cols-1 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">公式サイト URL</span>
-              </label>
-              <input
-                type="url"
-                name="official_url"
-                value={formData.official_url}
-                onChange={handleChange}
-                class="input input-bordered"
-                placeholder="https://example.com"
-              />
-            </div>
-
             <div class="form-control">
               <label class="label">
                 <span class="label-text">
@@ -310,6 +321,9 @@ export default function OrganizationSettingsForm({
       <div class="card bg-base-100 shadow">
         <div class="card-body">
           <h2 class="card-title">SNS リンク</h2>
+          <p class="text-sm text-base-content/70 mb-4">
+            公式アカウントのURLを入力してください。すべて任意項目です。
+          </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-control">
@@ -370,6 +384,30 @@ export default function OrganizationSettingsForm({
           </div>
         </div>
       </div>
+
+      {/* 認証ドメイン変更 */}
+      {verifiedDomain && (
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <h2 class="card-title">認証ドメイン</h2>
+            <p class="text-sm text-base-content/70 mb-4">
+              公式サイト URL は認証済みドメインである必要があります。
+            </p>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-base-content/70">現在の認証ドメイン</p>
+                <p class="font-mono text-lg">{verifiedDomain}</p>
+              </div>
+              <a
+                href="/verify/organization-manager?change_domain=true"
+                class="btn btn-outline btn-sm"
+              >
+                ドメインを変更
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 送信ボタン */}
       <div class="flex justify-end">

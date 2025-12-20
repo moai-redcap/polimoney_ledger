@@ -126,6 +126,12 @@ export interface Politician {
   official_url: string | null;
   party: string | null;
   photo_url: string | null;
+  // SNS
+  sns_x: string | null;
+  sns_instagram: string | null;
+  sns_facebook: string | null;
+  sns_tiktok: string | null;
+  // 認証
   is_verified: boolean;
   verified_at: string | null;
   verified_domain: string | null;
@@ -481,6 +487,11 @@ export interface UpdatePoliticianInput {
   official_url?: string | null;
   party?: string | null;
   photo_url?: string | null;
+  // SNS
+  sns_x?: string | null;
+  sns_instagram?: string | null;
+  sns_facebook?: string | null;
+  sns_tiktok?: string | null;
 }
 
 /**
