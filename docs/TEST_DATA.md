@@ -108,6 +108,7 @@ HUB_API_KEY_DEV=your-development-key
 ### 重要なポイント
 
 1. **テストユーザーでも本番 Hub に接続**
+
    - DEV/PROD 環境の切り替えは `APP_ENV` で行う
    - テストデータは `is_test` フラグで区別される
 
@@ -126,8 +127,8 @@ Hub の公開 API（`/api/public/*`）では、`is_test = false` のデータの
 
 ```sql
 -- Hub 側のクエリ例
-SELECT * FROM politicians 
-WHERE is_verified = true 
+SELECT * FROM politicians
+WHERE is_verified = true
   AND is_test = false;
 ```
 
@@ -140,10 +141,12 @@ WHERE is_verified = true
 ### テストアカウントでデータが表示されない
 
 1. **Hub にテストデータが存在するか確認**
+
    - Hub 管理画面または Supabase Dashboard で確認
    - `is_test = true` のデータが存在するか
 
 2. **`ledger_user_id` が正しいか確認**
+
    - テストユーザーの ID: `00000000-0000-0000-0000-000000000001`
 
 3. **Hub API が正しいか確認**

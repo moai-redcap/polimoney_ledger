@@ -807,7 +807,9 @@ export async function syncJournals(
 /**
  * 台帳データを Hub に同期
  */
-export async function syncLedger(ledger: SyncLedgerInput): Promise<SyncLedgerResult> {
+export async function syncLedger(
+  ledger: SyncLedgerInput
+): Promise<SyncLedgerResult> {
   const result = await fetchApi<SyncLedgerResult>("/api/v1/sync/ledger", {
     method: "POST",
     body: JSON.stringify({ ledger }),
