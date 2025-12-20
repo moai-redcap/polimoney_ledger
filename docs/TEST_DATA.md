@@ -114,6 +114,7 @@ HUB_API_KEY_DEV=your-development-key
    - PROD キーで呼ぶと `is_test = false` のデータのみ返る
 
 2. **Hub API キーの選択ロジック**
+
    ```typescript
    // テストユーザーの場合は DEV キーを使用
    const useDevKey = isTestUser(userId);
