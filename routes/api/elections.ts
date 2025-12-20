@@ -41,7 +41,9 @@ export const handler: Handlers = {
 
       if (!body.hub_politician_id) {
         return new Response(
-          JSON.stringify({ error: "政治家IDは必須です（認証済みの政治家IDが必要です）" }),
+          JSON.stringify({
+            error: "政治家IDは必須です（認証済みの政治家IDが必要です）",
+          }),
           {
             status: 400,
             headers: { "Content-Type": "application/json" },
