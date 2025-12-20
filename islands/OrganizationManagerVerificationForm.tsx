@@ -450,9 +450,18 @@ export default function OrganizationManagerVerificationForm({
                         >
                           {statusLabels[v.status]?.label || v.status}
                         </span>
-                        {v.status === "email_sent" && (
+                        {v.status === "pending" && (
                           <button
                             class="btn btn-sm btn-primary"
+                            onClick={() => handleSendCode(v.id)}
+                            disabled={isSubmitting}
+                          >
+                            認証コードを送信
+                          </button>
+                        )}
+                        {v.status === "email_sent" && (
+                          <button
+                            class="btn btn-sm btn-outline"
                             onClick={() => handleSendCode(v.id)}
                             disabled={isSubmitting}
                           >
@@ -596,9 +605,18 @@ export default function OrganizationManagerVerificationForm({
                       >
                         {statusLabels[v.status]?.label || v.status}
                       </span>
-                      {v.status === "email_sent" && (
+                      {v.status === "pending" && (
                         <button
                           class="btn btn-sm btn-primary"
+                          onClick={() => handleSendCode(v.id)}
+                          disabled={isSubmitting}
+                        >
+                          認証コードを送信
+                        </button>
+                      )}
+                      {v.status === "email_sent" && (
+                        <button
+                          class="btn btn-sm btn-outline"
                           onClick={() => handleSendCode(v.id)}
                           disabled={isSubmitting}
                         >

@@ -224,13 +224,15 @@ export default function PoliticianVerificationForm({
                 <div class="text-base-content/70">氏名</div>
                 <div class="font-medium">{verifiedPolitician.name}</div>
                 <div class="text-base-content/70">認証ドメイン</div>
-                <div class="font-mono">{verifiedPolitician.verified_domain}</div>
+                <div class="font-mono">
+                  {verifiedPolitician.verified_domain}
+                </div>
                 <div class="text-base-content/70">認証日</div>
                 <div>
                   {verifiedPolitician.verified_at
-                    ? new Date(verifiedPolitician.verified_at).toLocaleDateString(
-                        "ja-JP"
-                      )
+                    ? new Date(
+                        verifiedPolitician.verified_at
+                      ).toLocaleDateString("ja-JP")
                     : "-"}
                 </div>
               </div>
@@ -333,8 +335,9 @@ export default function PoliticianVerificationForm({
         </div>
 
         {/* 申請履歴（ドメイン変更のみ表示） */}
-        {politicianVerifications.filter((v) => v.request_type === "domain_change")
-          .length > 0 && (
+        {politicianVerifications.filter(
+          (v) => v.request_type === "domain_change"
+        ).length > 0 && (
           <div class="card bg-base-100 shadow-xl">
             <div class="card-body">
               <h3 class="card-title text-base">ドメイン変更申請履歴</h3>
@@ -362,9 +365,18 @@ export default function PoliticianVerificationForm({
                         >
                           {statusLabels[v.status]?.label || v.status}
                         </span>
-                        {v.status === "email_sent" && (
+                        {v.status === "pending" && (
                           <button
                             class="btn btn-sm btn-primary"
+                            onClick={() => handleSendCode(v.id)}
+                            disabled={isSubmitting}
+                          >
+                            認証コードを送信
+                          </button>
+                        )}
+                        {v.status === "email_sent" && (
+                          <button
+                            class="btn btn-sm btn-outline"
                             onClick={() => handleSendCode(v.id)}
                             disabled={isSubmitting}
                           >
@@ -468,9 +480,18 @@ export default function PoliticianVerificationForm({
                         >
                           {statusLabels[v.status]?.label || v.status}
                         </span>
-                        {v.status === "email_sent" && (
+                        {v.status === "pending" && (
                           <button
                             class="btn btn-sm btn-primary"
+                            onClick={() => handleSendCode(v.id)}
+                            disabled={isSubmitting}
+                          >
+                            認証コードを送信
+                          </button>
+                        )}
+                        {v.status === "email_sent" && (
+                          <button
+                            class="btn btn-sm btn-outline"
                             onClick={() => handleSendCode(v.id)}
                             disabled={isSubmitting}
                           >
