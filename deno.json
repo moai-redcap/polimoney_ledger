@@ -27,7 +27,9 @@
     "daisyui": "npm:daisyui@4.12.14",
     "$std/": "https://deno.land/std@0.216.0/",
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
-    "@deno/gfm": "jsr:@deno/gfm@0.10"
+    "@deno/gfm": "jsr:@deno/gfm@0.10",
+    "hono": "jsr:@hono/hono@^4.6.0",
+    "hono/": "jsr:@hono/hono@^4.6.0/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
