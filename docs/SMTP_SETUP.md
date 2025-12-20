@@ -1,12 +1,12 @@
-# SMTP設定ガイド（Supabase + Google Workspace）
+# SMTP 設定ガイド（Supabase + Google Workspace）
 
-このドキュメントでは、Supabaseから送信されるメールの送信元を `noreply@polimoney.jp` などのカスタムドメインに変更する方法を説明します。
+このドキュメントでは、Supabase から送信されるメールの送信元を `noreply@polimoney.jp` などのカスタムドメインに変更する方法を説明します。
 
 ## 前提条件
 
-- Google Workspaceの管理者権限
-- カスタムドメインがGoogle Workspaceに設定済み
-- Supabaseプロジェクトの管理者権限
+- Google Workspace の管理者権限
+- カスタムドメインが Google Workspace に設定済み
+- Supabase プロジェクトの管理者権限
 
 ---
 
@@ -14,16 +14,16 @@
 
 ### 料金
 
-Google Workspaceの契約料金に含まれる（追加料金なし）
+Google Workspace の契約料金に含まれる（追加料金なし）
 
 ### 制限
 
-| プラン | 1日あたりの送信制限 |
-|:--|:--|
-| Business Starter | 約500通/日 |
-| Business Standard | 約2,000通/日 |
-| Business Plus | 約2,000通/日 |
-| Enterprise | 約2,000通/日 |
+| プラン            | 1 日あたりの送信制限 |
+| :---------------- | :------------------- |
+| Business Starter  | 約 500 通/日         |
+| Business Standard | 約 2,000 通/日       |
+| Business Plus     | 約 2,000 通/日       |
+| Enterprise        | 約 2,000 通/日       |
 
 ---
 
@@ -37,11 +37,11 @@ Google Workspaceの契約料金に含まれる（追加料金なし）
 
 4. 以下の設定を行う：
 
-   | 項目 | 設定値 |
-   |:--|:--|
-   | 許可する送信者 | 「組織内のアドレスのみ」または「すべてのアドレス」 |
-   | 認証 | 「指定した IP アドレスからのメールのみを受け入れる」をOFF、「SMTP 認証が必要」をON |
-   | 暗号化 | 「TLS 暗号化を要求」をON |
+   | 項目           | 設定値                                                                               |
+   | :------------- | :----------------------------------------------------------------------------------- |
+   | 許可する送信者 | 「組織内のアドレスのみ」または「すべてのアドレス」                                   |
+   | 認証           | 「指定した IP アドレスからのメールのみを受け入れる」を OFF、「SMTP 認証が必要」を ON |
+   | 暗号化         | 「TLS 暗号化を要求」を ON                                                            |
 
 5. 「保存」をクリック
 
@@ -51,7 +51,7 @@ Google Workspaceの契約料金に含まれる（追加料金なし）
 
 ### オプション A: 既存ユーザーを使用
 
-既存のGoogle Workspaceユーザー（例: `admin@polimoney.jp`）を使用
+既存の Google Workspace ユーザー（例: `admin@polimoney.jp`）を使用
 
 ### オプション B: 専用アカウントを作成
 
@@ -61,27 +61,27 @@ Google Workspaceの契約料金に含まれる（追加料金なし）
 
 ### オプション C: グループエイリアスを使用（受信のみ）
 
-Google Groupsは受信専用です。送信には使えませんが、返信先として設定可能です。
+Google Groups は受信専用です。送信には使えませんが、返信先として設定可能です。
 
 ---
 
 ## Step 3: アプリパスワードを生成
 
-SMTP認証にはアプリパスワードが必要です。
+SMTP 認証にはアプリパスワードが必要です。
 
-1. 送信に使用するGoogleアカウントにログイン
+1. 送信に使用する Google アカウントにログイン
 
-2. [Googleアカウント](https://myaccount.google.com) → **セキュリティ** に移動
+2. [Google アカウント](https://myaccount.google.com) → **セキュリティ** に移動
 
-3. **2段階認証プロセス** が有効になっていることを確認（無効なら有効化）
+3. **2 段階認証プロセス** が有効になっていることを確認（無効なら有効化）
 
-4. **2段階認証プロセス** → **アプリパスワード** に移動
+4. **2 段階認証プロセス** → **アプリパスワード** に移動
 
 5. アプリを選択：「その他（カスタム名）」→「Supabase SMTP」と入力
 
 6. 「生成」をクリック
 
-7. 表示された16文字のパスワードをコピー（スペースは除去）
+7. 表示された 16 文字のパスワードをコピー（スペースは除去）
 
    ```
    例: xxxx xxxx xxxx xxxx → xxxxxxxxxxxxxxxx
@@ -97,18 +97,18 @@ SMTP認証にはアプリパスワードが必要です。
 
 3. **Project Settings** → **Authentication** → **SMTP Settings** に移動
 
-4. 「Enable Custom SMTP」をON
+4. 「Enable Custom SMTP」を ON
 
 5. 以下の情報を入力：
 
-   | 項目 | 値 |
-   |:--|:--|
-   | Host | `smtp-relay.gmail.com` |
-   | Port | `587` |
-   | Username | 送信元メールアドレス（例: `noreply@polimoney.jp`） |
-   | Password | Step 3で生成したアプリパスワード |
+   | 項目         | 値                                                 |
+   | :----------- | :------------------------------------------------- |
+   | Host         | `smtp-relay.gmail.com`                             |
+   | Port         | `587`                                              |
+   | Username     | 送信元メールアドレス（例: `noreply@polimoney.jp`） |
+   | Password     | Step 3 で生成したアプリパスワード                  |
    | Sender email | 送信元メールアドレス（例: `noreply@polimoney.jp`） |
-   | Sender name | `Polimoney Ledger` |
+   | Sender name  | `Polimoney Ledger`                                 |
 
 6. 「Save」をクリック
 
@@ -131,18 +131,18 @@ SMTP認証にはアプリパスワードが必要です。
 ### エラー: 認証に失敗する
 
 - アプリパスワードが正しいか確認
-- 2段階認証が有効になっているか確認
-- Google Admin ConsoleでSMTPリレーが正しく設定されているか確認
+- 2 段階認証が有効になっているか確認
+- Google Admin Console で SMTP リレーが正しく設定されているか確認
 
 ### エラー: 送信制限に達した
 
-- 1日あたりの送信制限を超えた場合、翌日まで待つ
-- 大量送信が必要な場合は、SendGrid/Resendなどの専用サービスを検討
+- 1 日あたりの送信制限を超えた場合、翌日まで待つ
+- 大量送信が必要な場合は、SendGrid/Resend などの専用サービスを検討
 
 ### メールが届かない
 
 - 迷惑メールフォルダを確認
-- SPF/DKIM/DMARCレコードが正しく設定されているか確認
+- SPF/DKIM/DMARC レコードが正しく設定されているか確認
 
 ---
 
@@ -150,12 +150,12 @@ SMTP認証にはアプリパスワードが必要です。
 
 大量のメール送信が必要な場合や、設定の簡便さを重視する場合は [Resend](https://resend.com) を推奨します。
 
-| 項目 | Google Workspace SMTP | Resend |
-|:--|:--|:--|
-| 料金 | Workspace料金に含まれる | 月3,000通まで無料 |
-| 設定難易度 | 中〜高 | 低 |
-| 送信制限 | 500〜2,000通/日 | 無料枠は月3,000通 |
-| 配信率 | 中 | 高 |
+| 項目       | Google Workspace SMTP    | Resend              |
+| :--------- | :----------------------- | :------------------ |
+| 料金       | Workspace 料金に含まれる | 月 3,000 通まで無料 |
+| 設定難易度 | 中〜高                   | 低                  |
+| 送信制限   | 500〜2,000 通/日         | 無料枠は月 3,000 通 |
+| 配信率     | 中                       | 高                  |
 
 ### Resend の設定
 
