@@ -27,6 +27,8 @@ interface Props {
   managedOrganizations: ManagedOrganization[];
   organizationManagerVerifications: OrganizationManagerVerification[];
   hubOrganizations: Organization[];
+  /** ドメイン変更モード */
+  changeDomain?: boolean;
 }
 
 const statusLabels: Record<string, { label: string; class: string }> = {
@@ -49,9 +51,10 @@ export default function OrganizationManagerVerificationForm({
   managedOrganizations,
   organizationManagerVerifications,
   hubOrganizations,
+  changeDomain = false,
 }: Props) {
-  // フォーム表示
-  const [showForm, setShowForm] = useState(false);
+  // フォーム表示（ドメイン変更モードの場合は最初から表示）
+  const [showForm, setShowForm] = useState(changeDomain);
 
   // 検索可能コンボボックス
   const [searchQuery, setSearchQuery] = useState("");

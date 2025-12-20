@@ -19,6 +19,8 @@ interface Props {
   userId: string;
   verifiedPolitician: Politician | null;
   politicianVerifications: PoliticianVerification[];
+  /** ドメイン変更モード */
+  changeDomain?: boolean;
 }
 
 const statusLabels: Record<string, { label: string; class: string }> = {
@@ -33,9 +35,10 @@ export default function PoliticianVerificationForm({
   userId,
   verifiedPolitician,
   politicianVerifications,
+  changeDomain = false,
 }: Props) {
-  // 政治家認証フォーム
-  const [showForm, setShowForm] = useState(false);
+  // 政治家認証フォーム（ドメイン変更モードの場合は最初から表示）
+  const [showForm, setShowForm] = useState(changeDomain);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [url, setUrl] = useState("");
@@ -168,7 +171,7 @@ export default function PoliticianVerificationForm({
       )}
 
       {/* 認証済み表示 */}
-      {verifiedPolitician ? (
+      {verifiedPolitician && (
         <div class="card bg-base-100 shadow-xl">
           <div class="card-body">
             <div class="flex items-center gap-4">
@@ -205,7 +208,10 @@ export default function PoliticianVerificationForm({
             </div>
           </div>
         </div>
-      ) : (
+      )}
+
+      {/* ドメイン変更モードまたは未認証の場合、申請フォームを表示 */}
+      {(!verifiedPolitician || changeDomain) && (
         <>
           {/* 申請履歴 */}
           {politicianVerifications.length > 0 && (

@@ -16,10 +16,11 @@ interface PageData {
   managedOrganizations: ManagedOrganization[];
   organizationManagerVerifications: OrganizationManagerVerification[];
   hubOrganizations: Organization[];
+  changeDomain: boolean;
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(_req, ctx) {
+  async GET(req, ctx) {
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(null, {
@@ -27,6 +28,10 @@ export const handler: Handlers<PageData> = {
         headers: { Location: "/login?redirect=/verify/organization" },
       });
     }
+
+    // URL パラメータを取得
+    const url = new URL(req.url);
+    const changeDomain = url.searchParams.get("change_domain") === "true";
 
     // Hub から認証情報を取得
     const [
@@ -44,6 +49,7 @@ export const handler: Handlers<PageData> = {
       managedOrganizations,
       organizationManagerVerifications,
       hubOrganizations,
+      changeDomain,
     });
   },
 };
@@ -56,6 +62,7 @@ export default function OrganizationVerificationPage({
     managedOrganizations,
     organizationManagerVerifications,
     hubOrganizations,
+    changeDomain,
   } = data;
 
   return (
@@ -94,6 +101,7 @@ export default function OrganizationVerificationPage({
             managedOrganizations={managedOrganizations}
             organizationManagerVerifications={organizationManagerVerifications}
             hubOrganizations={hubOrganizations}
+            changeDomain={changeDomain}
           />
         </div>
       </Layout>

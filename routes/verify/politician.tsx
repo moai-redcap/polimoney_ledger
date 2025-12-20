@@ -13,10 +13,11 @@ interface PageData {
   userId: string;
   verifiedPolitician: Politician | null;
   politicianVerifications: PoliticianVerification[];
+  changeDomain: boolean;
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(_req, ctx) {
+  async GET(req, ctx) {
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(null, {
@@ -24,6 +25,10 @@ export const handler: Handlers<PageData> = {
         headers: { Location: "/login?redirect=/verify/politician" },
       });
     }
+
+    // URL パラメータを取得
+    const url = new URL(req.url);
+    const changeDomain = url.searchParams.get("change_domain") === "true";
 
     // Hub から認証情報を取得
     const [verifiedPolitician, politicianVerifications] = await Promise.all([
@@ -35,6 +40,7 @@ export const handler: Handlers<PageData> = {
       userId,
       verifiedPolitician,
       politicianVerifications,
+      changeDomain,
     });
   },
 };
@@ -42,7 +48,7 @@ export const handler: Handlers<PageData> = {
 export default function PoliticianVerificationPage({
   data,
 }: PageProps<PageData>) {
-  const { userId, verifiedPolitician, politicianVerifications } = data;
+  const { userId, verifiedPolitician, politicianVerifications, changeDomain } = data;
 
   return (
     <>
@@ -79,6 +85,7 @@ export default function PoliticianVerificationPage({
             userId={userId}
             verifiedPolitician={verifiedPolitician}
             politicianVerifications={politicianVerifications}
+            changeDomain={changeDomain}
           />
         </div>
       </Layout>
