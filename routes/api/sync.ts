@@ -252,7 +252,7 @@ export const handler: Handlers = {
             ...totals,
           };
 
-          await syncLedger(ledgerInput);
+          await syncLedger(ledgerInput, { userId: userId || undefined });
 
           // 仕訳を変換
           const syncInputs: SyncJournalInput[] = [];
@@ -279,7 +279,9 @@ export const handler: Handlers = {
 
           // 仕訳を Hub に送信
           if (syncInputs.length > 0) {
-            const syncResult = await syncJournals(syncInputs);
+            const syncResult = await syncJournals(syncInputs, {
+              userId: userId || undefined,
+            });
             result.created += syncResult.created;
             result.updated += syncResult.updated;
             result.skipped += syncResult.skipped;
@@ -289,15 +291,18 @@ export const handler: Handlers = {
           result.ledgers_synced++;
 
           // 変更ログを記録
-          await recordChangeLog({
-            ledger_source_id: ledger.id,
-            change_summary: force ? "強制再同期" : "同期",
-            change_details: {
-              journal_count: syncInputs.length,
-              created: result.created,
-              updated: result.updated,
+          await recordChangeLog(
+            {
+              ledger_source_id: ledger.id,
+              change_summary: force ? "強制再同期" : "同期",
+              change_details: {
+                journal_count: syncInputs.length,
+                created: result.created,
+                updated: result.updated,
+              },
             },
-          });
+            { userId: userId || undefined }
+          );
 
           console.log(
             `[Sync] Ledger ${ledger.id}: ${syncInputs.length} journals synced`,

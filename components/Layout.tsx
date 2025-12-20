@@ -241,7 +241,7 @@ const navCategories: NavCategory[] = [
     ],
   },
   {
-    title: "情報編集",
+    title: "情報",
     items: [
       {
         href: "/profile/politician",

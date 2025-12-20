@@ -18,7 +18,9 @@ export const handler: Handlers = {
 
     try {
       const body = await req.json();
-      const result = await verifyPoliticianEmail(verificationId, body.code);
+      const result = await verifyPoliticianEmail(verificationId, body.code, {
+        userId,
+      });
 
       return new Response(JSON.stringify({ success: true, ...result }), {
         status: 200,

@@ -38,7 +38,7 @@ export const handler: Handlers<PageData> = {
     let organization: Organization | null = null;
     if (isManager) {
       try {
-        organization = await getOrganization(organizationId);
+        organization = await getOrganization(organizationId, { userId });
       } catch {
         organization = null;
       }

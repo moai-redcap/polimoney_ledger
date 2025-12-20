@@ -44,7 +44,7 @@ export const handler: Handlers = {
       }
 
       // Hub の政治家情報を更新
-      const updated = await updatePolitician(politician.id, body);
+      const updated = await updatePolitician(politician.id, body, { userId });
 
       return new Response(JSON.stringify({ success: true, data: updated }), {
         status: 200,

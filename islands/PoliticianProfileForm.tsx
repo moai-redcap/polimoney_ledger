@@ -95,6 +95,9 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   {new Date(politician.verified_at).toLocaleDateString("ja-JP")}
                 </p>
               )}
+              <p class="text-xs text-base-content/50 mt-1 font-mono">
+                政治家ID: {politician.id}
+              </p>
             </div>
           </div>
         </div>

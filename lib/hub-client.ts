@@ -261,7 +261,9 @@ async function fetchApi<T>(
   headers.set("X-API-Key", apiKey);
 
   const url = `${apiUrl}${endpoint}`;
-  console.log(`[Hub API] Fetching: ${url} (env: ${useDevEnv ? "DEV" : "PROD"})`);
+  console.log(
+    `[Hub API] Fetching: ${url} (env: ${useDevEnv ? "DEV" : "PROD"})`
+  );
 
   const response = await fetch(url, {
     ...fetchOptions,
@@ -315,9 +317,13 @@ export async function getOrganizations(): Promise<Organization[]> {
   return result.data;
 }
 
-export async function getOrganization(id: string): Promise<Organization> {
+export async function getOrganization(
+  id: string,
+  options: { userId?: string } = {}
+): Promise<Organization> {
   const result = await fetchApi<ApiResponse<Organization>>(
-    `/api/v1/organizations/${id}`
+    `/api/v1/organizations/${id}`,
+    { userId: options.userId }
   );
   return result.data;
 }
@@ -327,13 +333,15 @@ export async function getOrganization(id: string): Promise<Organization> {
  */
 export async function updateOrganization(
   id: string,
-  data: UpdateOrganizationInput
+  data: UpdateOrganizationInput,
+  options: { userId?: string } = {}
 ): Promise<Organization> {
   const result = await fetchApi<ApiResponse<Organization>>(
     `/api/v1/organizations/${id}`,
     {
       method: "PUT",
       body: JSON.stringify(data),
+      userId: options.userId,
     }
   );
   return result.data;
@@ -418,29 +426,40 @@ export async function getAccountCode(code: string): Promise<AccountCode> {
 // 政治家 API
 // ============================================
 
-export async function getPoliticians(): Promise<Politician[]> {
+export async function getPoliticians(
+  options: { userId?: string } = {}
+): Promise<Politician[]> {
   const result = await fetchApi<ApiResponse<Politician[]>>(
-    "/api/v1/politicians"
+    "/api/v1/politicians",
+    { userId: options.userId }
   );
   return result.data;
 }
 
-export async function getPolitician(id: string): Promise<Politician> {
+export async function getPolitician(
+  id: string,
+  options: { userId?: string } = {}
+): Promise<Politician> {
   const result = await fetchApi<ApiResponse<Politician>>(
-    `/api/v1/politicians/${id}`
+    `/api/v1/politicians/${id}`,
+    { userId: options.userId }
   );
   return result.data;
 }
 
-export async function createPolitician(data: {
-  name: string;
-  name_kana?: string;
-}): Promise<Politician> {
+export async function createPolitician(
+  data: {
+    name: string;
+    name_kana?: string;
+  },
+  options: { userId?: string } = {}
+): Promise<Politician> {
   const result = await fetchApi<ApiResponse<Politician>>(
     "/api/v1/politicians",
     {
       method: "POST",
       body: JSON.stringify(data),
+      userId: options.userId,
     }
   );
   return result.data;
@@ -460,13 +479,15 @@ export interface UpdatePoliticianInput {
  */
 export async function updatePolitician(
   id: string,
-  data: UpdatePoliticianInput
+  data: UpdatePoliticianInput,
+  options: { userId?: string } = {}
 ): Promise<Politician> {
   const result = await fetchApi<ApiResponse<Politician>>(
     `/api/v1/politicians/${id}`,
     {
       method: "PUT",
       body: JSON.stringify(data),
+      userId: options.userId,
     }
   );
   return result.data;
@@ -480,7 +501,7 @@ export async function getVerifiedPoliticianByUserId(
   ledgerUserId: string
 ): Promise<Politician | null> {
   try {
-    const politicians = await getPoliticians();
+    const politicians = await getPoliticians({ userId: ledgerUserId });
     const verified = politicians.find(
       (p) => p.ledger_user_id === ledgerUserId && p.is_verified
     );
@@ -506,6 +527,7 @@ export async function createPoliticianVerification(
     {
       method: "POST",
       body: JSON.stringify(data),
+      userId: data.ledger_user_id,
     }
   );
   return result.data;
@@ -518,7 +540,8 @@ export async function getPoliticianVerificationsByUser(
   ledgerUserId: string
 ): Promise<PoliticianVerification[]> {
   const result = await fetchApi<ApiResponse<PoliticianVerification[]>>(
-    `/api/v1/politician-verifications/user/${ledgerUserId}`
+    `/api/v1/politician-verifications/user/${ledgerUserId}`,
+    { userId: ledgerUserId }
   );
   return result.data;
 }
@@ -527,11 +550,12 @@ export async function getPoliticianVerificationsByUser(
  * メール認証コードを送信
  */
 export async function sendPoliticianVerificationCode(
-  verificationId: string
+  verificationId: string,
+  options: { userId?: string } = {}
 ): Promise<{ message: string; code?: string }> {
   const result = await fetchApi<{ message: string; code?: string }>(
     `/api/v1/politician-verifications/${verificationId}/send-verification`,
-    { method: "POST" }
+    { method: "POST", userId: options.userId }
   );
   return result;
 }
@@ -541,13 +565,15 @@ export async function sendPoliticianVerificationCode(
  */
 export async function verifyPoliticianEmail(
   verificationId: string,
-  code: string
+  code: string,
+  options: { userId?: string } = {}
 ): Promise<{ message: string }> {
   const result = await fetchApi<{ message: string }>(
     `/api/v1/politician-verifications/${verificationId}/verify-email`,
     {
       method: "POST",
       body: JSON.stringify({ code }),
+      userId: options.userId,
     }
   );
   return result;
@@ -568,6 +594,7 @@ export async function createOrganizationManagerVerification(
     {
       method: "POST",
       body: JSON.stringify(data),
+      userId: data.ledger_user_id,
     }
   );
   return result.data;
@@ -580,7 +607,8 @@ export async function getOrganizationManagerVerificationsByUser(
   ledgerUserId: string
 ): Promise<OrganizationManagerVerification[]> {
   const result = await fetchApi<ApiResponse<OrganizationManagerVerification[]>>(
-    `/api/v1/organization-manager-verifications/user/${ledgerUserId}`
+    `/api/v1/organization-manager-verifications/user/${ledgerUserId}`,
+    { userId: ledgerUserId }
   );
   return result.data;
 }
@@ -589,11 +617,12 @@ export async function getOrganizationManagerVerificationsByUser(
  * メール認証コードを送信
  */
 export async function sendOrganizationManagerVerificationCode(
-  verificationId: string
+  verificationId: string,
+  options: { userId?: string } = {}
 ): Promise<{ message: string; code?: string }> {
   const result = await fetchApi<{ message: string; code?: string }>(
     `/api/v1/organization-manager-verifications/${verificationId}/send-verification`,
-    { method: "POST" }
+    { method: "POST", userId: options.userId }
   );
   return result;
 }
@@ -603,13 +632,15 @@ export async function sendOrganizationManagerVerificationCode(
  */
 export async function verifyOrganizationManagerEmail(
   verificationId: string,
-  code: string
+  code: string,
+  options: { userId?: string } = {}
 ): Promise<{ message: string }> {
   const result = await fetchApi<{ message: string }>(
     `/api/v1/organization-manager-verifications/${verificationId}/verify-email`,
     {
       method: "POST",
       body: JSON.stringify({ code }),
+      userId: options.userId,
     }
   );
   return result;
@@ -806,13 +837,15 @@ export interface SyncLedgerResult {
  * 仕訳データを Hub に同期
  */
 export async function syncJournals(
-  journals: SyncJournalInput[]
+  journals: SyncJournalInput[],
+  options: { userId?: string } = {}
 ): Promise<SyncResult> {
   const result = await fetchApi<ApiResponse<SyncResult>>(
     "/api/v1/sync/journals",
     {
       method: "POST",
       body: JSON.stringify({ journals }),
+      userId: options.userId,
     }
   );
   return result.data;
@@ -822,11 +855,13 @@ export async function syncJournals(
  * 台帳データを Hub に同期
  */
 export async function syncLedger(
-  ledger: SyncLedgerInput
+  ledger: SyncLedgerInput,
+  options: { userId?: string } = {}
 ): Promise<SyncLedgerResult> {
   const result = await fetchApi<SyncLedgerResult>("/api/v1/sync/ledger", {
     method: "POST",
     body: JSON.stringify({ ledger }),
+    userId: options.userId,
   });
   return result;
 }
@@ -834,21 +869,29 @@ export async function syncLedger(
 /**
  * 同期ステータスを確認
  */
-export async function getSyncStatus(): Promise<SyncStatus> {
-  const result = await fetchApi<SyncStatus>("/api/v1/sync/status");
+export async function getSyncStatus(
+  options: { userId?: string } = {}
+): Promise<SyncStatus> {
+  const result = await fetchApi<SyncStatus>("/api/v1/sync/status", {
+    userId: options.userId,
+  });
   return result;
 }
 
 /**
  * 変更ログを記録
  */
-export async function recordChangeLog(data: {
-  ledger_source_id: string;
-  change_summary: string;
-  change_details?: Record<string, unknown>;
-}): Promise<void> {
+export async function recordChangeLog(
+  data: {
+    ledger_source_id: string;
+    change_summary: string;
+    change_details?: Record<string, unknown>;
+  },
+  options: { userId?: string } = {}
+): Promise<void> {
   await fetchApi("/api/v1/sync/change-log", {
     method: "POST",
     body: JSON.stringify(data),
+    userId: options.userId,
   });
 }

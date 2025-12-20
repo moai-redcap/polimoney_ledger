@@ -17,7 +17,9 @@ export const handler: Handlers = {
     }
 
     try {
-      const result = await sendPoliticianVerificationCode(verificationId);
+      const result = await sendPoliticianVerificationCode(verificationId, {
+        userId,
+      });
 
       return new Response(JSON.stringify({ success: true, ...result }), {
         status: 200,
