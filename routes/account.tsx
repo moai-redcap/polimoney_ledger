@@ -1,10 +1,9 @@
 import { Head } from "$fresh/runtime.ts";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Layout } from "../components/Layout.tsx";
-import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
+import { getSupabaseClient } from "../lib/supabase.ts";
 import ProfileEditor from "../islands/ProfileEditor.tsx";
-
-const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
+import EmailChangeForm from "../islands/EmailChangeForm.tsx";
 
 interface PageData {
   email: string;
@@ -52,32 +51,8 @@ export default function AccountPage({ data }: PageProps<PageData>) {
           {/* プロフィール編集 */}
           <ProfileEditor initialDisplayName={displayName} email={email} />
 
-          {/* メールアドレス */}
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <h2 class="card-title">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
-                  />
-                </svg>
-                メールアドレス
-              </h2>
-              <p class="text-base-content/70">{email}</p>
-              <p class="text-sm text-base-content/50">
-                ログインに使用するメールアドレスは変更できません。
-              </p>
-            </div>
-          </div>
+          {/* メールアドレス変更 */}
+          <EmailChangeForm currentEmail={email} />
 
           {/* パスワード変更（OAuth以外の場合） */}
           <div class="card bg-base-100 shadow-xl">

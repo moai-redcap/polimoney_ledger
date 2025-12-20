@@ -391,9 +391,7 @@ export default function OrganizationManagerVerificationForm({
                       <button
                         type="button"
                         class={`w-full px-4 py-3 text-left hover:bg-base-200 border-b border-base-300 ${
-                          !selectedOrg && !searchQuery
-                            ? "bg-primary/10"
-                            : ""
+                          !selectedOrg && !searchQuery ? "bg-primary/10" : ""
                         }`}
                         onClick={() => handleSelectOrg(null)}
                       >
