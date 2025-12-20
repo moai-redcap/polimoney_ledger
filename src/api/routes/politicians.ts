@@ -8,6 +8,9 @@ import {
   createPoliticianVerification,
   sendPoliticianVerificationCode,
   verifyPoliticianEmail,
+  verifyPoliticianDns,
+  type CandidateRegistrationInfo,
+  type PoliticalFundReportInfo,
 } from "../../../lib/hub-client.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -56,6 +59,12 @@ politiciansRouter.post("/verify", async (c) => {
   }
 
   try {
+    // ユーザーのメールアドレスを取得
+    const supabase =
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    const userEmail = userData?.user?.email || "";
+
     const body = await c.req.json<{
       name: string;
       official_email: string;
@@ -64,10 +73,13 @@ politiciansRouter.post("/verify", async (c) => {
       politician_id?: string;
       request_type?: "new" | "domain_change";
       previous_domain?: string;
+      candidate_registration_info?: CandidateRegistrationInfo;
+      political_fund_report_info?: PoliticalFundReportInfo;
     }>();
 
     const result = await createPoliticianVerification({
       ledger_user_id: userId,
+      ledger_user_email: userEmail,
       name: body.name,
       official_email: body.official_email,
       official_url: body.official_url,
@@ -75,6 +87,8 @@ politiciansRouter.post("/verify", async (c) => {
       politician_id: body.politician_id,
       request_type: body.request_type,
       previous_domain: body.previous_domain,
+      candidate_registration_info: body.candidate_registration_info,
+      political_fund_report_info: body.political_fund_report_info,
     });
 
     return c.json({ data: result }, 201);
@@ -140,6 +154,30 @@ politiciansRouter.post("/verify/:id/verify-code", async (c) => {
     return c.json(
       {
         error: error instanceof Error ? error.message : "認証に失敗しました",
+      },
+      500
+    );
+  }
+});
+
+// POST /politicians/verify/:id/verify-dns - DNS TXT認証確認
+politiciansRouter.post("/verify/:id/verify-dns", async (c) => {
+  const userId = c.get("userId");
+  if (!userId) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  const verificationId = c.req.param("id");
+
+  try {
+    const result = await verifyPoliticianDns(verificationId, { userId });
+    return c.json(result);
+  } catch (error) {
+    console.error("Error verifying DNS TXT:", error);
+    return c.json(
+      {
+        error:
+          error instanceof Error ? error.message : "DNS TXT認証に失敗しました",
       },
       500
     );

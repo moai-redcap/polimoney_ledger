@@ -168,7 +168,7 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
               <div class="form-control">
                 <label class="label">
                   <span class="label-text">
-                    お名前 <span class="text-error">*</span>
+                    姓名（本名） <span class="text-error">*</span>
                   </span>
                 </label>
                 <input
@@ -178,6 +178,11 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
                   class="input input-bordered w-full"
                   required
                 />
+                <label class="label">
+                  <span class="label-text-alt text-base-content/60">
+                    政治家認証などに使用されます。本名を入力してください。
+                  </span>
+                </label>
               </div>
 
               <div class="form-control">

@@ -15,7 +15,7 @@ export default function ProfileEditor({
 
   const handleSave = async () => {
     if (!displayName.trim()) {
-      setError("表示名を入力してください");
+      setError("姓名を入力してください");
       return;
     }
 
@@ -68,10 +68,10 @@ export default function ProfileEditor({
         )}
 
         <div class="space-y-4 mt-4">
-          {/* 表示名 */}
+          {/* 姓名（本名） */}
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">表示名</span>
+              <span class="label-text font-medium">姓名（本名）</span>
             </label>
             {isEditing ? (
               <div class="flex gap-2">
@@ -82,7 +82,7 @@ export default function ProfileEditor({
                   onChange={(e) =>
                     setDisplayName((e.target as HTMLInputElement).value)
                   }
-                  placeholder="表示名を入力"
+                  placeholder="山田 太郎"
                 />
                 <button
                   class="btn btn-ghost"
@@ -120,7 +120,7 @@ export default function ProfileEditor({
             )}
             <label class="label">
               <span class="label-text-alt text-base-content/60">
-                メンバー一覧などで表示される名前です
+                政治家認証やメンバー一覧に表示されます。本名を入力してください。
               </span>
             </label>
           </div>
