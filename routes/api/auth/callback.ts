@@ -26,10 +26,10 @@ export const handler: Handlers = {
 
       if (error) {
         console.error("Failed to set session:", error);
-        return new Response(
-          JSON.stringify({ error: error.message }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
       if (!data.session) {
@@ -58,16 +58,17 @@ export const handler: Handlers = {
         );
       }
 
-      return new Response(
-        JSON.stringify({ success: true }),
-        { status: 200, headers }
-      );
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers,
+      });
     } catch (error) {
       console.error("Auth callback error:", error);
-      return new Response(
-        JSON.stringify({ error: "Internal server error" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Internal server error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     }
   },
 };
+

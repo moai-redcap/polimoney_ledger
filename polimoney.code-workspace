@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": "../polimoney"
+	},
+	{
+		"path": "."
+	},
+	{
+		"path": "../polimoney_hub"
+	}
+],
+  "settings": {}
+}

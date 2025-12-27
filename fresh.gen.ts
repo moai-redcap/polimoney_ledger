@@ -5,30 +5,10 @@
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_middleware from "./routes/_middleware.ts";
-import * as $api_contacts from "./routes/api/contacts.ts";
-import * as $api_contacts_id_ from "./routes/api/contacts/[id].ts";
-import * as $api_election_requests from "./routes/api/election-requests.ts";
-import * as $api_elections from "./routes/api/elections.ts";
-import * as $api_export_csv from "./routes/api/export-csv.ts";
-import * as $api_export from "./routes/api/export.ts";
-import * as $api_journals from "./routes/api/journals.ts";
-import * as $api_journals_id_approve from "./routes/api/journals/[id]/approve.ts";
-import * as $api_journals_id_receipts from "./routes/api/journals/[id]/receipts.ts";
-import * as $api_members from "./routes/api/members.ts";
-import * as $api_members_id_ from "./routes/api/members/[id].ts";
-import * as $api_organization_requests from "./routes/api/organization-requests.ts";
-import * as $api_organizations from "./routes/api/organizations.ts";
-import * as $api_ownership_transfers from "./routes/api/ownership-transfers.ts";
-import * as $api_ownership_transfers_id_ from "./routes/api/ownership-transfers/[id].ts";
-import * as $api_ownership_transfers_id_accept from "./routes/api/ownership-transfers/[id]/accept.ts";
-import * as $api_ownership_transfers_id_decline from "./routes/api/ownership-transfers/[id]/decline.ts";
-import * as $api_politicians_id_ from "./routes/api/politicians/[id].ts";
-import * as $api_profile from "./routes/api/profile.ts";
-import * as $api_receipts from "./routes/api/receipts.ts";
-import * as $api_sub_accounts from "./routes/api/sub-accounts.ts";
-import * as $api_sub_accounts_id_ from "./routes/api/sub-accounts/[id].ts";
-import * as $api_sync from "./routes/api/sync.ts";
-import * as $api_upload from "./routes/api/upload.ts";
+import * as $account from "./routes/account.tsx";
+import * as $api_path_ from "./routes/api/[...path].ts";
+import * as $api_auth_callback from "./routes/api/auth/callback.ts";
+import * as $auth_callback from "./routes/auth/callback.tsx";
 import * as $contacts from "./routes/contacts.tsx";
 import * as $dashboard from "./routes/dashboard.tsx";
 import * as $elections from "./routes/elections.tsx";
@@ -46,34 +26,48 @@ import * as $organizations from "./routes/organizations.tsx";
 import * as $organizations_id_assets from "./routes/organizations/[id]/assets.tsx";
 import * as $organizations_id_ledger from "./routes/organizations/[id]/ledger.tsx";
 import * as $organizations_id_members from "./routes/organizations/[id]/members.tsx";
+import * as $organizations_id_settings from "./routes/organizations/[id]/settings.tsx";
 import * as $organizations_new from "./routes/organizations/new.tsx";
 import * as $pending_review from "./routes/pending-review.tsx";
 import * as $privacy from "./routes/privacy.tsx";
+import * as $profile_organization_id_ from "./routes/profile/organization/[id].tsx";
+import * as $profile_organization_index from "./routes/profile/organization/index.tsx";
+import * as $profile_politician from "./routes/profile/politician.tsx";
 import * as $register from "./routes/register.tsx";
 import * as $settings from "./routes/settings.tsx";
 import * as $sub_accounts from "./routes/sub-accounts.tsx";
 import * as $terms from "./routes/terms.tsx";
+import * as $verify_organization from "./routes/verify/organization.tsx";
+import * as $verify_politician from "./routes/verify/politician.tsx";
 import * as $welcome from "./routes/welcome.tsx";
 import * as $AddContactModal from "./islands/AddContactModal.tsx";
 import * as $ApproveButton from "./islands/ApproveButton.tsx";
+import * as $AuthCallback from "./islands/AuthCallback.tsx";
 import * as $ContactManager from "./islands/ContactManager.tsx";
 import * as $ElectionRequestForm from "./islands/ElectionRequestForm.tsx";
 import * as $ElectionSelector from "./islands/ElectionSelector.tsx";
+import * as $EmailChangeForm from "./islands/EmailChangeForm.tsx";
 import * as $ExportCSVButton from "./islands/ExportCSVButton.tsx";
+import * as $ImageCropper from "./islands/ImageCropper.tsx";
 import * as $JournalForm from "./islands/JournalForm.tsx";
 import * as $JournalFormDrawer from "./islands/JournalFormDrawer.tsx";
 import * as $JournalList from "./islands/JournalList.tsx";
 import * as $MemberManager from "./islands/MemberManager.tsx";
 import * as $NewElectionForm from "./islands/NewElectionForm.tsx";
 import * as $NewOrganizationForm from "./islands/NewOrganizationForm.tsx";
+import * as $OrganizationManagerVerificationForm from "./islands/OrganizationManagerVerificationForm.tsx";
 import * as $OrganizationSelector from "./islands/OrganizationSelector.tsx";
+import * as $OrganizationSettingsForm from "./islands/OrganizationSettingsForm.tsx";
 import * as $PendingTransfers from "./islands/PendingTransfers.tsx";
 import * as $PolicyBanner from "./islands/PolicyBanner.tsx";
+import * as $PoliticianProfileForm from "./islands/PoliticianProfileForm.tsx";
+import * as $PoliticianVerificationForm from "./islands/PoliticianVerificationForm.tsx";
 import * as $ProfileEditor from "./islands/ProfileEditor.tsx";
 import * as $ReSyncButton from "./islands/ReSyncButton.tsx";
 import * as $ReceiptUploader from "./islands/ReceiptUploader.tsx";
 import * as $SubAccountManager from "./islands/SubAccountManager.tsx";
 import * as $SyncButton from "./islands/SyncButton.tsx";
+import * as $VerificationSection from "./islands/VerificationSection.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -81,32 +75,10 @@ const manifest = {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/_middleware.ts": $_middleware,
-    "./routes/api/contacts.ts": $api_contacts,
-    "./routes/api/contacts/[id].ts": $api_contacts_id_,
-    "./routes/api/election-requests.ts": $api_election_requests,
-    "./routes/api/elections.ts": $api_elections,
-    "./routes/api/export-csv.ts": $api_export_csv,
-    "./routes/api/export.ts": $api_export,
-    "./routes/api/journals.ts": $api_journals,
-    "./routes/api/journals/[id]/approve.ts": $api_journals_id_approve,
-    "./routes/api/journals/[id]/receipts.ts": $api_journals_id_receipts,
-    "./routes/api/members.ts": $api_members,
-    "./routes/api/members/[id].ts": $api_members_id_,
-    "./routes/api/organization-requests.ts": $api_organization_requests,
-    "./routes/api/organizations.ts": $api_organizations,
-    "./routes/api/ownership-transfers.ts": $api_ownership_transfers,
-    "./routes/api/ownership-transfers/[id].ts": $api_ownership_transfers_id_,
-    "./routes/api/ownership-transfers/[id]/accept.ts":
-      $api_ownership_transfers_id_accept,
-    "./routes/api/ownership-transfers/[id]/decline.ts":
-      $api_ownership_transfers_id_decline,
-    "./routes/api/politicians/[id].ts": $api_politicians_id_,
-    "./routes/api/profile.ts": $api_profile,
-    "./routes/api/receipts.ts": $api_receipts,
-    "./routes/api/sub-accounts.ts": $api_sub_accounts,
-    "./routes/api/sub-accounts/[id].ts": $api_sub_accounts_id_,
-    "./routes/api/sync.ts": $api_sync,
-    "./routes/api/upload.ts": $api_upload,
+    "./routes/account.tsx": $account,
+    "./routes/api/[...path].ts": $api_path_,
+    "./routes/api/auth/callback.ts": $api_auth_callback,
+    "./routes/auth/callback.tsx": $auth_callback,
     "./routes/contacts.tsx": $contacts,
     "./routes/dashboard.tsx": $dashboard,
     "./routes/elections.tsx": $elections,
@@ -124,36 +96,51 @@ const manifest = {
     "./routes/organizations/[id]/assets.tsx": $organizations_id_assets,
     "./routes/organizations/[id]/ledger.tsx": $organizations_id_ledger,
     "./routes/organizations/[id]/members.tsx": $organizations_id_members,
+    "./routes/organizations/[id]/settings.tsx": $organizations_id_settings,
     "./routes/organizations/new.tsx": $organizations_new,
     "./routes/pending-review.tsx": $pending_review,
     "./routes/privacy.tsx": $privacy,
+    "./routes/profile/organization/[id].tsx": $profile_organization_id_,
+    "./routes/profile/organization/index.tsx": $profile_organization_index,
+    "./routes/profile/politician.tsx": $profile_politician,
     "./routes/register.tsx": $register,
     "./routes/settings.tsx": $settings,
     "./routes/sub-accounts.tsx": $sub_accounts,
     "./routes/terms.tsx": $terms,
+    "./routes/verify/organization.tsx": $verify_organization,
+    "./routes/verify/politician.tsx": $verify_politician,
     "./routes/welcome.tsx": $welcome,
   },
   islands: {
     "./islands/AddContactModal.tsx": $AddContactModal,
     "./islands/ApproveButton.tsx": $ApproveButton,
+    "./islands/AuthCallback.tsx": $AuthCallback,
     "./islands/ContactManager.tsx": $ContactManager,
     "./islands/ElectionRequestForm.tsx": $ElectionRequestForm,
     "./islands/ElectionSelector.tsx": $ElectionSelector,
+    "./islands/EmailChangeForm.tsx": $EmailChangeForm,
     "./islands/ExportCSVButton.tsx": $ExportCSVButton,
+    "./islands/ImageCropper.tsx": $ImageCropper,
     "./islands/JournalForm.tsx": $JournalForm,
     "./islands/JournalFormDrawer.tsx": $JournalFormDrawer,
     "./islands/JournalList.tsx": $JournalList,
     "./islands/MemberManager.tsx": $MemberManager,
     "./islands/NewElectionForm.tsx": $NewElectionForm,
     "./islands/NewOrganizationForm.tsx": $NewOrganizationForm,
+    "./islands/OrganizationManagerVerificationForm.tsx":
+      $OrganizationManagerVerificationForm,
     "./islands/OrganizationSelector.tsx": $OrganizationSelector,
+    "./islands/OrganizationSettingsForm.tsx": $OrganizationSettingsForm,
     "./islands/PendingTransfers.tsx": $PendingTransfers,
     "./islands/PolicyBanner.tsx": $PolicyBanner,
+    "./islands/PoliticianProfileForm.tsx": $PoliticianProfileForm,
+    "./islands/PoliticianVerificationForm.tsx": $PoliticianVerificationForm,
     "./islands/ProfileEditor.tsx": $ProfileEditor,
     "./islands/ReSyncButton.tsx": $ReSyncButton,
     "./islands/ReceiptUploader.tsx": $ReceiptUploader,
     "./islands/SubAccountManager.tsx": $SubAccountManager,
     "./islands/SyncButton.tsx": $SyncButton,
+    "./islands/VerificationSection.tsx": $VerificationSection,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

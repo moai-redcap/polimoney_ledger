@@ -2,10 +2,11 @@ import { useState } from "preact/hooks";
 
 interface Contact {
   id: string;
-  contact_type: "person" | "corporation";
+  contact_type: "person" | "corporation" | "political_organization";
   name: string;
   address: string | null;
   occupation: string | null;
+  hub_organization_id: string | null;
   is_name_private: boolean;
   is_address_private: boolean;
   is_occupation_private: boolean;
@@ -31,10 +32,14 @@ export default function ContactManager({
 
   // フォームの状態
   const [formData, setFormData] = useState({
-    contact_type: "person" as "person" | "corporation",
+    contact_type: "person" as
+      | "person"
+      | "corporation"
+      | "political_organization",
     name: "",
     address: "",
     occupation: "",
+    hub_organization_id: "",
     is_name_private: false,
     is_address_private: false,
     is_occupation_private: false,
@@ -42,19 +47,65 @@ export default function ContactManager({
     privacy_reason_other: "",
   });
 
+  // 政治団体Hub連携用
+  const [isFetchingOrg, setIsFetchingOrg] = useState(false);
+  const [orgFetchError, setOrgFetchError] = useState<string | null>(null);
+
   const resetForm = () => {
     setFormData({
       contact_type: "person",
       name: "",
       address: "",
       occupation: "",
+      hub_organization_id: "",
       is_name_private: false,
       is_address_private: false,
       is_occupation_private: false,
       privacy_reason_type: "",
       privacy_reason_other: "",
     });
+    setOrgFetchError(null);
     setError(null);
+  };
+
+  // 政治団体情報をHub APIから取得
+  const fetchOrganizationInfo = async () => {
+    if (!formData.hub_organization_id.trim()) {
+      setOrgFetchError("政治団体IDを入力してください");
+      return;
+    }
+
+    setIsFetchingOrg(true);
+    setOrgFetchError(null);
+
+    try {
+      const response = await fetch(
+        `/api/hub-organizations/${formData.hub_organization_id.trim()}`
+      );
+
+      if (!response.ok) {
+        const json = await response.json();
+        throw new Error(json.error || "政治団体情報の取得に失敗しました");
+      }
+
+      const result = await response.json();
+      const org = result.data;
+
+      // 取得した情報をフォームに自動入力
+      setFormData((prev) => ({
+        ...prev,
+        name: org.name,
+        address: org.office_address || prev.address,
+      }));
+
+      setOrgFetchError(null);
+    } catch (err) {
+      setOrgFetchError(
+        err instanceof Error ? err.message : "取得に失敗しました"
+      );
+    } finally {
+      setIsFetchingOrg(false);
+    }
   };
 
   const openAddModal = () => {
@@ -286,10 +337,16 @@ export default function ContactManager({
                         class={`badge ${
                           contact.contact_type === "person"
                             ? "badge-info"
+                            : contact.contact_type === "political_organization"
+                            ? "badge-secondary"
                             : "badge-warning"
                         }`}
                       >
-                        {contact.contact_type === "person" ? "個人" : "法人"}
+                        {contact.contact_type === "person"
+                          ? "個人"
+                          : contact.contact_type === "political_organization"
+                          ? "政治団体"
+                          : "法人"}
                       </span>
                     </td>
                     <td class="font-medium">{contact.name}</td>
@@ -374,8 +431,71 @@ export default function ContactManager({
                       setFormData({ ...formData, contact_type: "corporation" })
                     }
                   />
+                  <input
+                    class="join-item btn"
+                    type="radio"
+                    name="contact_type"
+                    aria-label="政治団体"
+                    checked={formData.contact_type === "political_organization"}
+                    onChange={() =>
+                      setFormData({
+                        ...formData,
+                        contact_type: "political_organization",
+                      })
+                    }
+                  />
                 </div>
               </div>
+
+              {/* 政治団体ID入力（政治団体の場合のみ） */}
+              {formData.contact_type === "political_organization" && (
+                <div class="form-control mb-4">
+                  <label class="label">
+                    <span class="label-text font-medium">
+                      政治団体ID <span class="text-error ml-1">*</span>
+                    </span>
+                  </label>
+                  <div class="flex gap-2">
+                    <input
+                      type="text"
+                      class="input input-bordered flex-1"
+                      placeholder="例: 12345678-1234-1234-1234-123456789012"
+                      value={formData.hub_organization_id}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          hub_organization_id: (e.target as HTMLInputElement)
+                            .value,
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      class={`btn btn-secondary ${
+                        isFetchingOrg ? "loading" : ""
+                      }`}
+                      onClick={fetchOrganizationInfo}
+                      disabled={
+                        isFetchingOrg || !formData.hub_organization_id.trim()
+                      }
+                    >
+                      {isFetchingOrg ? "" : "取得"}
+                    </button>
+                  </div>
+                  {orgFetchError && (
+                    <label class="label">
+                      <span class="label-text-alt text-error">
+                        {orgFetchError}
+                      </span>
+                    </label>
+                  )}
+                  <label class="label">
+                    <span class="label-text-alt text-base-content/60">
+                      Hub DBに登録されている政治団体のIDを入力してください
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {/* 氏名/団体名 */}
               <div class="form-control mb-4">

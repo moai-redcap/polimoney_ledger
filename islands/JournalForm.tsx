@@ -23,9 +23,10 @@ const PUBLIC_SUBSIDY_ELIGIBLE_CODES = [
 export interface Contact {
   id: string;
   name: string;
-  contact_type: string; // 'person' | 'corporation'
+  contact_type: string; // 'person' | 'corporation' | 'political_organization'
   address?: string | null;
   occupation?: string | null;
+  hub_organization_id?: string | null;
 }
 
 // 5万円超の基準額

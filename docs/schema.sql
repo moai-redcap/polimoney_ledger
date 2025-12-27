@@ -49,10 +49,11 @@ create table if not exists sub_accounts (
 create table if not exists contacts (
   id uuid primary key default uuid_generate_v4(),
   owner_user_id uuid references auth.users(id) not null,
-  contact_type text not null, -- 'person' or 'corporation'
+  contact_type text not null, -- 'person', 'corporation', or 'political_organization'
   name text not null,
   address text,
   occupation text,
+  hub_organization_id uuid, -- Hub DBの政治団体ID（political_organization タイプの場合）
   is_name_private boolean not null default false,
   is_address_private boolean not null default false,
   is_occupation_private boolean not null default false,

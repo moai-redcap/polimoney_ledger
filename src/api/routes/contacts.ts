@@ -14,10 +14,11 @@ export const contactsRouter = new Hono<{
 }>();
 
 interface CreateContactRequest {
-  contact_type: "person" | "corporation";
+  contact_type: "person" | "corporation" | "political_organization";
   name: string;
   address?: string;
   occupation?: string;
+  hub_organization_id?: string;
   is_name_private?: boolean;
   is_address_private?: boolean;
   is_occupation_private?: boolean;
@@ -38,7 +39,7 @@ contactsRouter.get("/", async (c) => {
 
     const { data, error } = await supabase
       .from("contacts")
-      .select("id, name, contact_type, address, occupation")
+      .select("id, name, contact_type, address, occupation, hub_organization_id")
       .eq("owner_user_id", userId)
       .order("name");
 
@@ -69,13 +70,21 @@ contactsRouter.post("/", async (c) => {
       return c.json({ error: "contact_type と name は必須です" }, 400);
     }
 
-    const validTypes = ["person", "corporation"];
+    const validTypes = ["person", "corporation", "political_organization"];
     if (!validTypes.includes(body.contact_type)) {
       return c.json(
         {
           error:
-            "contact_type は 'person' または 'corporation' である必要があります",
+            "contact_type は 'person'、'corporation'、または 'political_organization' である必要があります",
         },
+        400
+      );
+    }
+
+    // 政治団体タイプの場合、hub_organization_idが必須
+    if (body.contact_type === "political_organization" && !body.hub_organization_id) {
+      return c.json(
+        { error: "政治団体タイプの場合、政治団体IDは必須です" },
         400
       );
     }
@@ -91,6 +100,7 @@ contactsRouter.post("/", async (c) => {
         name: body.name,
         address: body.address || null,
         occupation: body.occupation || null,
+        hub_organization_id: body.hub_organization_id || null,
         is_name_private: body.is_name_private || false,
         is_address_private: body.is_address_private || false,
         is_occupation_private: body.is_occupation_private || false,
