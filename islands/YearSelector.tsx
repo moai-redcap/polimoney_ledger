@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import YearClosureDialog from "./YearClosureDialog.tsx";
+import ArchiveDialog from "./ArchiveDialog.tsx";
 
 interface YearClosureStatus {
   fiscal_year: number;
@@ -20,13 +21,13 @@ export default function YearSelector({
   years,
   closureStatuses,
 }: YearSelectorProps) {
-  const [showDialog, setShowDialog] = useState(false);
+  const [showClosureDialog, setShowClosureDialog] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
 
   const currentStatus = closureStatuses.find(
     (s) => s.fiscal_year === currentYear,
   );
-  const isClosed =
-    currentStatus?.status === "closed" || currentStatus?.status === "locked";
+  const status = currentStatus?.status || "open";
 
   function handleYearChange(e: Event) {
     const target = e.target as HTMLSelectElement;
@@ -37,10 +38,39 @@ export default function YearSelector({
     globalThis.location.href = url.href;
   }
 
-  function handleClosureSuccess() {
-    setShowDialog(false);
+  function handleSuccess() {
+    setShowClosureDialog(false);
+    setShowArchiveDialog(false);
     // ページをリロードしてステータスを更新
     globalThis.location.reload();
+  }
+
+  // ステータスのラベルを取得
+  function getStatusLabel(s: string) {
+    switch (s) {
+      case "closed":
+        return " (締め済)";
+      case "locked":
+        return " (アーカイブ済)";
+      case "temporary_unlock":
+        return " (一時解除中)";
+      default:
+        return "";
+    }
+  }
+
+  // ステータスバッジを返す
+  function getStatusBadge() {
+    switch (status) {
+      case "closed":
+        return <span class="badge badge-info">締め済み</span>;
+      case "locked":
+        return <span class="badge badge-neutral">アーカイブ済</span>;
+      case "temporary_unlock":
+        return <span class="badge badge-warning">一時解除中</span>;
+      default:
+        return <span class="badge badge-success">編集可能</span>;
+    }
   }
 
   return (
@@ -54,8 +84,10 @@ export default function YearSelector({
           onChange={handleYearChange}
         >
           {years.map((year) => {
-            const status = closureStatuses.find((s) => s.fiscal_year === year);
-            const label = status?.status === "closed" ? " (締め済)" : "";
+            const yearStatus = closureStatuses.find(
+              (s) => s.fiscal_year === year,
+            );
+            const label = getStatusLabel(yearStatus?.status || "open");
             return (
               <option key={year} value={year}>
                 {year}年度{label}
@@ -66,30 +98,47 @@ export default function YearSelector({
       </div>
 
       {/* 締めステータス表示 */}
-      {isClosed ? (
-        <span class="badge badge-info">締め済み</span>
-      ) : (
-        <span class="badge badge-success">編集可能</span>
-      )}
+      {getStatusBadge()}
 
-      {/* 年度締めボタン */}
-      {!isClosed && (
+      {/* 年度締めボタン（open の時のみ） */}
+      {status === "open" && (
         <button
           type="button"
           class="btn btn-sm btn-outline btn-warning"
-          onClick={() => setShowDialog(true)}
+          onClick={() => setShowClosureDialog(true)}
         >
           年度締め
         </button>
       )}
 
+      {/* アーカイブボタン（closed の時のみ） */}
+      {status === "closed" && (
+        <button
+          type="button"
+          class="btn btn-sm btn-outline btn-neutral"
+          onClick={() => setShowArchiveDialog(true)}
+        >
+          アーカイブ
+        </button>
+      )}
+
       {/* 年度締めダイアログ */}
-      {showDialog && (
+      {showClosureDialog && (
         <YearClosureDialog
           organizationId={organizationId}
           year={currentYear}
-          onClose={() => setShowDialog(false)}
-          onSuccess={handleClosureSuccess}
+          onClose={() => setShowClosureDialog(false)}
+          onSuccess={handleSuccess}
+        />
+      )}
+
+      {/* アーカイブダイアログ */}
+      {showArchiveDialog && (
+        <ArchiveDialog
+          organizationId={organizationId}
+          year={currentYear}
+          onClose={() => setShowArchiveDialog(false)}
+          onSuccess={handleSuccess}
         />
       )}
     </div>
