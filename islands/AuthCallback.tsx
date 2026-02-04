@@ -62,9 +62,7 @@ export default function AuthCallback() {
       <>
         <span class="loading loading-spinner loading-lg text-primary"></span>
         <h1 class="text-xl font-bold mt-4">認証処理中...</h1>
-        <p class="text-base-content/60 mt-2">
-          しばらくお待ちください。
-        </p>
+        <p class="text-base-content/60 mt-2">しばらくお待ちください。</p>
       </>
     );
   }
@@ -97,3 +95,4 @@ export default function AuthCallback() {
     </>
   );
 }
+

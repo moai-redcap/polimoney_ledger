@@ -19,6 +19,7 @@ import { ownershipTransfersRouter } from "./routes/ownership-transfers.ts";
 import { electionRequestsRouter } from "./routes/election-requests.ts";
 import { organizationRequestsRouter } from "./routes/organization-requests.ts";
 import { accountRouter } from "./routes/account.ts";
+import { hubOrganizationsRouter } from "./routes/hub-organizations.ts";
 
 // Hono アプリを作成
 export const api = new Hono<{
@@ -52,6 +53,7 @@ api.route("/ownership-transfers", ownershipTransfersRouter);
 api.route("/election-requests", electionRequestsRouter);
 api.route("/organization-requests", organizationRequestsRouter);
 api.route("/account", accountRouter);
+api.route("/hub-organizations", hubOrganizationsRouter);
 
 // 404 ハンドラー
 api.notFound((c) => {
