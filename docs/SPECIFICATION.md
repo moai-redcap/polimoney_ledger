@@ -453,11 +453,11 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   - **「選挙」タブ:**
     - StreamBuilder で elections の owner_user_id が自分、**または**
       ledger_members の user_id が自分で election_id が NULL
-      でない台帳を**両方**取得し、マージして表示する。（politicians テーブルと
-      JOIN して政治家名も取得）
+      でない台帳を**両方**取得し、マージして表示する。
+    - **【v3.16 更新】** 政治家名は `hub_politician_id` を使用して Hub API (`getPolitician`) 経由で取得する。
     - ListTile:
       - title: Text(election.election_name)
-      - subtitle: Text('${politician.name} / ${election.election_date}')
+      - subtitle: Text('${politician.name} / ${election.election_date}') ※ politician は Hub API から取得
       - trailing: Icon(Icons.arrow_forward_ios)
   - FloatingActionButton: Icon(Icons.add) を配置。
 - **機能:**
@@ -490,11 +490,9 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
         '政治団体名')
     - **if (\_ledgerType == LedgerType.election):**
       - DropdownButtonFormField (政治家)
-        - items: politicians テーブルから owner_user_id
-          が一致するリストを取得して表示。
-        - decoration: InputDecoration(labelText: '政治家', suffixIcon:
-          IconButton(icon: Icon(Icons.person_add), onPressed:
-          \_addNewPolitician))
+        - **【v3.16 更新】** items: Hub API (`getPoliticians`) から認証済み政治家リストを取得して表示。
+        - 選択時は `hub_politician_id` を elections テーブルに保存。
+        - decoration: InputDecoration(labelText: '政治家')
       - TextFormField (選挙名) - decoration: InputDecoration(labelText: '選挙名
         (例: 2025 年〇〇市議選)')
       - DatePicker (選挙の投開票日)
@@ -503,19 +501,14 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     - 選択された \_ledgerType に応じて、owner_user_id = auth.uid
       を設定して、対応するテーブル (political_organizations または elections) に
       insert を実行する。
-    - elections を保存する際は、ドロップダウンで選択された politician_id
-      を含める。
+    - **【v3.16 更新】** elections を保存する際は、ドロップダウンで選択された `hub_politician_id`
+      を含める（Hub 上の政治家 ID）。
     - （accounts テーブルへのデータ投入は、README.md の初期 SQL
       で行われている前提のため、この画面でのロジックは不要）
     - 保存後、モーダルを閉じる (Navigator.pop)。
-  - **\_addNewPolitician (新規政治家追加):**
-    - suffixIcon の +
-      ボタンが押されたら、小さなアラートダイアログ（AlertDialog）を表示する。
-    - ダイアログには TextFormField (政治家名)と「追加」ボタンを配置。
-    - 「追加」ボタンで politicians テーブルに owner_user_id = auth.uid
-      を設定して新しい政治家を保存し、ダイアログを閉じる。
-    - DropdownButtonFormField
-      の政治家リストが自動でリフレッシュされ、今追加した政治家が選択状態になる。
+  - **【v3.16 削除】** \_addNewPolitician: 政治家の新規追加機能は廃止。
+    政治家は Hub で管理されるため、Ledger から直接追加することはできなくなりました。
+    ユーザーは政治家認証を行い、Hub に政治家として登録される必要があります。
 
 ### **3.3. 仕訳一覧画面 (JournalListScreen)**
 
@@ -1162,12 +1155,10 @@ pending ──→ converted  (仕訳に変換)
 ### 6.5. UI フロー
 
 1. **取り込み画面**
-
    - Freee 連携 / CSV アップロード / 手動追加 を選択
    - 取引データを取得・表示
 
 2. **確認・編集画面**
-
    - 未処理の取引一覧を表示
    - 各取引に対して科目を割り当て（推奨科目を提示）
    - 「仕訳に変換」または「無視」を選択
