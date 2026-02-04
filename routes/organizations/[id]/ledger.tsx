@@ -170,9 +170,29 @@ export const handler: Handlers<PageData> = {
         .select("fiscal_year, status, closed_at")
         .eq("organization_id", organizationId);
 
-      // 利用可能な年度リストを生成（現在年から過去5年）
+      // 仕訳が存在する年度を取得
+      const { data: journalYears } = await supabase
+        .from("journals")
+        .select("journal_date")
+        .eq("organization_id", organizationId);
+
+      // 仕訳データから年度を抽出
+      const existingYears = new Set<number>();
+      if (journalYears) {
+        journalYears.forEach((j) => {
+          if (j.journal_date) {
+            const year = new Date(j.journal_date).getFullYear();
+            existingYears.add(year);
+          }
+        });
+      }
+
+      // 利用可能な年度リストを生成（現在年から過去5年 + 仕訳が存在する年度）
       const currentYear = new Date().getFullYear();
-      const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+      const defaultYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
+      const years = [...new Set([...defaultYears, ...existingYears])].sort(
+        (a, b) => b - a,
+      );
 
       const closureStatuses = (closureData || []).map((c) => ({
         fiscal_year: c.fiscal_year as number,
