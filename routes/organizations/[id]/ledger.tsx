@@ -137,9 +137,6 @@ export const handler: Handlers<PageData> = {
             `,
             )
             .eq("organization_id", organizationId)
-            // 日付は YYYY-MM-DD 形式で保存されているため同形式で比較
-            .gte("journal_date", `${selectedYear}-01-01`)
-            .lte("journal_date", `${selectedYear}-12-31`)
             .order("journal_date", { ascending: false }),
           // 関係者一覧
           supabase
