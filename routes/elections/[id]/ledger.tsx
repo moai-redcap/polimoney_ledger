@@ -13,9 +13,7 @@ interface Election {
   id: string;
   election_name: string;
   election_date: string;
-  politicians: {
-    name: string;
-  } | null;
+  hub_politician_id: string | null;
 }
 
 interface Journal {
@@ -76,7 +74,7 @@ export const handler: Handlers<PageData> = {
       // 選挙情報を取得
       const { data: election, error: electionError } = await supabase
         .from("elections")
-        .select("id, election_name, election_date, politicians(name)")
+        .select("id, election_name, election_date, hub_politician_id")
         .eq("id", electionId)
         .single();
 
@@ -114,7 +112,7 @@ export const handler: Handlers<PageData> = {
               contacts (
                 name
               )
-            `
+            `,
             )
             .eq("election_id", electionId)
             .order("journal_date", { ascending: false }),
@@ -197,9 +195,7 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
     );
   }
 
-  const title = `${election.election_name}${
-    election.politicians?.name ? ` (${election.politicians.name})` : ""
-  }`;
+  const title = election.election_name;
 
   return (
     <>
