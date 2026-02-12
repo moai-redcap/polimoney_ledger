@@ -12,6 +12,8 @@ interface JournalFormDrawerProps {
   accountCodes: AccountCode[];
   contacts: Contact[];
   subAccounts: SubAccount[];
+  selectedYear?: number;
+  isReadOnly?: boolean;
 }
 
 export default function JournalFormDrawer({
@@ -21,6 +23,8 @@ export default function JournalFormDrawer({
   accountCodes,
   contacts,
   subAccounts,
+  selectedYear,
+  isReadOnly = false,
 }: JournalFormDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -30,8 +34,13 @@ export default function JournalFormDrawer({
   const handleSuccess = () => {
     setIsOpen(false);
     // ページをリロードして一覧を更新
-    window.location.reload();
+    globalThis.location.reload();
   };
+
+  // 読み取り専用モード（締め済み/ロック中）の場合はボタンを表示しない
+  if (isReadOnly) {
+    return null;
+  }
 
   return (
     <>
@@ -97,9 +106,10 @@ export default function JournalFormDrawer({
                 accountCodes={accountCodes}
                 contacts={contacts}
                 subAccounts={subAccounts}
+                selectedYear={selectedYear}
                 onSuccess={handleSuccess}
                 onCancel={handleClose}
-                showFixedButtons={true}
+                showFixedButtons
               />
             </div>
           </div>

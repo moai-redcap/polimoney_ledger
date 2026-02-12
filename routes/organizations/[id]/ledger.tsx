@@ -341,14 +341,26 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
               </h2>
               <div class="flex items-center gap-2">
                 <ExportCSVButton organizationId={organization.id} />
-                <JournalFormDrawer
-                  ledgerType="organization"
-                  organizationId={organization.id}
-                  electionId={null}
-                  accountCodes={accountCodes}
-                  contacts={contacts}
-                  subAccounts={subAccounts}
-                />
+                {(() => {
+                  const currentStatus = closureStatuses.find(
+                    (s) => s.fiscal_year === currentYear,
+                  );
+                  const isReadOnly =
+                    currentStatus?.status === "closed" ||
+                    currentStatus?.status === "locked";
+                  return (
+                    <JournalFormDrawer
+                      ledgerType="organization"
+                      organizationId={organization.id}
+                      electionId={null}
+                      accountCodes={accountCodes}
+                      contacts={contacts}
+                      subAccounts={subAccounts}
+                      selectedYear={currentYear}
+                      isReadOnly={isReadOnly}
+                    />
+                  );
+                })()}
               </div>
             </div>
             <JournalList

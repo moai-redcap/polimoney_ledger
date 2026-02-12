@@ -47,6 +47,7 @@ interface JournalFormProps {
   accountCodes: AccountCode[];
   contacts: Contact[];
   subAccounts: SubAccount[];
+  selectedYear?: number;
   onSuccess?: () => void;
   onCancel?: () => void;
   showFixedButtons?: boolean;
@@ -56,6 +57,16 @@ interface JournalFormProps {
 // メインコンポーネント
 // ============================================
 
+// 年度に応じた日付初期値を計算
+function getDefaultDate(selectedYear?: number): string {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  if (!selectedYear || selectedYear === currentYear) {
+    return now.toISOString().split("T")[0];
+  }
+  return `${selectedYear}-01-01`;
+}
+
 export default function JournalForm({
   ledgerType,
   organizationId,
@@ -63,13 +74,14 @@ export default function JournalForm({
   accountCodes,
   contacts: initialContacts,
   subAccounts,
+  selectedYear,
   onSuccess,
   onCancel,
   showFixedButtons = false,
 }: JournalFormProps) {
   // 基本情報
   const [entryType, setEntryType] = useState<EntryType>("expense");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(getDefaultDate(selectedYear));
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
 
@@ -122,7 +134,7 @@ export default function JournalForm({
   const assetAccounts = accountCodes.filter((a) => a.type === "asset");
   const expenseAccounts = accountCodes.filter((a) => a.type === "expense");
   const revenueAccounts = accountCodes.filter(
-    (a) => a.type === "revenue" || a.type === "equity"
+    (a) => a.type === "revenue" || a.type === "equity",
   );
 
   // 取引タイプ変更時に勘定科目をリセット
@@ -383,7 +395,7 @@ export default function JournalForm({
         onSuccess();
       } else {
         setTimeout(() => {
-          window.location.reload();
+          globalThis.location.reload();
         }, 1000);
       }
     } catch (err) {
@@ -642,7 +654,7 @@ export default function JournalForm({
                     value={debitAccountCode}
                     onChange={(e) => {
                       setDebitAccountCode(
-                        (e.target as HTMLSelectElement).value
+                        (e.target as HTMLSelectElement).value,
                       );
                       setDebitSubAccountId("");
                     }}
@@ -667,7 +679,7 @@ export default function JournalForm({
                         value={debitSubAccountId}
                         onChange={(e) =>
                           setDebitSubAccountId(
-                            (e.target as HTMLSelectElement).value
+                            (e.target as HTMLSelectElement).value,
                           )
                         }
                       >
@@ -713,7 +725,7 @@ export default function JournalForm({
                       value={creditAccountCode}
                       onChange={(e) => {
                         setCreditAccountCode(
-                          (e.target as HTMLSelectElement).value
+                          (e.target as HTMLSelectElement).value,
                         );
                         setCreditSubAccountId("");
                       }}
@@ -738,7 +750,7 @@ export default function JournalForm({
                           value={creditSubAccountId}
                           onChange={(e) =>
                             setCreditSubAccountId(
-                              (e.target as HTMLSelectElement).value
+                              (e.target as HTMLSelectElement).value,
                             )
                           }
                         >
@@ -772,7 +784,7 @@ export default function JournalForm({
                     value={debitAccountCode}
                     onChange={(e) => {
                       setDebitAccountCode(
-                        (e.target as HTMLSelectElement).value
+                        (e.target as HTMLSelectElement).value,
                       );
                       setDebitSubAccountId("");
                     }}
@@ -801,7 +813,7 @@ export default function JournalForm({
                     value={creditAccountCode}
                     onChange={(e) => {
                       setCreditAccountCode(
-                        (e.target as HTMLSelectElement).value
+                        (e.target as HTMLSelectElement).value,
                       );
                       setCreditSubAccountId("");
                     }}
@@ -826,7 +838,7 @@ export default function JournalForm({
                         value={creditSubAccountId}
                         onChange={(e) =>
                           setCreditSubAccountId(
-                            (e.target as HTMLSelectElement).value
+                            (e.target as HTMLSelectElement).value,
                           )
                         }
                       >
@@ -858,7 +870,7 @@ export default function JournalForm({
                     value={creditAccountCode}
                     onChange={(e) => {
                       setCreditAccountCode(
-                        (e.target as HTMLSelectElement).value
+                        (e.target as HTMLSelectElement).value,
                       );
                       setCreditSubAccountId("");
                     }}
@@ -886,7 +898,7 @@ export default function JournalForm({
                     value={debitAccountCode}
                     onChange={(e) => {
                       setDebitAccountCode(
-                        (e.target as HTMLSelectElement).value
+                        (e.target as HTMLSelectElement).value,
                       );
                       setDebitSubAccountId("");
                     }}
@@ -981,7 +993,7 @@ export default function JournalForm({
                     checked={isFullPublicSubsidy}
                     onChange={(e) =>
                       setIsFullPublicSubsidy(
-                        (e.target as HTMLInputElement).checked
+                        (e.target as HTMLInputElement).checked,
                       )
                     }
                   />
@@ -1039,7 +1051,7 @@ export default function JournalForm({
                   value={politicalGrantAmount}
                   onChange={(e) =>
                     setPoliticalGrantAmount(
-                      (e.target as HTMLInputElement).value
+                      (e.target as HTMLInputElement).value,
                     )
                   }
                 />
@@ -1072,7 +1084,7 @@ export default function JournalForm({
                   checked={isAssetAcquisition}
                   onChange={(e) =>
                     setIsAssetAcquisition(
-                      (e.target as HTMLInputElement).checked
+                      (e.target as HTMLInputElement).checked,
                     )
                   }
                 />
@@ -1260,7 +1272,7 @@ export default function JournalForm({
                 value={receiptHardToCollectReason}
                 onChange={(e) =>
                   setReceiptHardToCollectReason(
-                    (e.target as HTMLInputElement).value
+                    (e.target as HTMLInputElement).value,
                   )
                 }
                 required
