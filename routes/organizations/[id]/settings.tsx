@@ -60,7 +60,7 @@ export const handler: Handlers<PageData> = {
           const managedOrgs = await getManagedOrganizations(userId);
           hubOrganization =
             managedOrgs.find(
-              (org) => org.id === organization.hub_organization_id
+              (org) => org.id === organization.hub_organization_id,
             ) || null;
         } catch (error) {
           console.warn("Failed to fetch hub organization:", error);
@@ -111,21 +111,40 @@ export default function OrganizationSettingsPage({
         currentPath="/organizations"
         title={`${organization.name} - 設定`}
       >
-        {/* ナビゲーション */}
-        <div class="tabs tabs-box mb-6">
-          <a href={`/organizations/${organization.id}/ledger`} class="tab">
-            台帳
-          </a>
-          <a href={`/organizations/${organization.id}/members`} class="tab">
-            構成員
-          </a>
-          <a href={`/organizations/${organization.id}/assets`} class="tab">
-            資産
+        {/* パンくずリスト */}
+        <div class="text-sm breadcrumbs mb-4">
+          <ul>
+            <li>
+              <a href="/organizations">政治団体一覧</a>
+            </li>
+            <li>{organization.name}</li>
+          </ul>
+        </div>
+
+        {/* タブナビゲーション */}
+        <div role="tablist" class="tabs tabs-bordered mb-6">
+          <a
+            role="tab"
+            href={`/organizations/${organization.id}/ledger`}
+            class="tab hover:text-primary"
+          >
+            仕訳一覧
           </a>
           <a
-            href={`/organizations/${organization.id}/settings`}
-            class="tab tab-active"
+            role="tab"
+            href={`/organizations/${organization.id}/assets`}
+            class="tab hover:text-primary"
           >
+            資産一覧
+          </a>
+          <a
+            role="tab"
+            href={`/organizations/${organization.id}/members`}
+            class="tab hover:text-primary"
+          >
+            メンバー
+          </a>
+          <a role="tab" class="tab tab-active">
             設定
           </a>
         </div>
@@ -191,7 +210,7 @@ export default function OrganizationSettingsPage({
                 認証日:{" "}
                 {hubOrganization.manager_verified_at
                   ? new Date(
-                      hubOrganization.manager_verified_at
+                      hubOrganization.manager_verified_at,
                     ).toLocaleDateString("ja-JP")
                   : "-"}
               </span>

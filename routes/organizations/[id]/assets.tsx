@@ -83,7 +83,7 @@ export const handler: Handlers<PageData> = {
           journal_entries (
             debit_amount
           )
-        `
+        `,
         )
         .eq("organization_id", organizationId)
         .eq("is_asset_acquisition", true)
@@ -103,7 +103,7 @@ export const handler: Handlers<PageData> = {
         amount:
           j.journal_entries?.reduce(
             (sum: number, e: any) => sum + (e.debit_amount || 0),
-            0
+            0,
           ) || 0,
         contact_name: j.contacts?.name || null,
       }));
@@ -163,14 +163,17 @@ export default function OrganizationAssetsPage({ data }: PageProps<PageData>) {
   }
 
   // 資産種別ごとに集計
-  const assetSummary = assets.reduce((acc, asset) => {
-    if (!acc[asset.asset_type]) {
-      acc[asset.asset_type] = { count: 0, total: 0 };
-    }
-    acc[asset.asset_type].count += 1;
-    acc[asset.asset_type].total += asset.amount;
-    return acc;
-  }, {} as Record<string, { count: number; total: number }>);
+  const assetSummary = assets.reduce(
+    (acc, asset) => {
+      if (!acc[asset.asset_type]) {
+        acc[asset.asset_type] = { count: 0, total: 0 };
+      }
+      acc[asset.asset_type].count += 1;
+      acc[asset.asset_type].total += asset.amount;
+      return acc;
+    },
+    {} as Record<string, { count: number; total: number }>,
+  );
 
   const totalAmount = assets.reduce((sum, a) => sum + a.amount, 0);
 
@@ -216,6 +219,13 @@ export default function OrganizationAssetsPage({ data }: PageProps<PageData>) {
             class="tab hover:text-primary"
           >
             メンバー
+          </a>
+          <a
+            role="tab"
+            href={`/organizations/${organization.id}/settings`}
+            class="tab hover:text-primary"
+          >
+            設定
           </a>
         </div>
 

@@ -307,6 +307,13 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
           >
             メンバー
           </a>
+          <a
+            role="tab"
+            href={`/organizations/${organization.id}/settings`}
+            class="tab hover:text-primary"
+          >
+            設定
+          </a>
         </div>
 
         {/* 勘定科目取得エラー警告 */}

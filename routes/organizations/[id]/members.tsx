@@ -78,7 +78,7 @@ export const handler: Handlers<PageData> = {
       if (currentMember) {
         canManageMembers = hasPermission(
           currentMember.role as AppRole,
-          "manageMembers"
+          "manageMembers",
         );
       }
     }
@@ -147,6 +147,13 @@ export default function OrganizationMembersPage({ data }: PageProps<PageData>) {
           </a>
           <a role="tab" class="tab tab-active">
             メンバー
+          </a>
+          <a
+            role="tab"
+            href={`/organizations/${organization.id}/settings`}
+            class="tab hover:text-primary"
+          >
+            設定
           </a>
         </div>
 
