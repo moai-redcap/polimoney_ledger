@@ -37,9 +37,7 @@ export const handler = define.handlers<PageData>({
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase = getSupabaseClient(userId);
 
       // ローカルの政治団体情報を取得
       const { data: organization, error: orgError } = await supabase

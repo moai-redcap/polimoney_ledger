@@ -42,7 +42,7 @@ export const handler = define.handlers<PageData>({
 
     const supabase = userId === TEST_USER_ID
       ? getServiceClient()
-      : getSupabaseClient(req);
+      : getSupabaseClient(userId);
 
     const [subAccountsResult, accountMasterResult] = await Promise.all([
       supabase

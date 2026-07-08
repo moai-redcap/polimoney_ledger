@@ -37,9 +37,7 @@ export const handler = define.handlers<PageData>({
       });
     }
 
-    const supabase = userId === TEST_USER_ID
-      ? getServiceClient()
-      : getSupabaseClient(req);
+    const supabase = getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("contacts")

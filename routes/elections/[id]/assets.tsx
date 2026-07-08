@@ -54,9 +54,7 @@ export const handler = define.handlers<PageData>({
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase = getSupabaseClient(userId);
 
       // 選挙情報を取得
       const { data: election, error: electionError } = await supabase

@@ -63,9 +63,7 @@ export const handler = define.handlers<PageData>({
     }
 
     try {
-      const supabase = userId === TEST_USER_ID
-        ? getServiceClient()
-        : getSupabaseClient(req);
+      const supabase = getSupabaseClient(userId);
 
       const { data: journal, error } = await supabase
         .from("journals")

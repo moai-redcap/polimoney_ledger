@@ -49,7 +49,7 @@ export const handler = define.handlers<PageData>({
     try {
       const supabase = userId === TEST_USER_ID
         ? getServiceClient()
-        : getSupabaseClient(req);
+        : getSupabaseClient(userId);
 
       let query = supabase
         .from("journals")
@@ -108,13 +108,11 @@ export const handler = define.handlers<PageData>({
   },
 });
 
-// 金額をフォーマット
-function formatAmount(amount: number): string {
+// 金額をフォーマッチEfunction formatAmount(amount: number): string {
   return new Intl.NumberFormat("ja-JP").format(amount);
 }
 
-// 日付をフォーマット
-function formatDate(dateStr: string): string {
+// 日付をフォーマッチEfunction formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toLocaleDateString("ja-JP", {
     year: "numeric",
@@ -123,8 +121,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-// 仕訳の合計金額を計算
-function calculateTotal(entries: Journal["journal_entries"]): number {
+// 仕訳の合計��額を計箁Efunction calculateTotal(entries: Journal["journal_entries"]): number {
   return entries.reduce((sum, entry) => sum + entry.debit_amount, 0);
 }
 
@@ -140,7 +137,7 @@ export default define.page<typeof handler>(({ data }) => {
         <title>仕訳一覧 - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/journals" title="仕訳一覧">
-        {/* フィルタータブ */}
+        {/* フィルタータチE*/}
         <div class="tabs tabs-boxed mb-6">
           <a
             href="/journals"
@@ -152,14 +149,14 @@ export default define.page<typeof handler>(({ data }) => {
             href="/journals?filter=draft"
             class={`tab ${filter === "draft" ? "tab-active" : ""}`}
           >
-            <span class="badge badge-warning badge-sm mr-1">下書き</span>
+            <span class="badge badge-warning badge-sm mr-1">下書ぁE/span>
             {draftCount}
           </a>
           <a
             href="/journals?filter=approved"
             class={`tab ${filter === "approved" ? "tab-active" : ""}`}
           >
-            <span class="badge badge-success badge-sm mr-1">承認済</span>
+            <span class="badge badge-success badge-sm mr-1">承認渁E/span>
             {approvedCount}
           </a>
         </div>
@@ -184,11 +181,11 @@ export default define.page<typeof handler>(({ data }) => {
               <table class="table table-zebra">
                 <thead>
                   <tr>
-                    <th>日付</th>
-                    <th>摘要</th>
-                    <th>関係者</th>
-                    <th class="text-right">金額</th>
-                    <th>ステータス</th>
+                    <th>日仁E/th>
+                    <th>摘要E/th>
+                    <th>関係老E/th>
+                    <th class="text-right">金顁E/th>
+                    <th>スチE�Eタス</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -215,13 +212,11 @@ export default define.page<typeof handler>(({ data }) => {
                         {journal.status === "draft"
                           ? (
                             <span class="badge badge-warning badge-sm">
-                              下書き
-                            </span>
+                              下書ぁE                            </span>
                           )
                           : (
                             <span class="badge badge-success badge-sm">
-                              承認済
-                            </span>
+                              承認渁E                            </span>
                           )}
                       </td>
                       <td>

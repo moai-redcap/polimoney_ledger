@@ -16,11 +16,11 @@ interface Transfer {
   political_organizations?: {
     id: string;
     name: string;
-  } | { id: string; name: string }[] | null;
+  } | null;
   elections?: {
     id: string;
     election_name: string;
-  } | { id: string; election_name: string }[] | null;
+  } | null;
 }
 
 interface DashboardData {
@@ -30,7 +30,6 @@ interface DashboardData {
 
 export const handler = define.handlers<DashboardData>({
   async GET(ctx) {
-    const req = ctx.req;
     const user = ctx.state.user as { email?: string } | undefined;
     const userId = ctx.state.userId as string;
 
@@ -38,9 +37,7 @@ export const handler = define.handlers<DashboardData>({
 
     if (userId) {
       try {
-        const supabase = userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(req);
+        const supabase = getSupabaseClient(userId);
 
         const { data: transfers } = await supabase
           .from("ownership_transfers")
@@ -65,8 +62,7 @@ export const handler = define.handlers<DashboardData>({
           .eq("status", "pending")
           .order("requested_at", { ascending: false });
 
-        // deno-lint-ignore no-explicit-any
-        pendingTransfers = (transfers || []) as any[];
+        pendingTransfers = (transfers || []) as Transfer[];
       } catch (error) {
         console.error("Failed to fetch pending transfers:", error);
       }

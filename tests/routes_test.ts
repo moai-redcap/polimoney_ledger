@@ -3,7 +3,6 @@
  *
  * テスト実行: deno test -A tests/
  */
-import { App, staticFiles } from "fresh";
 import { Builder } from "fresh/dev";
 import { assertEquals } from "$std/assert/assert_equals.ts";
 import { assertStringIncludes } from "$std/assert/assert_string_includes.ts";
