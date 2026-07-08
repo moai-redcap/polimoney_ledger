@@ -6,12 +6,15 @@ import { Hono } from "hono";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
   isTestUser,
+  syncContacts,
+  type SyncContactInput,
   syncJournals,
   syncLedger,
   type SyncJournalInput,
   type SyncLedgerInput,
 } from "../../../lib/hub-client.ts";
 import {
+  isFullyPublicContact,
   shouldSync,
   transformJournalForSync,
 } from "../../../lib/sync-transform.ts";
@@ -32,8 +35,7 @@ interface JournalEntry {
 }
 
 interface CreateJournalRequest {
-  organization_id: string | null;
-  election_id: string | null;
+  ledger_id: string;
   journal_date: string | null;
   description: string;
   contact_id?: string | null;
@@ -85,8 +87,8 @@ journalsRouter.post("/", async (c) => {
       return c.json({ error: "借方と貸方の合計が一致しません" }, 400);
     }
 
-    if (!body.organization_id && !body.election_id) {
-      return c.json({ error: "政治団体または選挙を指定してください" }, 400);
+    if (!body.ledger_id) {
+      return c.json({ error: "台帳を指定してください" }, 400);
     }
 
     // 領収証徴収困難の場合、理由が必須
@@ -109,8 +111,7 @@ journalsRouter.post("/", async (c) => {
     const { data: journal, error: journalError } = await supabase
       .from("journals")
       .insert({
-        organization_id: body.organization_id,
-        election_id: body.election_id,
+        ledger_id: body.ledger_id,
         journal_date: body.journal_date || null,
         description: body.description,
         contact_id: body.contact_id || null,
@@ -314,42 +315,63 @@ journalsRouter.post("/:id/approve", async (c) => {
 
       if (shouldSync(approvedJournal)) {
         // 台帳情報を取得
-        const ledgerQuery = approvedJournal.organization_id
-          ? supabase
-              .from("ledgers")
-              .select("*")
-              .eq("organization_id", approvedJournal.organization_id)
-              .limit(1)
-          : supabase
-              .from("ledgers")
-              .select("*")
-              .eq("election_id", approvedJournal.election_id)
-              .limit(1);
+        const { data: ledgers } = await supabase
+          .from("ledgers")
+          .select("*")
+          .eq("id", approvedJournal.ledger_id)
+          .limit(1);
 
-        const { data: ledgers } = await ledgerQuery;
         const ledger = ledgers?.[0];
 
         if (ledger) {
           // 台帳の集計を更新
           const ledgerInput: SyncLedgerInput = {
             ledger_source_id: ledger.id,
-            politician_id: ledger.politician_id,
-            organization_id: ledger.organization_id || undefined,
-            election_id: ledger.election_id || undefined,
-            fiscal_year: ledger.fiscal_year || new Date().getFullYear(),
+            ledger_type: ledger.ledger_type,
+            politician_organization_id:
+              ledger.hub_politician_organization_id || undefined,
+            politician_election_id:
+              ledger.hub_politician_election_id || undefined,
+            fiscal_year: new Date().getFullYear(),
             is_test: isTest,
             total_income: 0, // 集計は syncLedger 内で再計算される想定
             total_expense: 0,
             journal_count: 1,
           };
-          await syncLedger(ledgerInput, { userId });
+          const ledgerResult = await syncLedger(ledgerInput, { userId });
 
-          // 単一仕訳を同期
+          // contact を先に同期（UUID でユニーク識別）
+          let hubContactId: string | null = null;
+          const contact = approvedJournal.contacts;
+          if (contact && contact.id) {
+            const contactInput: SyncContactInput = {
+              contact_source_id: contact.id,
+              ledger_id: ledgerResult.data?.id || ledger.id,
+              contact_type: contact.contact_type,
+              name: contact.is_name_private ? null : contact.name,
+              address: contact.is_address_private ? null : (contact.address ?? null),
+              occupation: contact.is_occupation_private ? null : (contact.occupation ?? null),
+              is_name_private: contact.is_name_private,
+              is_address_private: contact.is_address_private,
+              is_occupation_private: contact.is_occupation_private,
+            };
+            try {
+              const contactResult = await syncContacts([contactInput], { userId });
+              if (contactResult.data.length > 0) {
+                hubContactId = contactResult.data[0].hub_contact_id;
+              }
+            } catch (contactErr) {
+              console.warn("[Approve] Contact sync failed (non-fatal):", contactErr);
+            }
+          }
+
+          // 単一仕訳を同期（Hub の contact_id を使用）
           const transformed = await transformJournalForSync({
             journal: approvedJournal,
             entries: approvedJournal.journal_entries,
             contact: approvedJournal.contacts,
             ledgerSourceId: ledger.id,
+            hubContactId,
           });
 
           const syncInput: SyncJournalInput = {
