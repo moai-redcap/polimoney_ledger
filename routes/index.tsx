@@ -16,11 +16,11 @@ interface Transfer {
   political_organizations?: {
     id: string;
     name: string;
-  } | null;
+  } | { id: string; name: string }[] | null;
   elections?: {
     id: string;
     election_name: string;
-  } | null;
+  } | { id: string; election_name: string }[] | null;
 }
 
 interface DashboardData {
@@ -65,7 +65,8 @@ export const handler = define.handlers<DashboardData>({
           .eq("status", "pending")
           .order("requested_at", { ascending: false });
 
-        pendingTransfers = (transfers || []) as Transfer[];
+        // deno-lint-ignore no-explicit-any
+        pendingTransfers = (transfers || []) as any[];
       } catch (error) {
         console.error("Failed to fetch pending transfers:", error);
       }
