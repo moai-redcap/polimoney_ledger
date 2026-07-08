@@ -20,7 +20,16 @@
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
     "@deno/gfm": "jsr:@deno/gfm@0.10",
     "hono": "jsr:@hono/hono@^4.6.0",
-    "fflate": "npm:fflate@0.8.2"
+    "fflate": "npm:fflate@0.8.2",
+    "@zag-js/preact": "npm:@zag-js/preact@^1.42.0",
+    "@zag-js/dialog": "npm:@zag-js/dialog@^1.42.0",
+    "@zag-js/menu": "npm:@zag-js/menu@^1.42.0",
+    "@zag-js/select": "npm:@zag-js/select@^1.42.0",
+    "@zag-js/tabs": "npm:@zag-js/tabs@^1.42.0",
+    "@zag-js/toast": "npm:@zag-js/toast@^1.42.0",
+    "@zag-js/tooltip": "npm:@zag-js/tooltip@^1.42.0",
+    "@zag-js/collapsible": "npm:@zag-js/collapsible@^1.42.0",
+    "@zag-js/file-upload": "npm:@zag-js/file-upload@^1.42.0"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" }
 }
