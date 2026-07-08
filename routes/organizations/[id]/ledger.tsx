@@ -112,14 +112,25 @@ export const handler: Handlers<PageData> = {
         });
       }
 
+      // organization_id から ledger を取得
+      const { data: ledgerData } = await supabase
+        .from("ledgers")
+        .select("id")
+        .eq("organization_id", organizationId)
+        .limit(1)
+        .single();
+
+      const ledgerId = ledgerData?.id;
+
       // 並列で各種データを取得
       const [journalsResult, contactsResult, subAccountsResult, accountCodes] =
         await Promise.all([
           // 仕訳一覧
-          supabase
-            .from("journals")
-            .select(
-              `
+          ledgerId
+            ? supabase
+                .from("journals")
+                .select(
+                  `
               id,
               journal_date,
               description,
@@ -136,11 +147,12 @@ export const handler: Handlers<PageData> = {
                 name
               )
             `,
-            )
-            .eq("organization_id", organizationId)
-            .gte("journal_date", `${selectedYear}-01-01`)
-            .lte("journal_date", `${selectedYear}-12-31`)
-            .order("journal_date", { ascending: false }),
+                )
+                .eq("ledger_id", ledgerId)
+                .gte("journal_date", `${selectedYear}-01-01`)
+                .lte("journal_date", `${selectedYear}-12-31`)
+                .order("journal_date", { ascending: false })
+            : Promise.resolve({ data: [], error: null }),
           // 関係者一覧
           supabase
             .from("contacts")
@@ -166,16 +178,20 @@ export const handler: Handlers<PageData> = {
       }
 
       // 年度締めステータスを取得
-      const { data: closureData } = await supabase
-        .from("ledger_year_closures")
-        .select("fiscal_year, status, closed_at")
-        .eq("organization_id", organizationId);
+      const { data: closureData } = ledgerId
+        ? await supabase
+            .from("ledger_year_closures")
+            .select("fiscal_year, status, closed_at")
+            .eq("ledger_id", ledgerId)
+        : { data: null };
 
       // 仕訳が存在する年度を取得
-      const { data: journalYears } = await supabase
-        .from("journals")
-        .select("journal_date")
-        .eq("organization_id", organizationId);
+      const { data: journalYears } = ledgerId
+        ? await supabase
+            .from("journals")
+            .select("journal_date")
+            .eq("ledger_id", ledgerId)
+        : { data: null };
 
       // 仕訳データから年度を抽出
       const existingYears = new Set<number>();
@@ -348,7 +364,7 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
                 <span class="badge badge-ghost">{journals.length}件</span>
               </h2>
               <div class="flex items-center gap-2">
-                <ExportCSVButton organizationId={organization.id} />
+                <ExportCSVButton ledgerId={ledgerId || ""} />
                 {(() => {
                   const currentStatus = closureStatuses.find(
                     (s) => s.fiscal_year === currentYear,
@@ -359,8 +375,7 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
                   return (
                     <JournalFormDrawer
                       ledgerType="organization"
-                      organizationId={organization.id}
-                      electionId={null}
+                      ledgerId={ledgerId || ""}
                       accountCodes={accountCodes}
                       contacts={contacts}
                       subAccounts={subAccounts}

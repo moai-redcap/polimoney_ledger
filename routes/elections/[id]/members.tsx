@@ -64,12 +64,22 @@ export const handler: Handlers<PageData> = {
 
     const isOwner = election.owner_user_id === userId;
 
-    // メンバー一覧を取得
-    const { data: members } = await supabase
-      .from("ledger_members")
-      .select("id, user_id, role, created_at, invited_by_user_id")
+    // election_id から ledger を取得
+    const { data: ledgerData } = await supabase
+      .from("ledgers")
+      .select("id")
       .eq("election_id", electionId)
-      .order("created_at");
+      .limit(1)
+      .single();
+
+    // メンバー一覧を取得
+    const { data: members } = ledgerData
+      ? await supabase
+          .from("ledger_members")
+          .select("id, user_id, role, created_at, invited_by_user_id")
+          .eq("ledger_id", ledgerData.id)
+          .order("created_at")
+      : { data: null };
 
     // 現在のユーザーの権限を確認
     let canManageMembers = isOwner;
@@ -154,7 +164,7 @@ export default function ElectionMembersPage({ data }: PageProps<PageData>) {
 
         <div class="max-w-4xl">
           <MemberManager
-            electionId={election.id}
+            ledgerId={ledgerData?.id}
             initialMembers={members}
             isOwner={isOwner}
             canManageMembers={canManageMembers}

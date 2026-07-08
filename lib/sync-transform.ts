@@ -48,6 +48,25 @@ export interface LedgerContact {
 }
 
 // ============================================
+// 公開判定
+// ============================================
+
+/**
+ * 関係者の全フィールドが公開かどうかを判定
+ *
+ * 名前・住所・職業の全てが公開の場合に true を返す。
+ * contact_source_id (UUID) でユニーク識別するため、
+ * 同姓同名でも確実に区別される。
+ */
+export function isFullyPublicContact(contact: LedgerContact): boolean {
+  return (
+    !contact.is_name_private &&
+    !contact.is_address_private &&
+    !contact.is_occupation_private
+  );
+}
+
+// ============================================
 // 匿名化ロジック
 // ============================================
 
