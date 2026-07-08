@@ -25,7 +25,7 @@ export interface Journal {
   journal_entries: JournalEntry[];
   contacts:
     | {
-        name: string;
-      }[]
+      name: string;
+    }[]
     | null;
 }

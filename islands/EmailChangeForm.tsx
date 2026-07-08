@@ -8,10 +8,12 @@ export default function EmailChangeForm({ currentEmail }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error" | "info";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error" | "info";
+      text: string;
+    } | null
+  >(null);
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -41,7 +43,8 @@ export default function EmailChangeForm({ currentEmail }: Props) {
 
       setMessage({
         type: "success",
-        text: "確認メールを送信しました。メール内の「メールアドレスを確認する」ボタンをクリックして変更を完了してください。※メールは noreply@mail.app.supabase.io から届きます。",
+        text:
+          "確認メールを送信しました。メール内の「メールアドレスを確認する」ボタンをクリックして変更を完了してください。※メールは noreply@mail.app.supabase.io から届きます。",
       });
       setIsEditing(false);
       setNewEmail("");
@@ -91,73 +94,73 @@ export default function EmailChangeForm({ currentEmail }: Props) {
           </div>
         )}
 
-        {isEditing ? (
-          <form onSubmit={handleSubmit} class="space-y-4 mt-2">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">現在のメールアドレス</span>
-              </label>
-              <input
-                type="email"
-                value={currentEmail}
-                class="input input-bordered"
-                disabled
-              />
-            </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">新しいメールアドレス</span>
-              </label>
-              <input
-                type="email"
-                value={newEmail}
-                onChange={(e) =>
-                  setNewEmail((e.target as HTMLInputElement).value)
-                }
-                class="input input-bordered"
-                placeholder="新しいメールアドレスを入力"
-                required
-              />
-              <label class="label">
-                <span class="label-text-alt">確認メールが送信されます</span>
-              </label>
-            </div>
-            <div class="flex gap-2">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                disabled={
-                  isSubmitting || !newEmail || newEmail === currentEmail
-                }
-              >
-                {isSubmitting ? "送信中..." : "変更を申請"}
-              </button>
-              <button
-                type="button"
-                class="btn"
-                onClick={() => {
-                  setIsEditing(false);
-                  setNewEmail("");
-                  setMessage(null);
-                }}
-              >
-                キャンセル
-              </button>
-            </div>
-          </form>
-        ) : (
-          <>
-            <p class="text-base-content/70">{currentEmail}</p>
-            <div class="card-actions mt-2">
-              <button
-                class="btn btn-sm btn-outline"
-                onClick={() => setIsEditing(true)}
-              >
-                メールアドレスを変更
-              </button>
-            </div>
-          </>
-        )}
+        {isEditing
+          ? (
+            <form onSubmit={handleSubmit} class="space-y-4 mt-2">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">現在のメールアドレス</span>
+                </label>
+                <input
+                  type="email"
+                  value={currentEmail}
+                  class="input input-bordered"
+                  disabled
+                />
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">新しいメールアドレス</span>
+                </label>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) =>
+                    setNewEmail((e.target as HTMLInputElement).value)}
+                  class="input input-bordered"
+                  placeholder="新しいメールアドレスを入力"
+                  required
+                />
+                <label class="label">
+                  <span class="label-text-alt">確認メールが送信されます</span>
+                </label>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  disabled={isSubmitting || !newEmail ||
+                    newEmail === currentEmail}
+                >
+                  {isSubmitting ? "送信中..." : "変更を申請"}
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setNewEmail("");
+                    setMessage(null);
+                  }}
+                >
+                  キャンセル
+                </button>
+              </div>
+            </form>
+          )
+          : (
+            <>
+              <p class="text-base-content/70">{currentEmail}</p>
+              <div class="card-actions mt-2">
+                <button
+                  class="btn btn-sm btn-outline"
+                  onClick={() => setIsEditing(true)}
+                >
+                  メールアドレスを変更
+                </button>
+              </div>
+            </>
+          )}
 
         <div class="alert alert-info mt-4">
           <svg

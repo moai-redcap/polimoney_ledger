@@ -66,7 +66,9 @@ function toCsv(headers: string[], rows: (string | number | null)[][]): string {
 
 function todayStr(): string {
   const d = new Date();
-  return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+  return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${
+    String(d.getDate()).padStart(2, "0")
+  }`;
 }
 
 // ============================================
@@ -78,8 +80,9 @@ async function fetchJournals(
   ledgerId: string,
   year: string | null,
 ): Promise<JournalRow[]> {
-  const supabase =
-    userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+  const supabase = userId === TEST_USER_ID
+    ? getServiceClient()
+    : getSupabaseClient(userId);
 
   let query = supabase
     .from("journals")
@@ -103,7 +106,9 @@ async function fetchJournals(
   }
 
   const { data, error } = await query;
-  if (error) throw new Error(`仕訳データの取得に失敗しました: ${error.message}`);
+  if (error) {
+    throw new Error(`仕訳データの取得に失敗しました: ${error.message}`);
+  }
   return (data ?? []) as unknown as JournalRow[];
 }
 
@@ -370,13 +375,16 @@ exportReportRouter.get("/", async (c) => {
     if (ledgerType === "election" || electionId) {
       // 選挙用: 選挙運動費用収支報告書
       const csv = generateElectionReportCsv(journals);
-      const filename = `選挙運動費用収支報告書_補助${yearSuffix}_${dateStr}.csv`;
+      const filename =
+        `選挙運動費用収支報告書_補助${yearSuffix}_${dateStr}.csv`;
 
       return new Response(csv, {
         status: 200,
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`,
+          "Content-Disposition": `attachment; filename*=UTF-8''${
+            encodeURIComponent(filename)
+          }`,
         },
       });
     } else {
@@ -398,7 +406,9 @@ exportReportRouter.get("/", async (c) => {
         status: 200,
         headers: {
           "Content-Type": "application/zip",
-          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(zipFilename)}`,
+          "Content-Disposition": `attachment; filename*=UTF-8''${
+            encodeURIComponent(zipFilename)
+          }`,
         },
       });
     }
@@ -406,8 +416,9 @@ exportReportRouter.get("/", async (c) => {
     console.error("Export report error:", error);
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "エクスポートに失敗しました",
+        error: error instanceof Error
+          ? error.message
+          : "エクスポートに失敗しました",
       },
       500,
     );

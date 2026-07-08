@@ -6,10 +6,10 @@ import { Hono } from "hono";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
   createOrganizationManagerVerification,
-  sendOrganizationManagerVerificationCode,
-  verifyOrganizationManagerEmail,
-  verifyOrganizationManagerDns,
   type PoliticalFundReportInfo,
+  sendOrganizationManagerVerificationCode,
+  verifyOrganizationManagerDns,
+  verifyOrganizationManagerEmail,
 } from "../../../lib/hub-client.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -30,8 +30,9 @@ organizationsRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("organizations")
@@ -62,8 +63,9 @@ organizationsRouter.put("/:id", async (c) => {
   try {
     const body = await c.req.json();
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("organizations")
@@ -94,8 +96,9 @@ organizationsRouter.post("/", async (c) => {
   try {
     const body = await c.req.json();
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("organizations")
@@ -127,8 +130,9 @@ organizationsRouter.post("/manager-verify", async (c) => {
 
   try {
     // ユーザーのメールアドレスを取得
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
     const { data: userData } = await supabase.auth.getUser();
     const userEmail = userData?.user?.email || "";
 
@@ -163,7 +167,7 @@ organizationsRouter.post("/manager-verify", async (c) => {
       {
         error: error instanceof Error ? error.message : "申請に失敗しました",
       },
-      500
+      500,
     );
   }
 });
@@ -180,17 +184,18 @@ organizationsRouter.post("/manager-verify/:id/send-code", async (c) => {
   try {
     const result = await sendOrganizationManagerVerificationCode(
       verificationId,
-      { userId }
+      { userId },
     );
     return c.json(result);
   } catch (error) {
     console.error("Error sending verification code:", error);
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "コード送信に失敗しました",
+        error: error instanceof Error
+          ? error.message
+          : "コード送信に失敗しました",
       },
-      500
+      500,
     );
   }
 });
@@ -214,7 +219,7 @@ organizationsRouter.post("/manager-verify/:id/verify-code", async (c) => {
     const result = await verifyOrganizationManagerEmail(
       verificationId,
       body.code,
-      { userId }
+      { userId },
     );
     return c.json(result);
   } catch (error) {
@@ -223,7 +228,7 @@ organizationsRouter.post("/manager-verify/:id/verify-code", async (c) => {
       {
         error: error instanceof Error ? error.message : "認証に失敗しました",
       },
-      500
+      500,
     );
   }
 });
@@ -246,10 +251,11 @@ organizationsRouter.post("/manager-verify/:id/verify-dns", async (c) => {
     console.error("Error verifying DNS TXT:", error);
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "DNS TXT認証に失敗しました",
+        error: error instanceof Error
+          ? error.message
+          : "DNS TXT認証に失敗しました",
       },
-      500
+      500,
     );
   }
 });

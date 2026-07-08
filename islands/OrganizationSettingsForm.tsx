@@ -41,15 +41,17 @@ export default function OrganizationSettingsForm({
   const [formData, setFormData] = useState<OrganizationFormData>(initialData);
   const [logoUrl, setLogoUrl] = useState<string | null>(currentLogoUrl || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error";
+      text: string;
+    } | null
+  >(null);
 
   const handleChange = (
     e: Event & {
       currentTarget: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-    }
+    },
   ) => {
     const { name, value } = e.currentTarget;
     setFormData((prev) => ({ ...prev, [name]: value }));

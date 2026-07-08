@@ -157,7 +157,8 @@ export interface TransformInput {
 export async function transformJournalForSync(
   input: TransformInput,
 ): Promise<SyncJournalInput> {
-  const { journal, entries, contact: _contact, ledgerSourceId, hubContactId } = input;
+  const { journal, entries, contact: _contact, ledgerSourceId, hubContactId } =
+    input;
 
   const amount = calculateAmount(entries);
   const accountCode = getAccountCode(entries);

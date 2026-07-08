@@ -34,12 +34,15 @@ contactsRouter.get("/", async (c) => {
   }
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("contacts")
-      .select("id, name, contact_type, address, occupation, hub_organization_id")
+      .select(
+        "id, name, contact_type, address, occupation, hub_organization_id",
+      )
       .eq("owner_user_id", userId)
       .order("name");
 
@@ -77,20 +80,24 @@ contactsRouter.post("/", async (c) => {
           error:
             "contact_type は 'person'、'corporation'、または 'political_organization' である必要があります",
         },
-        400
+        400,
       );
     }
 
     // 政治団体タイプの場合、hub_organization_idが必須
-    if (body.contact_type === "political_organization" && !body.hub_organization_id) {
+    if (
+      body.contact_type === "political_organization" &&
+      !body.hub_organization_id
+    ) {
       return c.json(
         { error: "政治団体タイプの場合、政治団体IDは必須です" },
-        400
+        400,
       );
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("contacts")
@@ -132,8 +139,9 @@ contactsRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("contacts")
@@ -165,8 +173,9 @@ contactsRouter.put("/:id", async (c) => {
   try {
     const body = await c.req.json();
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("contacts")
@@ -207,8 +216,9 @@ contactsRouter.delete("/:id", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { error } = await supabase
       .from("contacts")

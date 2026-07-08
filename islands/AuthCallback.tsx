@@ -2,7 +2,7 @@ import { useEffect, useState } from "preact/hooks";
 
 export default function AuthCallback() {
   const [status, setStatus] = useState<"processing" | "success" | "error">(
-    "processing"
+    "processing",
   );
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -49,7 +49,7 @@ export default function AuthCallback() {
       } catch (error) {
         setStatus("error");
         setErrorMessage(
-          error instanceof Error ? error.message : "認証に失敗しました"
+          error instanceof Error ? error.message : "認証に失敗しました",
         );
       }
     };
@@ -95,4 +95,3 @@ export default function AuthCallback() {
     </>
   );
 }
-

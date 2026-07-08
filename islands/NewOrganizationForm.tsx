@@ -39,7 +39,7 @@ export default function NewOrganizationForm({
       }
 
       const selectedOrg = managedOrganizations.find(
-        (o) => o.id === selectedOrgId
+        (o) => o.id === selectedOrgId,
       );
       if (!selectedOrg) {
         setError("選択された政治団体が見つかりません");
@@ -81,39 +81,41 @@ export default function NewOrganizationForm({
 
       {/* 管理する政治団体一覧 */}
       <div class="max-h-96 overflow-y-auto border rounded-lg mb-6">
-        {managedOrganizations.length === 0 ? (
-          <div class="p-8 text-center text-base-content/60">
-            管理する政治団体がありません
-          </div>
-        ) : (
-          managedOrganizations.map((org) => (
-            <label
-              key={org.id}
-              class={`flex items-center gap-4 p-4 cursor-pointer hover:bg-base-200 border-b ${
-                selectedOrgId === org.id ? "bg-primary/10" : ""
-              }`}
-            >
-              <input
-                type="radio"
-                name="organization"
-                class="radio radio-primary"
-                checked={selectedOrgId === org.id}
-                onChange={() => setSelectedOrgId(org.id)}
-              />
-              <div class="flex-1">
-                <div class="font-medium">{org.name}</div>
-                <div class="flex gap-2 mt-1">
-                  <span class="badge badge-sm badge-info">
-                    {ORGANIZATION_TYPES[org.type] || org.type}
-                  </span>
-                  <span class="badge badge-sm badge-success">
-                    ✓ 認証済み
-                  </span>
+        {managedOrganizations.length === 0
+          ? (
+            <div class="p-8 text-center text-base-content/60">
+              管理する政治団体がありません
+            </div>
+          )
+          : (
+            managedOrganizations.map((org) => (
+              <label
+                key={org.id}
+                class={`flex items-center gap-4 p-4 cursor-pointer hover:bg-base-200 border-b ${
+                  selectedOrgId === org.id ? "bg-primary/10" : ""
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="organization"
+                  class="radio radio-primary"
+                  checked={selectedOrgId === org.id}
+                  onChange={() => setSelectedOrgId(org.id)}
+                />
+                <div class="flex-1">
+                  <div class="font-medium">{org.name}</div>
+                  <div class="flex gap-2 mt-1">
+                    <span class="badge badge-sm badge-info">
+                      {ORGANIZATION_TYPES[org.type] || org.type}
+                    </span>
+                    <span class="badge badge-sm badge-success">
+                      ✓ 認証済み
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </label>
-          ))
-        )}
+              </label>
+            ))
+          )}
       </div>
 
       {/* 送信ボタン */}

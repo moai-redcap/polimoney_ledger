@@ -1,7 +1,8 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { getCookies } from "$std/http/cookie.ts";
 import { createClient } from "@supabase/supabase-js";
+import { Handlers } from "fresh/compat";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
@@ -20,7 +21,8 @@ interface PendingReviewData {
 }
 
 export const handler: Handlers<PendingReviewData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const cookies = getCookies(req.headers);
     const accessToken = cookies["sb-access-token"];
 

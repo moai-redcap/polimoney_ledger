@@ -85,7 +85,7 @@ export const permissionDisplayNames: Record<AppPermission, string> = {
  */
 export function hasPermission(
   role: AppRole,
-  permission: AppPermission
+  permission: AppPermission,
 ): boolean {
   const permissions = rolePermissions[role];
   return permissions?.includes(permission) ?? false;

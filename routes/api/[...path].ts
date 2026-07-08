@@ -1,33 +1,37 @@
-/**
- * API キャッチオールルート
- *
- * すべての /api/* リクエストを Hono に転送
- */
-
-import { Handlers } from "$fresh/server.ts";
 import { api } from "../../src/api/index.ts";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
+
     return handleRequest(req, ctx);
   },
-  async POST(req, ctx) {
+  async POST(ctx) {
+    const req = ctx.req;
+
     return handleRequest(req, ctx);
   },
-  async PUT(req, ctx) {
+  async PUT(ctx) {
+    const req = ctx.req;
+
     return handleRequest(req, ctx);
   },
-  async DELETE(req, ctx) {
+  async DELETE(ctx) {
+    const req = ctx.req;
+
     return handleRequest(req, ctx);
   },
-  async PATCH(req, ctx) {
+  async PATCH(ctx) {
+    const req = ctx.req;
+
     return handleRequest(req, ctx);
   },
 };
 
 async function handleRequest(
   req: Request,
-  ctx: { state: { userId?: string }; params: { path: string } }
+  ctx: { state: { userId?: string }; params: { path: string } },
 ): Promise<Response> {
   const url = new URL(req.url);
 

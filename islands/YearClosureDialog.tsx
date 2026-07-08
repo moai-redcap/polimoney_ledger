@@ -102,8 +102,8 @@ export default function YearClosureDialog({
     });
   }
 
-  const errorCount =
-    result?.issues.filter((i) => i.type === "error").length || 0;
+  const errorCount = result?.issues.filter((i) => i.type === "error").length ||
+    0;
   const warningCount =
     result?.issues.filter((i) => i.type === "warning").length || 0;
 
@@ -235,15 +235,17 @@ export default function YearClosureDialog({
                       {result.issues.map((issue, i) => (
                         <tr key={i}>
                           <td>
-                            {issue.type === "error" ? (
-                              <span class="badge badge-error badge-sm">
-                                必須
-                              </span>
-                            ) : (
-                              <span class="badge badge-warning badge-sm">
-                                注意
-                              </span>
-                            )}
+                            {issue.type === "error"
+                              ? (
+                                <span class="badge badge-error badge-sm">
+                                  必須
+                                </span>
+                              )
+                              : (
+                                <span class="badge badge-warning badge-sm">
+                                  注意
+                                </span>
+                              )}
                           </td>
                           <td class="max-w-sm truncate">{issue.message}</td>
                           <td class="whitespace-nowrap">
@@ -270,11 +272,11 @@ export default function YearClosureDialog({
             disabled={!result?.canClose || closing}
             onClick={executeClosure}
           >
-            {closing ? (
-              <span class="loading loading-spinner loading-sm"></span>
-            ) : (
-              "年度締めを実行"
-            )}
+            {closing
+              ? <span class="loading loading-spinner loading-sm"></span>
+              : (
+                "年度締めを実行"
+              )}
           </button>
         </div>
       </div>

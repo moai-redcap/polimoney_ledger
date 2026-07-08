@@ -1,13 +1,14 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { CSS, render as renderMarkdown } from "@deno/gfm";
+import { Handlers } from "fresh/compat";
 
 interface PageData {
   content: string;
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(_req, ctx) {
+  async GET(ctx) {
     const markdown = await Deno.readTextFile("docs/privacy-policy.md");
     const content = renderMarkdown(markdown);
     return ctx.render({ content });

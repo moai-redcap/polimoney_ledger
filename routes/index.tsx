@@ -1,8 +1,9 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
 import PendingTransfers from "../islands/PendingTransfers.tsx";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -28,7 +29,8 @@ interface DashboardData {
 }
 
 export const handler: Handlers<DashboardData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const user = ctx.state.user as { email?: string } | undefined;
     const userId = ctx.state.userId as string;
 
@@ -36,8 +38,9 @@ export const handler: Handlers<DashboardData> = {
 
     if (userId) {
       try {
-        const supabase =
-          userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        const supabase = userId === TEST_USER_ID
+          ? getServiceClient()
+          : getSupabaseClient(req);
 
         const { data: transfers } = await supabase
           .from("ownership_transfers")
@@ -56,7 +59,7 @@ export const handler: Handlers<DashboardData> = {
               id,
               election_name
             )
-          `
+          `,
           )
           .eq("to_user_id", userId)
           .eq("status", "pending")

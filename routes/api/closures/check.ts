@@ -1,5 +1,5 @@
-import { Handlers } from "$fresh/server.ts";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -24,7 +24,8 @@ interface Issue {
 }
 
 export const handler: Handlers = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -53,10 +54,9 @@ export const handler: Handlers = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(userId);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(userId);
 
       // 指定年度の仕訳を取得
       const startDate = `${year}-01-01`;
@@ -112,8 +112,8 @@ export const handler: Handlers = {
         }
 
         // 2. 領収証未添付チェック
-        const hasReceipt =
-          journal.media_assets && journal.media_assets.length > 0;
+        const hasReceipt = journal.media_assets &&
+          journal.media_assets.length > 0;
         if (!hasReceipt) {
           missingReceiptCount++;
           issues.push({
@@ -144,7 +144,8 @@ export const handler: Handlers = {
           issues.push({
             type: "error",
             category: "imbalance",
-            message: `借方・貸方が不一致です: ${journal.description} (借方: ${totalDebit}, 貸方: ${totalCredit})`,
+            message:
+              `借方・貸方が不一致です: ${journal.description} (借方: ${totalDebit}, 貸方: ${totalCredit})`,
             journalId: journal.id,
             journalDate: journal.journal_date,
             description: journal.description,

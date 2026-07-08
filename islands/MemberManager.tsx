@@ -1,8 +1,8 @@
 import { useState } from "preact/hooks";
 import {
   AppRole,
-  roleDisplayNames,
   roleDescriptions,
+  roleDisplayNames,
 } from "../lib/permissions.ts";
 
 interface Member {
@@ -49,8 +49,9 @@ export default function MemberManager({
   // オーナー譲渡の状態
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState("");
-  const [pendingTransfer, setPendingTransfer] =
-    useState<PendingTransfer | null>(null);
+  const [pendingTransfer, setPendingTransfer] = useState<
+    PendingTransfer | null
+  >(null);
 
   const roles: AppRole[] = [
     "admin",
@@ -118,7 +119,7 @@ export default function MemberManager({
 
       const { data } = await res.json();
       setMembers(
-        members.map((m) => (m.id === memberId ? { ...m, ...data } : m))
+        members.map((m) => (m.id === memberId ? { ...m, ...data } : m)),
       );
       setSuccess("権限を更新しました");
     } catch (err) {
@@ -133,7 +134,7 @@ export default function MemberManager({
       !confirm(
         `${
           member.display_name || member.email || "このメンバー"
-        } を削除しますか？`
+        } を削除しますか？`,
       )
     ) {
       return;
@@ -194,8 +195,8 @@ export default function MemberManager({
       setPendingTransfer({
         id: data.id,
         to_user_id: selectedMemberId,
-        to_user_name:
-          selectedMember?.display_name || selectedMember?.email || "メンバー",
+        to_user_name: selectedMember?.display_name || selectedMember?.email ||
+          "メンバー",
         status: data.status,
         requested_at: data.requested_at,
       });
@@ -222,7 +223,7 @@ export default function MemberManager({
         `/api/ownership-transfers/${pendingTransfer.id}`,
         {
           method: "DELETE",
-        }
+        },
       );
 
       if (!res.ok) {
@@ -303,7 +304,9 @@ export default function MemberManager({
               <div class="flex items-center gap-2 mt-2">
                 <span class="badge badge-primary">オーナー</span>
                 {isOwner && (
-                  <span class="text-sm text-success">（あなた）</span>
+                  <span class="text-sm text-success">
+                    （あなた）
+                  </span>
                 )}
               </div>
             </div>
@@ -356,83 +359,87 @@ export default function MemberManager({
         <div class="card-body">
           <h3 class="card-title text-base">メンバー</h3>
 
-          {members.length === 0 ? (
-            <p class="text-base-content/70 py-4">
-              まだメンバーがいません。「メンバーを招待」から追加してください。
-            </p>
-          ) : (
-            <div class="overflow-x-auto">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>メンバー</th>
-                    <th>権限</th>
-                    <th>招待日</th>
-                    {canManageMembers && <th></th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {members.map((member) => (
-                    <tr key={member.id} class="hover">
-                      <td>
-                        <div>
-                          <div class="font-medium">
-                            {member.display_name || member.email || "未設定"}
-                          </div>
-                          {member.email && (
-                            <div class="text-sm text-base-content/60">
-                              {member.email}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        {canManageMembers ? (
-                          <select
-                            class="select select-bordered select-sm"
-                            value={member.role}
-                            onChange={(e) =>
-                              handleRoleChange(
-                                member.id,
-                                (e.target as HTMLSelectElement).value as AppRole
-                              )
-                            }
-                            disabled={isLoading}
-                          >
-                            {roles.map((role) => (
-                              <option key={role} value={role}>
-                                {roleDisplayNames[role]}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <span class="badge">
-                            {roleDisplayNames[member.role]}
-                          </span>
-                        )}
-                      </td>
-                      <td class="text-sm text-base-content/70">
-                        {new Date(member.created_at).toLocaleDateString(
-                          "ja-JP"
-                        )}
-                      </td>
-                      {canManageMembers && (
-                        <td>
-                          <button
-                            class="btn btn-ghost btn-sm text-error"
-                            onClick={() => handleDelete(member)}
-                            disabled={isLoading}
-                          >
-                            削除
-                          </button>
-                        </td>
-                      )}
+          {members.length === 0
+            ? (
+              <p class="text-base-content/70 py-4">
+                まだメンバーがいません。「メンバーを招待」から追加してください。
+              </p>
+            )
+            : (
+              <div class="overflow-x-auto">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>メンバー</th>
+                      <th>権限</th>
+                      <th>招待日</th>
+                      {canManageMembers && <th></th>}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody>
+                    {members.map((member) => (
+                      <tr key={member.id} class="hover">
+                        <td>
+                          <div>
+                            <div class="font-medium">
+                              {member.display_name || member.email || "未設定"}
+                            </div>
+                            {member.email && (
+                              <div class="text-sm text-base-content/60">
+                                {member.email}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          {canManageMembers
+                            ? (
+                              <select
+                                class="select select-bordered select-sm"
+                                value={member.role}
+                                onChange={(e) =>
+                                  handleRoleChange(
+                                    member.id,
+                                    (e.target as HTMLSelectElement)
+                                      .value as AppRole,
+                                  )}
+                                disabled={isLoading}
+                              >
+                                {roles.map((role) => (
+                                  <option key={role} value={role}>
+                                    {roleDisplayNames[role]}
+                                  </option>
+                                ))}
+                              </select>
+                            )
+                            : (
+                              <span class="badge">
+                                {roleDisplayNames[member.role]}
+                              </span>
+                            )}
+                        </td>
+                        <td class="text-sm text-base-content/70">
+                          {new Date(member.created_at).toLocaleDateString(
+                            "ja-JP",
+                          )}
+                        </td>
+                        {canManageMembers && (
+                          <td>
+                            <button
+                              class="btn btn-ghost btn-sm text-error"
+                              onClick={() => handleDelete(member)}
+                              disabled={isLoading}
+                            >
+                              削除
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
         </div>
       </div>
 
@@ -487,8 +494,7 @@ export default function MemberManager({
                   class="input input-bordered"
                   value={inviteEmail}
                   onChange={(e) =>
-                    setInviteEmail((e.target as HTMLInputElement).value)
-                  }
+                    setInviteEmail((e.target as HTMLInputElement).value)}
                   placeholder="example@example.com"
                 />
               </div>
@@ -502,9 +508,8 @@ export default function MemberManager({
                   value={inviteRole}
                   onChange={(e) =>
                     setInviteRole(
-                      (e.target as HTMLSelectElement).value as AppRole
-                    )
-                  }
+                      (e.target as HTMLSelectElement).value as AppRole,
+                    )}
                 >
                   {roles.map((role) => (
                     <option key={role} value={role}>
@@ -594,29 +599,32 @@ export default function MemberManager({
                     譲渡先のメンバー<span class="text-error ml-1">*</span>
                   </span>
                 </label>
-                {members.length === 0 ? (
-                  <div class="alert alert-info">
-                    <span>
-                      譲渡先となるメンバーがいません。先にメンバーを招待してください。
-                    </span>
-                  </div>
-                ) : (
-                  <select
-                    class="select select-bordered"
-                    value={selectedMemberId}
-                    onChange={(e) =>
-                      setSelectedMemberId((e.target as HTMLSelectElement).value)
-                    }
-                  >
-                    <option value="">選択してください</option>
-                    {members.map((member) => (
-                      <option key={member.user_id} value={member.user_id}>
-                        {member.display_name || member.email || "未設定"} (
-                        {roleDisplayNames[member.role]})
-                      </option>
-                    ))}
-                  </select>
-                )}
+                {members.length === 0
+                  ? (
+                    <div class="alert alert-info">
+                      <span>
+                        譲渡先となるメンバーがいません。先にメンバーを招待してください。
+                      </span>
+                    </div>
+                  )
+                  : (
+                    <select
+                      class="select select-bordered"
+                      value={selectedMemberId}
+                      onChange={(e) =>
+                        setSelectedMemberId(
+                          (e.target as HTMLSelectElement).value,
+                        )}
+                    >
+                      <option value="">選択してください</option>
+                      {members.map((member) => (
+                        <option key={member.user_id} value={member.user_id}>
+                          {member.display_name || member.email || "未設定"} (
+                          {roleDisplayNames[member.role]})
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 <label class="label">
                   <span class="label-text-alt text-base-content/60">
                     選択したメンバーに譲渡申請メールが送信されます

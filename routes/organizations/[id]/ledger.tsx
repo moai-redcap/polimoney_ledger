@@ -1,5 +1,5 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import { type AccountCode, getAccountCodes } from "../../../lib/hub-client.ts";
@@ -8,6 +8,7 @@ import JournalList from "../../../islands/JournalList.tsx";
 import ExportCSVButton from "../../../islands/ExportCSVButton.tsx";
 import YearSelector from "../../../islands/YearSelector.tsx";
 import ReSyncButton from "../../../islands/ReSyncButton.tsx";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -31,8 +32,8 @@ interface Journal {
   }[];
   contacts:
     | {
-        name: string;
-      }[]
+      name: string;
+    }[]
     | null;
 }
 
@@ -67,7 +68,8 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const organizationId = ctx.params.id;
     const userId = ctx.state.userId as string;
 
@@ -85,10 +87,9 @@ export const handler: Handlers<PageData> = {
     const selectedYear = yearParam ? parseInt(yearParam, 10) : defaultYear;
 
     try {
-      const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(userId);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(userId);
 
       // 政治団体情報を取得
       const { data: organization, error: orgError } = await supabase
@@ -128,9 +129,9 @@ export const handler: Handlers<PageData> = {
           // 仕訳一覧
           ledgerId
             ? supabase
-                .from("journals")
-                .select(
-                  `
+              .from("journals")
+              .select(
+                `
               id,
               journal_date,
               description,
@@ -147,11 +148,11 @@ export const handler: Handlers<PageData> = {
                 name
               )
             `,
-                )
-                .eq("ledger_id", ledgerId)
-                .gte("journal_date", `${selectedYear}-01-01`)
-                .lte("journal_date", `${selectedYear}-12-31`)
-                .order("journal_date", { ascending: false })
+              )
+              .eq("ledger_id", ledgerId)
+              .gte("journal_date", `${selectedYear}-01-01`)
+              .lte("journal_date", `${selectedYear}-12-31`)
+              .order("journal_date", { ascending: false })
             : Promise.resolve({ data: [], error: null }),
           // 関係者一覧
           supabase
@@ -180,17 +181,17 @@ export const handler: Handlers<PageData> = {
       // 年度締めステータスを取得
       const { data: closureData } = ledgerId
         ? await supabase
-            .from("ledger_year_closures")
-            .select("fiscal_year, status, closed_at")
-            .eq("ledger_id", ledgerId)
+          .from("ledger_year_closures")
+          .select("fiscal_year, status, closed_at")
+          .eq("ledger_id", ledgerId)
         : { data: null };
 
       // 仕訳が存在する年度を取得
       const { data: journalYears } = ledgerId
         ? await supabase
-            .from("journals")
-            .select("journal_date")
-            .eq("ledger_id", ledgerId)
+          .from("journals")
+          .select("journal_date")
+          .eq("ledger_id", ledgerId)
         : { data: null };
 
       // 仕訳データから年度を抽出
@@ -369,8 +370,7 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
                   const currentStatus = closureStatuses.find(
                     (s) => s.fiscal_year === currentYear,
                   );
-                  const isReadOnly =
-                    currentStatus?.status === "closed" ||
+                  const isReadOnly = currentStatus?.status === "closed" ||
                     currentStatus?.status === "locked";
                   return (
                     <JournalFormDrawer

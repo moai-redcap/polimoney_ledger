@@ -1,11 +1,12 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import {
   getManagedOrganizations,
   type ManagedOrganization,
 } from "../../lib/hub-client.ts";
 import NewOrganizationForm from "../../islands/NewOrganizationForm.tsx";
+import { Handlers } from "fresh/compat";
 
 interface NewOrganizationPageData {
   managedOrganizations: ManagedOrganization[];
@@ -14,7 +15,7 @@ interface NewOrganizationPageData {
 }
 
 export const handler: Handlers<NewOrganizationPageData> = {
-  async GET(_req, ctx) {
+  async GET(ctx) {
     const userId = ctx.state.userId as string;
 
     if (!userId) {
@@ -83,88 +84,92 @@ export default function NewOrganizationPage({
           </div>
         )}
 
-        {!canCreateOrganization ? (
-          // 管理者として認証されていない場合
-          <div class="card bg-base-100 shadow">
-            <div class="card-body">
-              <div class="alert alert-warning">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-                <div>
-                  <h3 class="font-bold">政治団体台帳を作成できません</h3>
-                  <p class="text-sm mt-1">
-                    政治団体台帳を作成するには、政治団体の管理者として認証されている必要があります。
-                  </p>
-                </div>
-              </div>
-
-              <div class="mt-6 space-y-4">
-                <h3 class="font-bold text-lg">政治団体台帳を作成するには</h3>
-                <ol class="list-decimal list-inside space-y-2 text-base-content/70">
-                  <li>
-                    <strong>政治団体の管理者として認証申請</strong>
-                    する（政治団体の公式ドメインのメール認証が必要）
-                  </li>
-                  <li>
-                    Hub管理者による<strong>承認</strong>を受ける
-                  </li>
-                  <li>
-                    承認後、このページから政治団体台帳を作成できるようになります
-                  </li>
-                </ol>
-
-                <div class="alert alert-info mt-4">
+        {!canCreateOrganization
+          ? (
+            // 管理者として認証されていない場合
+            <div class="card bg-base-100 shadow">
+              <div class="card-body">
+                <div class="alert alert-warning">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
+                    class="stroke-current shrink-0 h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
-                    class="stroke-current shrink-0 w-6 h-6"
                   >
                     <path
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <span>
-                    認証済み管理者から招待されたメンバーも、権限に応じて台帳を操作できます。
-                  </span>
+                  <div>
+                    <h3 class="font-bold">政治団体台帳を作成できません</h3>
+                    <p class="text-sm mt-1">
+                      政治団体台帳を作成するには、政治団体の管理者として認証されている必要があります。
+                    </p>
+                  </div>
+                </div>
+
+                <div class="mt-6 space-y-4">
+                  <h3 class="font-bold text-lg">政治団体台帳を作成するには</h3>
+                  <ol class="list-decimal list-inside space-y-2 text-base-content/70">
+                    <li>
+                      <strong>政治団体の管理者として認証申請</strong>
+                      する（政治団体の公式ドメインのメール認証が必要）
+                    </li>
+                    <li>
+                      Hub管理者による<strong>承認</strong>を受ける
+                    </li>
+                    <li>
+                      承認後、このページから政治団体台帳を作成できるようになります
+                    </li>
+                  </ol>
+
+                  <div class="alert alert-info mt-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      class="stroke-current shrink-0 w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>
+                      認証済み管理者から招待されたメンバーも、権限に応じて台帳を操作できます。
+                    </span>
+                  </div>
+                </div>
+
+                <div class="card-actions justify-end mt-6">
+                  <a href="/settings" class="btn btn-primary">
+                    管理者認証を申請する
+                  </a>
+                  <a href="/organizations" class="btn btn-ghost">
+                    戻る
+                  </a>
                 </div>
               </div>
-
-              <div class="card-actions justify-end mt-6">
-                <a href="/settings" class="btn btn-primary">
-                  管理者認証を申請する
-                </a>
-                <a href="/organizations" class="btn btn-ghost">
-                  戻る
-                </a>
+            </div>
+          )
+          : (
+            // 管理者として認証されている場合
+            <div class="card bg-base-100 shadow">
+              <div class="card-body">
+                <p class="text-base-content/70 mb-4">
+                  あなたが管理者として認証されている政治団体から選択してください。
+                </p>
+                <NewOrganizationForm
+                  managedOrganizations={managedOrganizations}
+                />
               </div>
             </div>
-          </div>
-        ) : (
-          // 管理者として認証されている場合
-          <div class="card bg-base-100 shadow">
-            <div class="card-body">
-              <p class="text-base-content/70 mb-4">
-                あなたが管理者として認証されている政治団体から選択してください。
-              </p>
-              <NewOrganizationForm managedOrganizations={managedOrganizations} />
-            </div>
-          </div>
-        )}
+          )}
       </Layout>
     </>
   );

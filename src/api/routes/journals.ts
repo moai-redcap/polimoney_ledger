@@ -6,11 +6,11 @@ import { Hono } from "hono";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
   isTestUser,
-  syncContacts,
   type SyncContactInput,
+  syncContacts,
+  type SyncJournalInput,
   syncJournals,
   syncLedger,
-  type SyncJournalInput,
   type SyncLedgerInput,
 } from "../../../lib/hub-client.ts";
 import {
@@ -81,7 +81,7 @@ journalsRouter.post("/", async (c) => {
     const totalDebit = body.entries.reduce((sum, e) => sum + e.debit_amount, 0);
     const totalCredit = body.entries.reduce(
       (sum, e) => sum + e.credit_amount,
-      0
+      0,
     );
     if (totalDebit !== totalCredit) {
       return c.json({ error: "借方と貸方の合計が一致しません" }, 400);
@@ -104,8 +104,9 @@ journalsRouter.post("/", async (c) => {
       return c.json({ error: "資産種別を選択してください" }, 400);
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     // 仕訳を作成
     const { data: journal, error: journalError } = await supabase
@@ -122,8 +123,8 @@ journalsRouter.post("/", async (c) => {
         amount_political_fund: body.amount_political_fund || 0,
         amount_public_subsidy: body.amount_public_subsidy || 0,
         is_receipt_hard_to_collect: body.is_receipt_hard_to_collect || false,
-        receipt_hard_to_collect_reason:
-          body.receipt_hard_to_collect_reason || null,
+        receipt_hard_to_collect_reason: body.receipt_hard_to_collect_reason ||
+          null,
         status: status,
         is_asset_acquisition: body.is_asset_acquisition || false,
         asset_type: body.asset_type || null,
@@ -174,8 +175,9 @@ journalsRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("journals")
@@ -184,7 +186,7 @@ journalsRouter.get("/:id", async (c) => {
         *,
         journal_entries (*),
         contacts (*)
-      `
+      `,
       )
       .eq("id", id)
       .single();
@@ -212,8 +214,9 @@ journalsRouter.put("/:id", async (c) => {
   try {
     const body = await c.req.json();
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("journals")
@@ -244,8 +247,9 @@ journalsRouter.delete("/:id", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     // 仕訳明細を先に削除
     await supabase.from("journal_entries").delete().eq("journal_id", id);
@@ -275,8 +279,9 @@ journalsRouter.post("/:id/approve", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     // 仕訳とその関連データを取得（Hub同期に必要）
     const { data: journalFull, error: fetchError } = await supabase
@@ -328,10 +333,10 @@ journalsRouter.post("/:id/approve", async (c) => {
           const ledgerInput: SyncLedgerInput = {
             ledger_source_id: ledger.id,
             ledger_type: ledger.ledger_type,
-            politician_organization_id:
-              ledger.hub_politician_organization_id || undefined,
-            politician_election_id:
-              ledger.hub_politician_election_id || undefined,
+            politician_organization_id: ledger.hub_politician_organization_id ||
+              undefined,
+            politician_election_id: ledger.hub_politician_election_id ||
+              undefined,
             fiscal_year: new Date().getFullYear(),
             is_test: isTest,
             total_income: 0, // 集計は syncLedger 内で再計算される想定
@@ -349,19 +354,28 @@ journalsRouter.post("/:id/approve", async (c) => {
               ledger_id: ledgerResult.data?.id || ledger.id,
               contact_type: contact.contact_type,
               name: contact.is_name_private ? null : contact.name,
-              address: contact.is_address_private ? null : (contact.address ?? null),
-              occupation: contact.is_occupation_private ? null : (contact.occupation ?? null),
+              address: contact.is_address_private
+                ? null
+                : (contact.address ?? null),
+              occupation: contact.is_occupation_private
+                ? null
+                : (contact.occupation ?? null),
               is_name_private: contact.is_name_private,
               is_address_private: contact.is_address_private,
               is_occupation_private: contact.is_occupation_private,
             };
             try {
-              const contactResult = await syncContacts([contactInput], { userId });
+              const contactResult = await syncContacts([contactInput], {
+                userId,
+              });
               if (contactResult.data.length > 0) {
                 hubContactId = contactResult.data[0].hub_contact_id;
               }
             } catch (contactErr) {
-              console.warn("[Approve] Contact sync failed (non-fatal):", contactErr);
+              console.warn(
+                "[Approve] Contact sync failed (non-fatal):",
+                contactErr,
+              );
             }
           }
 
@@ -411,8 +425,9 @@ journalsRouter.post("/:id/receipts", async (c) => {
   try {
     const body = await c.req.json();
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("receipts")

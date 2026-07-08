@@ -150,9 +150,7 @@ export default function YearSelector({
           disabled={reopening}
           onClick={handleReopen}
         >
-          {reopening ? (
-            <span class="loading loading-spinner loading-sm" />
-          ) : (
+          {reopening ? <span class="loading loading-spinner loading-sm" /> : (
             "締め解除"
           )}
         </button>

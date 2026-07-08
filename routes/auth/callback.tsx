@@ -1,4 +1,4 @@
-import { Head } from "$fresh/runtime.ts";
+import { Head } from "fresh/runtime";
 import AuthCallback from "../../islands/AuthCallback.tsx";
 
 export default function AuthCallbackPage() {
@@ -18,4 +18,3 @@ export default function AuthCallbackPage() {
     </>
   );
 }
-

@@ -5,10 +5,10 @@
 
 import { Hono } from "hono";
 
-const HUB_API_URL = Deno.env.get("HUB_API_URL_PROD") || 
-                    Deno.env.get("HUB_API_URL_DEV") || 
-                    Deno.env.get("HUB_API_URL") || 
-                    "http://localhost:8787";
+const HUB_API_URL = Deno.env.get("HUB_API_URL_PROD") ||
+  Deno.env.get("HUB_API_URL_DEV") ||
+  Deno.env.get("HUB_API_URL") ||
+  "http://localhost:8787";
 
 export const hubOrganizationsRouter = new Hono<{
   Variables: {
@@ -44,14 +44,15 @@ hubOrganizationsRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
 
   // UUID形式チェック
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(id)) {
     return c.json({ error: "無効な政治団体IDです" }, 400);
   }
 
   try {
     const response = await fetch(`${HUB_API_URL}/organizations/${id}`);
-    
+
     if (!response.ok) {
       if (response.status === 404) {
         return c.json({ error: "政治団体が見つかりません" }, 404);
@@ -93,9 +94,9 @@ hubOrganizationsRouter.get("/search", async (c) => {
 
   try {
     // TODO: Hub APIに検索エンドポイントを追加後に実装
-    return c.json({ 
+    return c.json({
       data: [],
-      message: "検索機能は現在準備中です"
+      message: "検索機能は現在準備中です",
     });
   } catch (error) {
     console.error("Error searching organizations from Hub:", error);

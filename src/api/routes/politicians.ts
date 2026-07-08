@@ -5,12 +5,12 @@
 import { Hono } from "hono";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
-  createPoliticianVerification,
-  sendPoliticianVerificationCode,
-  verifyPoliticianEmail,
-  verifyPoliticianDns,
   type CandidateRegistrationInfo,
+  createPoliticianVerification,
   type PoliticalFundReportInfo,
+  sendPoliticianVerificationCode,
+  verifyPoliticianDns,
+  verifyPoliticianEmail,
 } from "../../../lib/hub-client.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -31,8 +31,9 @@ politiciansRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
 
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase
       .from("politicians")
@@ -60,8 +61,9 @@ politiciansRouter.post("/verify", async (c) => {
 
   try {
     // ユーザーのメールアドレスを取得
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
     const { data: userData, error: userError } = await supabase.auth.getUser();
     const userEmail = userData?.user?.email || "";
 
@@ -98,7 +100,7 @@ politiciansRouter.post("/verify", async (c) => {
       {
         error: error instanceof Error ? error.message : "申請に失敗しました",
       },
-      500
+      500,
     );
   }
 });
@@ -121,10 +123,11 @@ politiciansRouter.post("/verify/:id/send-code", async (c) => {
     console.error("Error sending verification code:", error);
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "コード送信に失敗しました",
+        error: error instanceof Error
+          ? error.message
+          : "コード送信に失敗しました",
       },
-      500
+      500,
     );
   }
 });
@@ -155,7 +158,7 @@ politiciansRouter.post("/verify/:id/verify-code", async (c) => {
       {
         error: error instanceof Error ? error.message : "認証に失敗しました",
       },
-      500
+      500,
     );
   }
 });
@@ -176,10 +179,11 @@ politiciansRouter.post("/verify/:id/verify-dns", async (c) => {
     console.error("Error verifying DNS TXT:", error);
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "DNS TXT認証に失敗しました",
+        error: error instanceof Error
+          ? error.message
+          : "DNS TXT認証に失敗しました",
       },
-      500
+      500,
     );
   }
 });

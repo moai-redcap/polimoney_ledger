@@ -1,7 +1,8 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -19,7 +20,8 @@ interface ElectionsPageData {
 }
 
 export const handler: Handlers<ElectionsPageData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
 
     if (!userId) {
@@ -30,8 +32,9 @@ export const handler: Handlers<ElectionsPageData> = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(req);
 
       // ユーザーが作成した選挙台帳を取得
       const { data: elections, error } = await supabase
@@ -43,7 +46,7 @@ export const handler: Handlers<ElectionsPageData> = {
           election_date,
           created_at,
           hub_politician_id
-        `
+        `,
         )
         .eq("owner_user_id", userId)
         .order("election_date", { ascending: false });
@@ -127,44 +130,46 @@ export default function ElectionsPage({ data }: PageProps<ElectionsPageData>) {
         </div>
 
         {/* 選挙台帳一覧 */}
-        {elections.length === 0 ? (
-          <div class="card bg-base-100 shadow">
-            <div class="card-body items-center text-center py-12">
-              <div class="text-6xl mb-4">🗳️</div>
-              <h2 class="card-title">選挙台帳がありません</h2>
-              <p class="text-base-content/70 mb-4">
-                「新しい選挙台帳を作成」ボタンから、選挙を登録して台帳を作成しましょう。
-              </p>
+        {elections.length === 0
+          ? (
+            <div class="card bg-base-100 shadow">
+              <div class="card-body items-center text-center py-12">
+                <div class="text-6xl mb-4">🗳️</div>
+                <h2 class="card-title">選挙台帳がありません</h2>
+                <p class="text-base-content/70 mb-4">
+                  「新しい選挙台帳を作成」ボタンから、選挙を登録して台帳を作成しましょう。
+                </p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div class="grid gap-4">
-            {elections.map((election) => (
-              <div key={election.id} class="card bg-base-100 shadow">
-                <div class="card-body">
-                  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                      <h2 class="card-title">{election.election_name}</h2>
-                      <div class="flex flex-wrap gap-2 mt-2">
-                        <span class="badge badge-outline">
-                          {formatDate(election.election_date)}
-                        </span>
+          )
+          : (
+            <div class="grid gap-4">
+              {elections.map((election) => (
+                <div key={election.id} class="card bg-base-100 shadow">
+                  <div class="card-body">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div>
+                        <h2 class="card-title">{election.election_name}</h2>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                          <span class="badge badge-outline">
+                            {formatDate(election.election_date)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="flex gap-2">
-                      <a
-                        href={`/elections/${election.id}/ledger`}
-                        class="btn btn-primary"
-                      >
-                        台帳を開く
-                      </a>
+                      <div class="flex gap-2">
+                        <a
+                          href={`/elections/${election.id}/ledger`}
+                          class="btn btn-primary"
+                        >
+                          台帳を開く
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
       </Layout>
     </>
   );

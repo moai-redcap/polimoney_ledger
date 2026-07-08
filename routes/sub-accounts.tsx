@@ -1,8 +1,9 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
 import SubAccountManager from "../islands/SubAccountManager.tsx";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -29,7 +30,8 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(null, {
@@ -38,8 +40,9 @@ export const handler: Handlers<PageData> = {
       });
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(req);
 
     const [subAccountsResult, accountMasterResult] = await Promise.all([
       supabase

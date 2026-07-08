@@ -1,18 +1,20 @@
-import { Handlers } from "$fresh/server.ts";
 import { createClient } from "@supabase/supabase-js";
+import { Handlers } from "fresh/compat";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 
 export const handler: Handlers = {
-  async POST(req) {
+  async POST(ctx) {
+    const req = ctx.req;
+
     try {
       const { access_token, refresh_token } = await req.json();
 
       if (!access_token) {
         return new Response(
           JSON.stringify({ error: "access_token is required" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
+          { status: 400, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -35,7 +37,7 @@ export const handler: Handlers = {
       if (!data.session) {
         return new Response(
           JSON.stringify({ error: "Failed to create session" }),
-          { status: 400, headers: { "Content-Type": "application/json" } }
+          { status: 400, headers: { "Content-Type": "application/json" } },
         );
       }
 
@@ -47,14 +49,14 @@ export const handler: Handlers = {
       // アクセストークンをCookieに設定
       headers.append(
         "Set-Cookie",
-        `sb-access-token=${data.session.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`
+        `sb-access-token=${data.session.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`,
       );
 
       // リフレッシュトークンをCookieに設定
       if (data.session.refresh_token) {
         headers.append(
           "Set-Cookie",
-          `sb-refresh-token=${data.session.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`
+          `sb-refresh-token=${data.session.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`,
         );
       }
 
@@ -71,4 +73,3 @@ export const handler: Handlers = {
     }
   },
 };
-

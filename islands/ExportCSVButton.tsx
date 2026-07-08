@@ -116,7 +116,9 @@ export default function ExportCSVButton({
       setIsOpen(false);
     } catch (error) {
       console.error("Export report error:", error);
-      alert(error instanceof Error ? error.message : "エクスポートに失敗しました");
+      alert(
+        error instanceof Error ? error.message : "エクスポートに失敗しました",
+      );
     } finally {
       setIsLoading(null);
     }

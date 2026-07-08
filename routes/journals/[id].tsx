@@ -1,8 +1,9 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../lib/supabase.ts";
 import ApproveButton from "../../islands/ApproveButton.tsx";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -49,7 +50,8 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const journalId = ctx.params.id;
     const userId = ctx.state.userId as string;
 
@@ -61,8 +63,9 @@ export const handler: Handlers<PageData> = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(req);
 
       const { data: journal, error } = await supabase
         .from("journals")
@@ -100,7 +103,7 @@ export const handler: Handlers<PageData> = {
           elections (
             election_name
           )
-        `
+        `,
         )
         .eq("id", journalId)
         .single();
@@ -203,11 +206,11 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
   // 借方・貸方の合計
   const totalDebit = journal.journal_entries.reduce(
     (sum, e) => sum + e.debit_amount,
-    0
+    0,
   );
   const totalCredit = journal.journal_entries.reduce(
     (sum, e) => sum + e.credit_amount,
-    0
+    0,
   );
 
   return (
@@ -225,11 +228,9 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
             <h2 class="text-xl font-bold">
               {formatDate(journal.journal_date)}
             </h2>
-            {journal.status === "draft" ? (
-              <span class="badge badge-warning">下書き</span>
-            ) : (
-              <span class="badge badge-success">承認済</span>
-            )}
+            {journal.status === "draft"
+              ? <span class="badge badge-warning">下書き</span>
+              : <span class="badge badge-success">承認済</span>}
           </div>
 
           {/* 承認ボタン */}
@@ -357,13 +358,13 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
               <dl class="space-y-3">
                 {journal.amount_public_subsidy !== null &&
                   journal.amount_public_subsidy > 0 && (
-                    <div>
-                      <dt class="text-sm text-base-content/60">公費負担額</dt>
-                      <dd class="font-medium font-mono">
-                        ¥{formatAmount(journal.amount_public_subsidy)}
-                      </dd>
-                    </div>
-                  )}
+                  <div>
+                    <dt class="text-sm text-base-content/60">公費負担額</dt>
+                    <dd class="font-medium font-mono">
+                      ¥{formatAmount(journal.amount_public_subsidy)}
+                    </dd>
+                  </div>
+                )}
 
                 {journal.is_receipt_hard_to_collect && (
                   <div>

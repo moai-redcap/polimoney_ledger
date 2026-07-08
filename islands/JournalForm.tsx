@@ -111,8 +111,9 @@ export default function JournalForm({
   const [nonMonetaryBasis, setNonMonetaryBasis] = useState("");
   const [notes, setNotes] = useState("");
   const [isReceiptHardToCollect, setIsReceiptHardToCollect] = useState(false);
-  const [receiptHardToCollectReason, setReceiptHardToCollectReason] =
-    useState("");
+  const [receiptHardToCollectReason, setReceiptHardToCollectReason] = useState(
+    "",
+  );
 
   // 証憑ファイル
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -123,10 +124,12 @@ export default function JournalForm({
 
   // UI状態
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error";
+      text: string;
+    } | null
+  >(null);
 
   // 勘定科目をタイプ別にフィルタ
   const assetAccounts = accountCodes.filter((a) => a.type === "asset");
@@ -154,8 +157,7 @@ export default function JournalForm({
   };
 
   // 現在選択中の科目が公費対象かどうか
-  const showPublicSubsidyField =
-    ledgerType === "election" &&
+  const showPublicSubsidyField = ledgerType === "election" &&
     entryType === "expense" &&
     isPublicSubsidyEligible(debitAccountCode);
 
@@ -188,15 +190,13 @@ export default function JournalForm({
   const isOver50k = amountNum > THRESHOLD_AMOUNT;
 
   // 住所未入力警告（支出5万円超 または 収入5万円超）
-  const showAddressWarning =
-    isOver50k &&
+  const showAddressWarning = isOver50k &&
     entryType !== "transfer" &&
     selectedContact &&
     !selectedContact.address;
 
   // 職業未入力警告（収入で個人から5万円超）
-  const showOccupationWarning =
-    isOver50k &&
+  const showOccupationWarning = isOver50k &&
     entryType === "revenue" &&
     selectedContact &&
     selectedContact.contact_type === "person" &&
@@ -335,35 +335,33 @@ export default function JournalForm({
             console.error("証憑のアップロードに失敗しました");
             setMessage({
               type: "success",
-              text:
-                status === "draft"
-                  ? "下書きを保存しました（証憑のアップロードに失敗）"
-                  : "仕訳を登録しました（証憑のアップロードに失敗）",
+              text: status === "draft"
+                ? "下書きを保存しました（証憑のアップロードに失敗）"
+                : "仕訳を登録しました（証憑のアップロードに失敗）",
             });
           } else {
             setMessage({
               type: "success",
-              text:
-                status === "draft"
-                  ? "下書きを保存しました"
-                  : "仕訳と証憑を登録しました",
+              text: status === "draft"
+                ? "下書きを保存しました"
+                : "仕訳と証憑を登録しました",
             });
           }
         } catch (uploadErr) {
           console.error("Receipt upload error:", uploadErr);
           setMessage({
             type: "success",
-            text:
-              status === "draft"
-                ? "下書きを保存しました（証憑のアップロードに失敗）"
-                : "仕訳を登録しました（証憑のアップロードに失敗）",
+            text: status === "draft"
+              ? "下書きを保存しました（証憑のアップロードに失敗）"
+              : "仕訳を登録しました（証憑のアップロードに失敗）",
           });
         }
       } else {
         setMessage({
           type: "success",
-          text:
-            status === "draft" ? "下書きを保存しました" : "仕訳を登録しました",
+          text: status === "draft"
+            ? "下書きを保存しました"
+            : "仕訳を登録しました",
         });
       }
 
@@ -496,8 +494,7 @@ export default function JournalForm({
                 min="0"
                 value={amount}
                 onChange={(e) =>
-                  setAmount((e.target as HTMLInputElement).value)
-                }
+                  setAmount((e.target as HTMLInputElement).value)}
                 required
                 disabled={isFullPublicSubsidy}
               />
@@ -524,8 +521,7 @@ export default function JournalForm({
               placeholder="例: 事務所家賃 5月分"
               value={description}
               onChange={(e) =>
-                setDescription((e.target as HTMLInputElement).value)
-              }
+                setDescription((e.target as HTMLInputElement).value)}
               required
             />
           </div>
@@ -543,8 +539,7 @@ export default function JournalForm({
                   class="select select-bordered flex-1"
                   value={contactId}
                   onChange={(e) =>
-                    setContactId((e.target as HTMLSelectElement).value)
-                  }
+                    setContactId((e.target as HTMLSelectElement).value)}
                   required
                 >
                   <option value="">選択してください</option>
@@ -667,77 +662,78 @@ export default function JournalForm({
                 </div>
                 {debitAccountCode &&
                   getSubAccountsFor(debitAccountCode).length > 0 && (
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">補助科目</span>
-                      </label>
-                      <select
-                        class="select select-bordered select-sm"
-                        value={debitSubAccountId}
-                        onChange={(e) =>
-                          setDebitSubAccountId(
-                            (e.target as HTMLSelectElement).value,
-                          )
-                        }
-                      >
-                        <option value="">（なし）</option>
-                        {getSubAccountsFor(debitAccountCode).map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-              </div>
-
-              {/* 全額公費負担の場合は支払元を自動設定 */}
-              {isFullPublicSubsidy ? (
-                <div class="space-y-2">
                   <div class="form-control">
                     <label class="label">
-                      <span class="label-text">支払元</span>
-                    </label>
-                    <div class="input input-bordered bg-base-200 flex items-center text-base-content/70">
-                      公費負担（自動設定）
-                    </div>
-                    <label class="label">
-                      <span class="label-text-alt text-info">
-                        全額公費負担のため、候補者の資産からの支出はありません
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              ) : (
-                <div class="space-y-2">
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">
-                        支払元（どの資産から払ったか）{" "}
-                        <span class="text-error">*</span>
-                      </span>
+                      <span class="label-text">補助科目</span>
                     </label>
                     <select
-                      class="select select-bordered"
-                      value={creditAccountCode}
-                      onChange={(e) => {
-                        setCreditAccountCode(
+                      class="select select-bordered select-sm"
+                      value={debitSubAccountId}
+                      onChange={(e) =>
+                        setDebitSubAccountId(
                           (e.target as HTMLSelectElement).value,
-                        );
-                        setCreditSubAccountId("");
-                      }}
-                      required
+                        )}
                     >
-                      <option value="">選択してください</option>
-                      {assetAccounts.map((a) => (
-                        <option key={a.code} value={a.code}>
-                          {a.name}
+                      <option value="">（なし）</option>
+                      {getSubAccountsFor(debitAccountCode).map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
                         </option>
                       ))}
                     </select>
                   </div>
-                  {creditAccountCode &&
-                    getSubAccountsFor(creditAccountCode).length > 0 && (
+                )}
+              </div>
+
+              {/* 全額公費負担の場合は支払元を自動設定 */}
+              {isFullPublicSubsidy
+                ? (
+                  <div class="space-y-2">
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">支払元</span>
+                      </label>
+                      <div class="input input-bordered bg-base-200 flex items-center text-base-content/70">
+                        公費負担（自動設定）
+                      </div>
+                      <label class="label">
+                        <span class="label-text-alt text-info">
+                          全額公費負担のため、候補者の資産からの支出はありません
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )
+                : (
+                  <div class="space-y-2">
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">
+                          支払元（どの資産から払ったか）{" "}
+                          <span class="text-error">*</span>
+                        </span>
+                      </label>
+                      <select
+                        class="select select-bordered"
+                        value={creditAccountCode}
+                        onChange={(e) => {
+                          setCreditAccountCode(
+                            (e.target as HTMLSelectElement).value,
+                          );
+                          setCreditSubAccountId("");
+                        }}
+                        required
+                      >
+                        <option value="">選択してください</option>
+                        {assetAccounts.map((a) => (
+                          <option key={a.code} value={a.code}>
+                            {a.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {creditAccountCode &&
+                      getSubAccountsFor(creditAccountCode).length > 0 && (
                       <div class="form-control">
                         <label class="label">
                           <span class="label-text">補助科目</span>
@@ -748,8 +744,7 @@ export default function JournalForm({
                           onChange={(e) =>
                             setCreditSubAccountId(
                               (e.target as HTMLSelectElement).value,
-                            )
-                          }
+                            )}
                         >
                           <option value="">（なし）</option>
                           {getSubAccountsFor(creditAccountCode).map((s) => (
@@ -760,8 +755,8 @@ export default function JournalForm({
                         </select>
                       </div>
                     )}
-                </div>
-              )}
+                  </div>
+                )}
             </div>
           )}
 
@@ -826,28 +821,27 @@ export default function JournalForm({
                 </div>
                 {creditAccountCode &&
                   getSubAccountsFor(creditAccountCode).length > 0 && (
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">補助科目</span>
-                      </label>
-                      <select
-                        class="select select-bordered select-sm"
-                        value={creditSubAccountId}
-                        onChange={(e) =>
-                          setCreditSubAccountId(
-                            (e.target as HTMLSelectElement).value,
-                          )
-                        }
-                      >
-                        <option value="">（なし）</option>
-                        {getSubAccountsFor(creditAccountCode).map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text">補助科目</span>
+                    </label>
+                    <select
+                      class="select select-bordered select-sm"
+                      value={creditSubAccountId}
+                      onChange={(e) =>
+                        setCreditSubAccountId(
+                          (e.target as HTMLSelectElement).value,
+                        )}
+                    >
+                      <option value="">（なし）</option>
+                      {getSubAccountsFor(creditAccountCode).map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -975,8 +969,9 @@ export default function JournalForm({
                   min="0"
                   value={publicSubsidyAmount}
                   onChange={(e) =>
-                    setPublicSubsidyAmount((e.target as HTMLInputElement).value)
-                  }
+                    setPublicSubsidyAmount(
+                      (e.target as HTMLInputElement).value,
+                    )}
                   required={isFullPublicSubsidy}
                 />
               </div>
@@ -991,8 +986,7 @@ export default function JournalForm({
                     onChange={(e) =>
                       setIsFullPublicSubsidy(
                         (e.target as HTMLInputElement).checked,
-                      )
-                    }
+                      )}
                   />
                   <div>
                     <span class="label-text font-medium">
@@ -1018,7 +1012,8 @@ export default function JournalForm({
                       strokeLinejoin="round"
                       strokeWidth="2"
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
+                    >
+                    </path>
                   </svg>
                   <div>
                     <p class="font-medium">全額公費負担モード</p>
@@ -1049,8 +1044,7 @@ export default function JournalForm({
                   onChange={(e) =>
                     setPoliticalGrantAmount(
                       (e.target as HTMLInputElement).value,
-                    )
-                  }
+                    )}
                 />
               </div>
               <div class="form-control">
@@ -1064,8 +1058,9 @@ export default function JournalForm({
                   min="0"
                   value={politicalFundAmount}
                   onChange={(e) =>
-                    setPoliticalFundAmount((e.target as HTMLInputElement).value)
-                  }
+                    setPoliticalFundAmount(
+                      (e.target as HTMLInputElement).value,
+                    )}
                 />
               </div>
             </div>
@@ -1082,8 +1077,7 @@ export default function JournalForm({
                   onChange={(e) =>
                     setIsAssetAcquisition(
                       (e.target as HTMLInputElement).checked,
-                    )
-                  }
+                    )}
                 />
                 <div>
                   <span class="label-text font-medium">資産取得</span>
@@ -1107,8 +1101,7 @@ export default function JournalForm({
                 class="select select-bordered"
                 value={assetType}
                 onChange={(e) =>
-                  setAssetType((e.target as HTMLSelectElement).value)
-                }
+                  setAssetType((e.target as HTMLSelectElement).value)}
                 required
               >
                 <option value="">選択してください</option>
@@ -1137,8 +1130,7 @@ export default function JournalForm({
               placeholder="現物寄付等の場合に記入"
               value={nonMonetaryBasis}
               onChange={(e) =>
-                setNonMonetaryBasis((e.target as HTMLInputElement).value)
-              }
+                setNonMonetaryBasis((e.target as HTMLInputElement).value)}
             />
           </div>
 
@@ -1153,8 +1145,7 @@ export default function JournalForm({
               rows={2}
               value={notes}
               onChange={(e) =>
-                setNotes((e.target as HTMLTextAreaElement).value)
-              }
+                setNotes((e.target as HTMLTextAreaElement).value)}
             />
           </div>
 
@@ -1270,8 +1261,7 @@ export default function JournalForm({
                 onChange={(e) =>
                   setReceiptHardToCollectReason(
                     (e.target as HTMLInputElement).value,
-                  )
-                }
+                  )}
                 required
               />
               <label class="label">
@@ -1300,53 +1290,55 @@ export default function JournalForm({
       {/* ============================================ */}
       {/* 送信ボタン（通常表示 or 固定表示） */}
       {/* ============================================ */}
-      {showFixedButtons ? (
-        // ドロワー用：下部固定ボタン
-        <div class="fixed bottom-0 left-0 right-0 w-[85%] max-w-4xl ml-auto bg-base-100 border-t border-base-300 p-4 flex justify-end gap-2">
-          <button type="button" class="btn btn-ghost" onClick={onCancel}>
-            キャンセル
-          </button>
-          <button
-            type="button"
-            class={`btn btn-outline ${isSubmitting ? "loading" : ""}`}
-            disabled={isSubmitting}
-            onClick={handleSaveDraft}
-          >
-            {isSubmitting ? "保存中..." : "下書き保存"}
-          </button>
-          <button
-            type="submit"
-            class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "登録中..." : "仕訳を登録"}
-          </button>
-        </div>
-      ) : (
-        // 通常表示
-        <div class="flex justify-end gap-2">
-          {onCancel && (
+      {showFixedButtons
+        ? (
+          // ドロワー用：下部固定ボタン
+          <div class="fixed bottom-0 left-0 right-0 w-[85%] max-w-4xl ml-auto bg-base-100 border-t border-base-300 p-4 flex justify-end gap-2">
             <button type="button" class="btn btn-ghost" onClick={onCancel}>
               キャンセル
             </button>
-          )}
-          <button
-            type="button"
-            class={`btn btn-outline ${isSubmitting ? "loading" : ""}`}
-            disabled={isSubmitting}
-            onClick={handleSaveDraft}
-          >
-            {isSubmitting ? "保存中..." : "下書き保存"}
-          </button>
-          <button
-            type="submit"
-            class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "登録中..." : "仕訳を登録"}
-          </button>
-        </div>
-      )}
+            <button
+              type="button"
+              class={`btn btn-outline ${isSubmitting ? "loading" : ""}`}
+              disabled={isSubmitting}
+              onClick={handleSaveDraft}
+            >
+              {isSubmitting ? "保存中..." : "下書き保存"}
+            </button>
+            <button
+              type="submit"
+              class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "登録中..." : "仕訳を登録"}
+            </button>
+          </div>
+        )
+        : (
+          // 通常表示
+          <div class="flex justify-end gap-2">
+            {onCancel && (
+              <button type="button" class="btn btn-ghost" onClick={onCancel}>
+                キャンセル
+              </button>
+            )}
+            <button
+              type="button"
+              class={`btn btn-outline ${isSubmitting ? "loading" : ""}`}
+              disabled={isSubmitting}
+              onClick={handleSaveDraft}
+            >
+              {isSubmitting ? "保存中..." : "下書き保存"}
+            </button>
+            <button
+              type="submit"
+              class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "登録中..." : "仕訳を登録"}
+            </button>
+          </div>
+        )}
 
       {/* 関係者追加モーダル */}
       <AddContactModal

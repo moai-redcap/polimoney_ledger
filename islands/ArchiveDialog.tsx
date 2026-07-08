@@ -82,11 +82,11 @@ export default function ArchiveDialog({
             disabled={archiving}
             onClick={executeArchive}
           >
-            {archiving ? (
-              <span class="loading loading-spinner loading-sm"></span>
-            ) : (
-              "アーカイブを実行"
-            )}
+            {archiving
+              ? <span class="loading loading-spinner loading-sm"></span>
+              : (
+                "アーカイブを実行"
+              )}
           </button>
         </div>
       </div>

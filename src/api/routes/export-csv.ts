@@ -97,8 +97,9 @@ async function fetchJournals(
   ledgerId: string,
   year: string | null,
 ) {
-  const supabase =
-    userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+  const supabase = userId === TEST_USER_ID
+    ? getServiceClient()
+    : getSupabaseClient(userId);
 
   let query = supabase
     .from("journals")
@@ -133,8 +134,9 @@ async function fetchJournals(
 }
 
 async function fetchSubAccounts(userId: string): Promise<Map<string, string>> {
-  const supabase =
-    userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+  const supabase = userId === TEST_USER_ID
+    ? getServiceClient()
+    : getSupabaseClient(userId);
 
   const { data } = await supabase.from("sub_accounts").select("id, name");
 
@@ -156,8 +158,9 @@ async function fetchReceiptsForJournals(
 ): Promise<ReceiptRow[]> {
   if (journalIds.length === 0) return [];
 
-  const supabase =
-    userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+  const supabase = userId === TEST_USER_ID
+    ? getServiceClient()
+    : getSupabaseClient(userId);
 
   const { data, error } = await supabase
     .from("receipts")
@@ -179,8 +182,9 @@ async function fetchReceiptBinary(
   storagePath: string,
 ): Promise<Uint8Array | null> {
   try {
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data, error } = await supabase.storage
       .from("uploads")
@@ -307,10 +311,9 @@ function generateSummaryCsv(journals: JournalRow[]): string {
   for (const j of journals) {
     for (const e of j.journal_entries) {
       const acctType = getAccountType(e.account_code);
-      const amount =
-        acctType === "expense" || acctType === "asset"
-          ? e.debit_amount
-          : e.credit_amount;
+      const amount = acctType === "expense" || acctType === "asset"
+        ? e.debit_amount
+        : e.credit_amount;
 
       if (amount > 0) {
         const existing = summaryMap.get(e.account_code);
@@ -387,10 +390,9 @@ function generateAssetsCsv(journals: JournalRow[]): string {
     .map(([code, info]) => {
       const acctType = getAccountType(code);
       // 資産は借方残、負債・純資産は貸方残
-      const balance =
-        acctType === "asset"
-          ? info.totalDebit - info.totalCredit
-          : info.totalCredit - info.totalDebit;
+      const balance = acctType === "asset"
+        ? info.totalDebit - info.totalCredit
+        : info.totalCredit - info.totalDebit;
       return [code, info.name, info.totalDebit, info.totalCredit, balance];
     });
 
@@ -484,23 +486,29 @@ exportCsvRouter.get("/", async (c) => {
           const safeFileName = receipt.file_name
             .replace(/[/\\?%*:|"<>]/g, "_")
             .substring(0, 60);
-          const zipKey = `receipts/${date}_${String(imageIndex).padStart(3, "0")}_${safeFileName}.${ext}`;
+          const zipKey = `receipts/${date}_${
+            String(imageIndex).padStart(3, "0")
+          }_${safeFileName}.${ext}`;
           zipData[zipKey] = binary;
           imageIndex++;
         }
       }
 
       const zipped = zipSync(zipData);
-      const zipFilename = `収支報告補助データ${yearSuffix}${includeImages ? "（領収書含む）" : ""}_${dateStr}.zip`;
+      const zipFilename = `収支報告補助データ${yearSuffix}${
+        includeImages ? "（領収書含む）" : ""
+      }_${dateStr}.zip`;
 
       const zipBuffer = zipped.slice().buffer as ArrayBuffer;
       return new Response(zipBuffer, {
         status: 200,
         headers: {
           "Content-Type": "application/zip",
-          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(
-            zipFilename,
-          )}`,
+          "Content-Disposition": `attachment; filename*=UTF-8''${
+            encodeURIComponent(
+              zipFilename,
+            )
+          }`,
         },
       });
     } else {
@@ -535,9 +543,11 @@ exportCsvRouter.get("/", async (c) => {
         status: 200,
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(
-            filename,
-          )}`,
+          "Content-Disposition": `attachment; filename*=UTF-8''${
+            encodeURIComponent(
+              filename,
+            )
+          }`,
         },
       });
     }
@@ -545,8 +555,9 @@ exportCsvRouter.get("/", async (c) => {
     console.error("Export error:", error);
     return c.json(
       {
-        error:
-          error instanceof Error ? error.message : "エクスポートに失敗しました",
+        error: error instanceof Error
+          ? error.message
+          : "エクスポートに失敗しました",
       },
       500,
     );

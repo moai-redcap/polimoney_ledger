@@ -1,5 +1,5 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import { type AccountCode, getAccountCodes } from "../../../lib/hub-client.ts";
@@ -8,6 +8,7 @@ import JournalList from "../../../islands/JournalList.tsx";
 import ExportCSVButton from "../../../islands/ExportCSVButton.tsx";
 import { type Journal } from "../../../lib/types.ts";
 import ReSyncButton from "../../../islands/ReSyncButton.tsx";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -40,7 +41,7 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(_req, ctx) {
+  async GET(ctx) {
     const electionId = ctx.params.id;
     const userId = ctx.state.userId as string;
 
@@ -52,10 +53,9 @@ export const handler: Handlers<PageData> = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(userId);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(userId);
 
       // 選挙情報を取得
       const { data: election, error: electionError } = await supabase
@@ -91,9 +91,9 @@ export const handler: Handlers<PageData> = {
           // 仕訳一覧
           ledgerId
             ? supabase
-                .from("journals")
-                .select(
-                  `
+              .from("journals")
+              .select(
+                `
               id,
               journal_date,
               description,
@@ -110,9 +110,9 @@ export const handler: Handlers<PageData> = {
                 name
               )
             `,
-                )
-                .eq("ledger_id", ledgerId)
-                .order("journal_date", { ascending: false })
+              )
+              .eq("ledger_id", ledgerId)
+              .order("journal_date", { ascending: false })
             : Promise.resolve({ data: [], error: null }),
           // 関係者一覧
           supabase

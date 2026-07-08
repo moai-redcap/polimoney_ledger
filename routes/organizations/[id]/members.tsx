@@ -1,9 +1,10 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
-import { hasPermission, AppRole } from "../../../lib/permissions.ts";
+import { AppRole, hasPermission } from "../../../lib/permissions.ts";
 import MemberManager from "../../../islands/MemberManager.tsx";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -31,7 +32,8 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(null, {
@@ -43,8 +45,9 @@ export const handler: Handlers<PageData> = {
     }
 
     const organizationId = ctx.params.id;
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     // 政治団体の情報を取得
     const { data: organization, error: orgError } = await supabase
@@ -76,10 +79,10 @@ export const handler: Handlers<PageData> = {
     // メンバー一覧を取得
     const { data: members } = ledgerData
       ? await supabase
-          .from("ledger_members")
-          .select("id, user_id, role, created_at, invited_by_user_id")
-          .eq("ledger_id", ledgerData.id)
-          .order("created_at")
+        .from("ledger_members")
+        .select("id, user_id, role, created_at, invited_by_user_id")
+        .eq("ledger_id", ledgerData.id)
+        .order("created_at")
       : { data: null };
 
     // 現在のユーザーの権限を確認
@@ -105,7 +108,8 @@ export const handler: Handlers<PageData> = {
 };
 
 export default function OrganizationMembersPage({ data }: PageProps<PageData>) {
-  const { organization, members, isOwner, canManageMembers, ledgerId, error } = data;
+  const { organization, members, isOwner, canManageMembers, ledgerId, error } =
+    data;
 
   if (error) {
     return (

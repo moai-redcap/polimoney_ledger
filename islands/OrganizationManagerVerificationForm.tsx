@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 interface ManagedOrganization {
   id: string;
@@ -176,10 +176,12 @@ export default function OrganizationManagerVerificationForm({
   >(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error";
+      text: string;
+    } | null
+  >(null);
 
   // メールアドレス変更時にドメイン判定
   const [isLgDomain, setIsLgDomain] = useState(false);
@@ -204,7 +206,7 @@ export default function OrganizationManagerVerificationForm({
         org.name.toLowerCase().includes(query) ||
         (organizationTypeLabels[org.type] || org.type)
           .toLowerCase()
-          .includes(query)
+          .includes(query),
     );
   }, [searchQuery, hubOrganizations]);
 
@@ -323,7 +325,7 @@ export default function OrganizationManagerVerificationForm({
     try {
       const response = await fetch(
         `/api/organizations/manager-verify/${verificationId}/send-code`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!response.ok) {
@@ -336,8 +338,9 @@ export default function OrganizationManagerVerificationForm({
     } catch (error) {
       setMessage({
         type: "error",
-        text:
-          error instanceof Error ? error.message : "コード送信に失敗しました",
+        text: error instanceof Error
+          ? error.message
+          : "コード送信に失敗しました",
       });
     } finally {
       setIsSubmitting(false);
@@ -352,7 +355,7 @@ export default function OrganizationManagerVerificationForm({
     try {
       const response = await fetch(
         `/api/organizations/manager-verify/${verificationId}/verify-dns`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!response.ok) {
@@ -368,8 +371,9 @@ export default function OrganizationManagerVerificationForm({
     } catch (error) {
       setMessage({
         type: "error",
-        text:
-          error instanceof Error ? error.message : "DNS TXT検証に失敗しました",
+        text: error instanceof Error
+          ? error.message
+          : "DNS TXT検証に失敗しました",
       });
     } finally {
       setIsSubmitting(false);
@@ -391,7 +395,7 @@ export default function OrganizationManagerVerificationForm({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: verificationCode }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -432,7 +436,8 @@ export default function OrganizationManagerVerificationForm({
               strokeLinejoin="round"
               strokeWidth="2"
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
+            >
+            </path>
           </svg>
           <span>
             ドメインの所有権を確認するため、DNS TXTレコードを設定してください。
@@ -514,8 +519,7 @@ export default function OrganizationManagerVerificationForm({
               onChange({
                 ...value,
                 organization_name: (e.target as HTMLInputElement).value,
-              })
-            }
+              })}
             class="input input-bordered"
             placeholder="例: 山田太郎後援会"
             required
@@ -532,8 +536,7 @@ export default function OrganizationManagerVerificationForm({
               onChange({
                 ...value,
                 representative_name: (e.target as HTMLInputElement).value,
-              })
-            }
+              })}
             class="input input-bordered"
             placeholder="例: 山田太郎"
             required
@@ -549,8 +552,7 @@ export default function OrganizationManagerVerificationForm({
               onChange({
                 ...value,
                 registration_authority: (e.target as HTMLSelectElement).value,
-              })
-            }
+              })}
             class="select select-bordered"
             required
           >
@@ -573,7 +575,7 @@ export default function OrganizationManagerVerificationForm({
       (v) =>
         v.request_type === "domain_change" &&
         v.status === "pending" &&
-        v.verification_method === "dns_txt"
+        v.verification_method === "dns_txt",
     );
 
     return (
@@ -611,8 +613,8 @@ export default function OrganizationManagerVerificationForm({
                 <div>
                   {targetOrganization.manager_verified_at
                     ? new Date(
-                        targetOrganization.manager_verified_at
-                      ).toLocaleDateString("ja-JP")
+                      targetOrganization.manager_verified_at,
+                    ).toLocaleDateString("ja-JP")
                     : "-"}
                 </div>
               </div>
@@ -639,8 +641,7 @@ export default function OrganizationManagerVerificationForm({
                     type="text"
                     value={verificationCode}
                     onChange={(e) =>
-                      setVerificationCode((e.target as HTMLInputElement).value)
-                    }
+                      setVerificationCode((e.target as HTMLInputElement).value)}
                     class="input input-bordered flex-1"
                     placeholder="6桁のコード"
                     maxLength={6}
@@ -692,23 +693,24 @@ export default function OrganizationManagerVerificationForm({
                   type="email"
                   value={newEmail}
                   onChange={(e) =>
-                    setNewEmail((e.target as HTMLInputElement).value)
-                  }
+                    setNewEmail((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="例: info@new-domain.jp"
                   required
                 />
                 {newEmail && (
                   <label class="label">
-                    {newIsLgDomain ? (
-                      <span class="label-text-alt text-success">
-                        🏛️ lg.jpドメイン - メール認証を使用します
-                      </span>
-                    ) : (
-                      <span class="label-text-alt text-warning">
-                        🔐 DNS TXT認証が必要です
-                      </span>
-                    )}
+                    {newIsLgDomain
+                      ? (
+                        <span class="label-text-alt text-success">
+                          🏛️ lg.jpドメイン - メール認証を使用します
+                        </span>
+                      )
+                      : (
+                        <span class="label-text-alt text-warning">
+                          🔐 DNS TXT認証が必要です
+                        </span>
+                      )}
                   </label>
                 )}
               </div>
@@ -740,8 +742,8 @@ export default function OrganizationManagerVerificationForm({
 
         {/* 申請履歴（ドメイン変更のみ表示） */}
         {organizationManagerVerifications.filter(
-          (v) => v.request_type === "domain_change"
-        ).length > 0 && (
+              (v) => v.request_type === "domain_change",
+            ).length > 0 && (
           <div class="card bg-base-100 shadow-xl">
             <div class="card-body">
               <h3 class="card-title text-base">ドメイン変更申請履歴</h3>
@@ -782,14 +784,14 @@ export default function OrganizationManagerVerificationForm({
                         </span>
                         {v.status === "pending" &&
                           v.verification_method === "email" && (
-                            <button
-                              class="btn btn-sm btn-primary"
-                              onClick={() => handleSendCode(v.id)}
-                              disabled={isSubmitting}
-                            >
-                              認証コードを送信
-                            </button>
-                          )}
+                          <button
+                            class="btn btn-sm btn-primary"
+                            onClick={() => handleSendCode(v.id)}
+                            disabled={isSubmitting}
+                          >
+                            認証コードを送信
+                          </button>
+                        )}
                         {v.status === "email_sent" && (
                           <button
                             class="btn btn-sm btn-outline"
@@ -843,7 +845,7 @@ export default function OrganizationManagerVerificationForm({
   // 通常モード
   // DNS TXT認証が必要な申請を探す
   const pendingDnsVerification = organizationManagerVerifications.find(
-    (v) => v.status === "pending" && v.verification_method === "dns_txt"
+    (v) => v.status === "pending" && v.verification_method === "dns_txt",
   );
 
   return (
@@ -912,7 +914,7 @@ export default function OrganizationManagerVerificationForm({
 
       {/* 申請履歴 */}
       {organizationManagerVerifications.filter((v) => v.status !== "approved")
-        .length > 0 && (
+            .length > 0 && (
         <div class="card bg-base-100 shadow-xl">
           <div class="card-body">
             <h3 class="card-title text-base">申請履歴</h3>
@@ -958,14 +960,14 @@ export default function OrganizationManagerVerificationForm({
                       </span>
                       {v.status === "pending" &&
                         v.verification_method === "email" && (
-                          <button
-                            class="btn btn-sm btn-primary"
-                            onClick={() => handleSendCode(v.id)}
-                            disabled={isSubmitting}
-                          >
-                            認証コードを送信
-                          </button>
-                        )}
+                        <button
+                          class="btn btn-sm btn-primary"
+                          onClick={() => handleSendCode(v.id)}
+                          disabled={isSubmitting}
+                        >
+                          認証コードを送信
+                        </button>
+                      )}
                       {v.status === "email_sent" && (
                         <button
                           class="btn btn-sm btn-outline"
@@ -997,8 +999,7 @@ export default function OrganizationManagerVerificationForm({
                   type="text"
                   value={verificationCode}
                   onChange={(e) =>
-                    setVerificationCode((e.target as HTMLInputElement).value)
-                  }
+                    setVerificationCode((e.target as HTMLInputElement).value)}
                   class="input input-bordered flex-1"
                   placeholder="6桁のコード"
                   maxLength={6}
@@ -1017,208 +1018,214 @@ export default function OrganizationManagerVerificationForm({
       )}
 
       {/* 新規申請フォーム */}
-      {showForm ? (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title text-base">認証申請</h3>
-            <form onSubmit={handleSubmit} class="space-y-4">
-              {/* 検索可能コンボボックス */}
-              <div class="form-control" ref={dropdownRef}>
-                <label class="label">
-                  <span class="label-text">政治団体を検索・選択</span>
-                </label>
-                <div class="relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery((e.target as HTMLInputElement).value);
-                      setSelectedOrg(null);
-                      setIsDropdownOpen(true);
-                    }}
-                    onFocus={() => setIsDropdownOpen(true)}
-                    class="input input-bordered w-full"
-                    placeholder="団体名を入力して検索..."
-                  />
-                  {/* ドロップダウン */}
-                  {isDropdownOpen && (
-                    <div class="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                      {/* 新規作成オプション */}
-                      <button
-                        type="button"
-                        class={`w-full px-4 py-3 text-left hover:bg-base-200 border-b border-base-300 ${
-                          !selectedOrg && !searchQuery ? "bg-primary/10" : ""
-                        }`}
-                        onClick={() => handleSelectOrg(null)}
-                      >
-                        <span class="font-medium text-primary">
-                          ＋ 新規作成
-                        </span>
-                        <span class="text-sm text-base-content/70 ml-2">
-                          （一覧にない場合）
-                        </span>
-                      </button>
-                      {/* 検索結果 */}
-                      {filteredOrgs.length > 0 ? (
-                        filteredOrgs.map((org) => (
-                          <button
-                            type="button"
-                            key={org.id}
-                            class={`w-full px-4 py-3 text-left hover:bg-base-200 ${
-                              selectedOrg?.id === org.id ? "bg-primary/10" : ""
-                            }`}
-                            onClick={() => handleSelectOrg(org)}
-                          >
-                            <span class="font-medium">{org.name}</span>
-                            <span class="badge badge-sm badge-outline ml-2">
-                              {organizationTypeLabels[org.type] || org.type}
-                            </span>
-                          </button>
-                        ))
-                      ) : searchQuery ? (
-                        <div class="px-4 py-3 text-base-content/70">
-                          「{searchQuery}」に一致する団体が見つかりません
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
+      {showForm
+        ? (
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h3 class="card-title text-base">認証申請</h3>
+              <form onSubmit={handleSubmit} class="space-y-4">
+                {/* 検索可能コンボボックス */}
+                <div class="form-control" ref={dropdownRef}>
+                  <label class="label">
+                    <span class="label-text">政治団体を検索・選択</span>
+                  </label>
+                  <div class="relative">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery((e.target as HTMLInputElement).value);
+                        setSelectedOrg(null);
+                        setIsDropdownOpen(true);
+                      }}
+                      onFocus={() => setIsDropdownOpen(true)}
+                      class="input input-bordered w-full"
+                      placeholder="団体名を入力して検索..."
+                    />
+                    {/* ドロップダウン */}
+                    {isDropdownOpen && (
+                      <div class="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                        {/* 新規作成オプション */}
+                        <button
+                          type="button"
+                          class={`w-full px-4 py-3 text-left hover:bg-base-200 border-b border-base-300 ${
+                            !selectedOrg && !searchQuery ? "bg-primary/10" : ""
+                          }`}
+                          onClick={() => handleSelectOrg(null)}
+                        >
+                          <span class="font-medium text-primary">
+                            ＋ 新規作成
+                          </span>
+                          <span class="text-sm text-base-content/70 ml-2">
+                            （一覧にない場合）
+                          </span>
+                        </button>
+                        {/* 検索結果 */}
+                        {filteredOrgs.length > 0
+                          ? (
+                            filteredOrgs.map((org) => (
+                              <button
+                                type="button"
+                                key={org.id}
+                                class={`w-full px-4 py-3 text-left hover:bg-base-200 ${
+                                  selectedOrg?.id === org.id
+                                    ? "bg-primary/10"
+                                    : ""
+                                }`}
+                                onClick={() => handleSelectOrg(org)}
+                              >
+                                <span class="font-medium">{org.name}</span>
+                                <span class="badge badge-sm badge-outline ml-2">
+                                  {organizationTypeLabels[org.type] || org.type}
+                                </span>
+                              </button>
+                            ))
+                          )
+                          : searchQuery
+                          ? (
+                            <div class="px-4 py-3 text-base-content/70">
+                              「{searchQuery}」に一致する団体が見つかりません
+                            </div>
+                          )
+                          : null}
+                      </div>
+                    )}
+                  </div>
+                  <label class="label">
+                    <span class="label-text-alt">
+                      既存の政治団体を選択するか、新規作成できます
+                    </span>
+                  </label>
                 </div>
-                <label class="label">
-                  <span class="label-text-alt">
-                    既存の政治団体を選択するか、新規作成できます
-                  </span>
-                </label>
-              </div>
 
-              {/* 新規作成時の入力フィールド */}
-              {!selectedOrg && (
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-base-200 rounded-lg">
+                {/* 新規作成時の入力フィールド */}
+                {!selectedOrg && (
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-base-200 rounded-lg">
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">政治団体名 *</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={orgName}
+                        onChange={(e) =>
+                          setOrgName((e.target as HTMLInputElement).value)}
+                        class="input input-bordered"
+                        placeholder="○○後援会"
+                        required={!selectedOrg}
+                      />
+                    </div>
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">団体種別 *</span>
+                      </label>
+                      <select
+                        value={orgType}
+                        onChange={(e) =>
+                          setOrgType((e.target as HTMLSelectElement).value)}
+                        class="select select-bordered"
+                        required
+                      >
+                        {Object.entries(organizationTypeLabels).map(
+                          ([value, label]) => (
+                            <option key={value} value={value}>
+                              {label}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* 共通フィールド */}
+                <div class="grid grid-cols-1 gap-4">
                   <div class="form-control">
                     <label class="label">
-                      <span class="label-text">政治団体名 *</span>
+                      <span class="label-text">公式メールアドレス *</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={orgEmail}
+                      onChange={(e) =>
+                        setOrgEmail((e.target as HTMLInputElement).value)}
+                      class="input input-bordered"
+                      placeholder="例: info@party.example.jp"
+                      required
+                    />
+                    {orgEmail && (
+                      <label class="label">
+                        {isLgDomain
+                          ? (
+                            <span class="label-text-alt text-success">
+                              🏛️ lg.jpドメイン - メール認証を使用します
+                            </span>
+                          )
+                          : (
+                            <span class="label-text-alt text-warning">
+                              🔐 DNS TXT認証が必要です
+                            </span>
+                          )}
+                      </label>
+                    )}
+                  </div>
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text">役職</span>
                     </label>
                     <input
                       type="text"
-                      value={orgName}
+                      value={orgRole}
                       onChange={(e) =>
-                        setOrgName((e.target as HTMLInputElement).value)
-                      }
+                        setOrgRole((e.target as HTMLInputElement).value)}
                       class="input input-bordered"
-                      placeholder="○○後援会"
-                      required={!selectedOrg}
+                      placeholder="例: 事務局長、会計責任者"
                     />
                   </div>
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">団体種別 *</span>
-                    </label>
-                    <select
-                      value={orgType}
-                      onChange={(e) =>
-                        setOrgType((e.target as HTMLSelectElement).value)
-                      }
-                      class="select select-bordered"
-                      required
-                    >
-                      {Object.entries(organizationTypeLabels).map(
-                        ([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </div>
                 </div>
-              )}
 
-              {/* 共通フィールド */}
-              <div class="grid grid-cols-1 gap-4">
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text">公式メールアドレス *</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={orgEmail}
-                    onChange={(e) =>
-                      setOrgEmail((e.target as HTMLInputElement).value)
-                    }
-                    class="input input-bordered"
-                    placeholder="例: info@party.example.jp"
-                    required
-                  />
-                  {orgEmail && (
-                    <label class="label">
-                      {isLgDomain ? (
-                        <span class="label-text-alt text-success">
-                          🏛️ lg.jpドメイン - メール認証を使用します
-                        </span>
-                      ) : (
-                        <span class="label-text-alt text-warning">
-                          🔐 DNS TXT認証が必要です
-                        </span>
-                      )}
-                    </label>
-                  )}
+                {/* 政治資金収支報告書情報 */}
+                <FundReportInfoForm value={fundInfo} onChange={setFundInfo} />
+
+                <div class="flex gap-2">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    disabled={isSubmitting || (!selectedOrg && !orgName)}
+                  >
+                    {isSubmitting ? "送信中..." : "申請する"}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn"
+                    onClick={() => {
+                      setShowForm(false);
+                      setSelectedOrg(null);
+                      setSearchQuery("");
+                    }}
+                  >
+                    キャンセル
+                  </button>
                 </div>
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text">役職</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={orgRole}
-                    onChange={(e) =>
-                      setOrgRole((e.target as HTMLInputElement).value)
-                    }
-                    class="input input-bordered"
-                    placeholder="例: 事務局長、会計責任者"
-                  />
-                </div>
-              </div>
-
-              {/* 政治資金収支報告書情報 */}
-              <FundReportInfoForm value={fundInfo} onChange={setFundInfo} />
-
-              <div class="flex gap-2">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  disabled={isSubmitting || (!selectedOrg && !orgName)}
-                >
-                  {isSubmitting ? "送信中..." : "申請する"}
-                </button>
-                <button
-                  type="button"
-                  class="btn"
-                  onClick={() => {
-                    setShowForm(false);
-                    setSelectedOrg(null);
-                    setSearchQuery("");
-                  }}
-                >
-                  キャンセル
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title text-base">新規認証申請</h3>
-            <p class="text-base-content/70 mb-4">
-              政治団体の管理者として認証されると、その団体の収支台帳を管理できるようになります。
-              認証にはlg.jpドメインの場合はメール認証、それ以外はDNS
-              TXT認証が必要です。
-            </p>
-            <button class="btn btn-primary" onClick={() => setShowForm(true)}>
-              認証を申請する
-            </button>
+        )
+        : (
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h3 class="card-title text-base">新規認証申請</h3>
+              <p class="text-base-content/70 mb-4">
+                政治団体の管理者として認証されると、その団体の収支台帳を管理できるようになります。
+                認証にはlg.jpドメインの場合はメール認証、それ以外はDNS
+                TXT認証が必要です。
+              </p>
+              <button class="btn btn-primary" onClick={() => setShowForm(true)}>
+                認証を申請する
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

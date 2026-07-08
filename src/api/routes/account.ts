@@ -27,8 +27,9 @@ accountRouter.put("/email", async (c) => {
       return c.json({ error: "メールアドレスは必須です" }, 400);
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     // Supabase Auth のメール変更
     const { error } = await supabase.auth.updateUser({

@@ -1,15 +1,16 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import ElectionRequestForm from "../../islands/ElectionRequestForm.tsx";
 import { createClient } from "@supabase/supabase-js";
+import { Handlers } from "fresh/compat";
 
 interface ElectionRequestPageData {
   userEmail?: string;
 }
 
 export const handler: Handlers<ElectionRequestPageData> = {
-  async GET(_req, ctx) {
+  async GET(ctx) {
     const userId = ctx.state.userId as string;
 
     if (!userId) {

@@ -1,6 +1,7 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { createClient } from "@supabase/supabase-js";
+import { Handlers } from "fresh/compat";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
@@ -12,11 +13,12 @@ interface RegisterData {
 }
 
 export const handler: Handlers<RegisterData> = {
-  GET(_req, ctx) {
+  GET(ctx) {
     return ctx.render({});
   },
 
-  async POST(req, ctx) {
+  async POST(ctx) {
+    const req = ctx.req;
     const form = await req.formData();
     const email = form.get("email")?.toString() || "";
     const password = form.get("password")?.toString() || "";

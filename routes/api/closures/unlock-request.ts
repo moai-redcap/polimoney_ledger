@@ -1,9 +1,9 @@
-import { Handlers } from "$fresh/server.ts";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
-  createUnlockRequest,
   checkUnlockStatus,
+  createUnlockRequest,
 } from "../../../lib/hub-client.ts";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -17,7 +17,8 @@ export const handler: Handlers = {
   /**
    * POST - ロック解除リクエストを作成
    */
-  async POST(req, ctx) {
+  async POST(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -53,10 +54,9 @@ export const handler: Handlers = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(userId);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(userId);
 
       // 組織の所有者確認
       const { data: org, error: orgError } = await supabase
@@ -106,8 +106,9 @@ export const handler: Handlers = {
       console.error("Error creating unlock request:", error);
 
       // Hub からのエラーをそのまま返す
-      const errorMessage =
-        error instanceof Error ? error.message : "Internal server error";
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Internal server error";
 
       // 既存リクエストエラーの場合
       if (errorMessage.includes("pending unlock request already exists")) {
@@ -127,7 +128,8 @@ export const handler: Handlers = {
   /**
    * GET - ロック解除状態を確認
    */
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {

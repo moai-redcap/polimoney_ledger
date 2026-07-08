@@ -80,7 +80,7 @@ export default function ContactManager({
 
     try {
       const response = await fetch(
-        `/api/hub-organizations/${formData.hub_organization_id.trim()}`
+        `/api/hub-organizations/${formData.hub_organization_id.trim()}`,
       );
 
       if (!response.ok) {
@@ -101,7 +101,7 @@ export default function ContactManager({
       setOrgFetchError(null);
     } catch (err) {
       setOrgFetchError(
-        err instanceof Error ? err.message : "取得に失敗しました"
+        err instanceof Error ? err.message : "取得に失敗しました",
       );
     } finally {
       setIsFetchingOrg(false);
@@ -137,8 +137,7 @@ export default function ContactManager({
     resetForm();
   };
 
-  const hasPrivacySetting =
-    formData.is_name_private ||
+  const hasPrivacySetting = formData.is_name_private ||
     formData.is_address_private ||
     formData.is_occupation_private;
 
@@ -173,16 +172,14 @@ export default function ContactManager({
       contact_type: formData.contact_type,
       name: formData.name.trim(),
       address: formData.address.trim() || null,
-      occupation:
-        formData.contact_type === "person"
-          ? formData.occupation.trim() || null
-          : null,
+      occupation: formData.contact_type === "person"
+        ? formData.occupation.trim() || null
+        : null,
       is_name_private: formData.is_name_private,
       is_address_private: formData.is_address_private,
-      is_occupation_private:
-        formData.contact_type === "person"
-          ? formData.is_occupation_private
-          : false,
+      is_occupation_private: formData.contact_type === "person"
+        ? formData.is_occupation_private
+        : false,
       privacy_reason_type: hasPrivacySetting
         ? formData.privacy_reason_type
         : null,
@@ -207,7 +204,7 @@ export default function ContactManager({
 
         const { data } = await res.json();
         setContacts(
-          [...contacts, data].sort((a, b) => a.name.localeCompare(b.name))
+          [...contacts, data].sort((a, b) => a.name.localeCompare(b.name)),
         );
       } else if (modalMode === "edit" && editingContact) {
         const res = await fetch(`/api/contacts/${editingContact.id}`, {
@@ -225,7 +222,7 @@ export default function ContactManager({
         setContacts(
           contacts
             .map((c) => (c.id === editingContact.id ? data : c))
-            .sort((a, b) => a.name.localeCompare(b.name))
+            .sort((a, b) => a.name.localeCompare(b.name)),
         );
       }
 
@@ -290,105 +287,108 @@ export default function ContactManager({
       </div>
 
       {/* 関係者一覧 */}
-      {contacts.length === 0 ? (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body items-center text-center py-12">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-16 w-16 text-base-content/30 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            <h3 class="text-lg font-semibold">
-              関係者がまだ登録されていません
-            </h3>
-            <p class="text-base-content/70">
-              「新規登録」ボタンから関係者を追加してください。
-            </p>
+      {contacts.length === 0
+        ? (
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body items-center text-center py-12">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-16 w-16 text-base-content/30 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+              <h3 class="text-lg font-semibold">
+                関係者がまだ登録されていません
+              </h3>
+              <p class="text-base-content/70">
+                「新規登録」ボタンから関係者を追加してください。
+              </p>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="overflow-x-auto">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>種別</th>
-                  <th>氏名/団体名</th>
-                  <th>住所</th>
-                  <th>職業</th>
-                  <th>非公開</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {contacts.map((contact) => (
-                  <tr key={contact.id} class="hover">
-                    <td>
-                      <span
-                        class={`badge ${
-                          contact.contact_type === "person"
-                            ? "badge-info"
-                            : contact.contact_type === "political_organization"
-                            ? "badge-secondary"
-                            : "badge-warning"
-                        }`}
-                      >
-                        {contact.contact_type === "person"
-                          ? "個人"
-                          : contact.contact_type === "political_organization"
-                          ? "政治団体"
-                          : "法人"}
-                      </span>
-                    </td>
-                    <td class="font-medium">{contact.name}</td>
-                    <td class="text-sm text-base-content/70 max-w-xs truncate">
-                      {contact.address || "-"}
-                    </td>
-                    <td class="text-sm text-base-content/70">
-                      {contact.contact_type === "person"
-                        ? contact.occupation || "-"
-                        : "-"}
-                    </td>
-                    <td>
-                      {(contact.is_name_private ||
-                        contact.is_address_private ||
-                        contact.is_occupation_private) && (
-                        <span class="badge badge-ghost badge-sm">あり</span>
-                      )}
-                    </td>
-                    <td>
-                      <div class="flex gap-2">
-                        <button
-                          class="btn btn-ghost btn-sm"
-                          onClick={() => openEditModal(contact)}
-                        >
-                          編集
-                        </button>
-                        <button
-                          class="btn btn-ghost btn-sm text-error"
-                          onClick={() => handleDelete(contact)}
-                          disabled={isLoading}
-                        >
-                          削除
-                        </button>
-                      </div>
-                    </td>
+        )
+        : (
+          <div class="card bg-base-100 shadow-xl">
+            <div class="overflow-x-auto">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>種別</th>
+                    <th>氏名/団体名</th>
+                    <th>住所</th>
+                    <th>職業</th>
+                    <th>非公開</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {contacts.map((contact) => (
+                    <tr key={contact.id} class="hover">
+                      <td>
+                        <span
+                          class={`badge ${
+                            contact.contact_type === "person"
+                              ? "badge-info"
+                              : contact.contact_type ===
+                                  "political_organization"
+                              ? "badge-secondary"
+                              : "badge-warning"
+                          }`}
+                        >
+                          {contact.contact_type === "person"
+                            ? "個人"
+                            : contact.contact_type === "political_organization"
+                            ? "政治団体"
+                            : "法人"}
+                        </span>
+                      </td>
+                      <td class="font-medium">{contact.name}</td>
+                      <td class="text-sm text-base-content/70 max-w-xs truncate">
+                        {contact.address || "-"}
+                      </td>
+                      <td class="text-sm text-base-content/70">
+                        {contact.contact_type === "person"
+                          ? contact.occupation || "-"
+                          : "-"}
+                      </td>
+                      <td>
+                        {(contact.is_name_private ||
+                          contact.is_address_private ||
+                          contact.is_occupation_private) && (
+                          <span class="badge badge-ghost badge-sm">あり</span>
+                        )}
+                      </td>
+                      <td>
+                        <div class="flex gap-2">
+                          <button
+                            class="btn btn-ghost btn-sm"
+                            onClick={() => openEditModal(contact)}
+                          >
+                            編集
+                          </button>
+                          <button
+                            class="btn btn-ghost btn-sm text-error"
+                            onClick={() => handleDelete(contact)}
+                            disabled={isLoading}
+                          >
+                            削除
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* モーダル */}
       {modalMode !== "closed" && (
@@ -418,8 +418,7 @@ export default function ContactManager({
                     aria-label="個人"
                     checked={formData.contact_type === "person"}
                     onChange={() =>
-                      setFormData({ ...formData, contact_type: "person" })
-                    }
+                      setFormData({ ...formData, contact_type: "person" })}
                   />
                   <input
                     class="join-item btn"
@@ -428,8 +427,7 @@ export default function ContactManager({
                     aria-label="法人/団体"
                     checked={formData.contact_type === "corporation"}
                     onChange={() =>
-                      setFormData({ ...formData, contact_type: "corporation" })
-                    }
+                      setFormData({ ...formData, contact_type: "corporation" })}
                   />
                   <input
                     class="join-item btn"
@@ -441,8 +439,7 @@ export default function ContactManager({
                       setFormData({
                         ...formData,
                         contact_type: "political_organization",
-                      })
-                    }
+                      })}
                   />
                 </div>
               </div>
@@ -466,8 +463,7 @@ export default function ContactManager({
                           ...formData,
                           hub_organization_id: (e.target as HTMLInputElement)
                             .value,
-                        })
-                      }
+                        })}
                     />
                     <button
                       type="button"
@@ -475,9 +471,8 @@ export default function ContactManager({
                         isFetchingOrg ? "loading" : ""
                       }`}
                       onClick={fetchOrganizationInfo}
-                      disabled={
-                        isFetchingOrg || !formData.hub_organization_id.trim()
-                      }
+                      disabled={isFetchingOrg ||
+                        !formData.hub_organization_id.trim()}
                     >
                       {isFetchingOrg ? "" : "取得"}
                     </button>
@@ -515,13 +510,10 @@ export default function ContactManager({
                     setFormData({
                       ...formData,
                       name: (e.target as HTMLInputElement).value,
-                    })
-                  }
-                  placeholder={
-                    formData.contact_type === "person"
-                      ? "山田 太郎"
-                      : "株式会社〇〇"
-                  }
+                    })}
+                  placeholder={formData.contact_type === "person"
+                    ? "山田 太郎"
+                    : "株式会社〇〇"}
                 />
                 <label class="label">
                   <span class="label-text-alt flex items-center gap-1">
@@ -534,8 +526,7 @@ export default function ContactManager({
                           ...formData,
                           is_name_private: (e.target as HTMLInputElement)
                             .checked,
-                        })
-                      }
+                        })}
                     />
                     非公開にする
                   </span>
@@ -555,8 +546,7 @@ export default function ContactManager({
                     setFormData({
                       ...formData,
                       address: (e.target as HTMLInputElement).value,
-                    })
-                  }
+                    })}
                   placeholder="東京都千代田区..."
                 />
                 <label class="label">
@@ -570,8 +560,7 @@ export default function ContactManager({
                           ...formData,
                           is_address_private: (e.target as HTMLInputElement)
                             .checked,
-                        })
-                      }
+                        })}
                     />
                     非公開にする
                   </span>
@@ -595,8 +584,7 @@ export default function ContactManager({
                       setFormData({
                         ...formData,
                         occupation: (e.target as HTMLInputElement).value,
-                      })
-                    }
+                      })}
                     placeholder="会社員"
                   />
                   <label class="label">
@@ -611,8 +599,7 @@ export default function ContactManager({
                             is_occupation_private: (
                               e.target as HTMLInputElement
                             ).checked,
-                          })
-                        }
+                          })}
                       />
                       非公開にする
                     </span>
@@ -639,8 +626,7 @@ export default function ContactManager({
                         ...formData,
                         privacy_reason_type: (e.target as HTMLSelectElement)
                           .value as "" | "personal_info" | "other",
-                      })
-                    }
+                      })}
                   >
                     <option value="">選択してください</option>
                     <option value="personal_info">個人情報保護のため</option>
@@ -658,8 +644,7 @@ export default function ContactManager({
                           privacy_reason_other: (
                             e.target as HTMLTextAreaElement
                           ).value,
-                        })
-                      }
+                        })}
                     />
                   )}
                 </div>

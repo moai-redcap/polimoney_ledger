@@ -1,5 +1,5 @@
-import { Head } from "$fresh/runtime.ts";
-import { Handlers, PageProps } from "$fresh/server.ts";
+import { Head } from "fresh/runtime";
+import { PageProps } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import OrganizationManagerVerificationForm from "../../islands/OrganizationManagerVerificationForm.tsx";
 import {
@@ -7,9 +7,10 @@ import {
   getOrganizationManagerVerificationsByUser,
   getOrganizations,
   type ManagedOrganization,
-  type OrganizationManagerVerification,
   type Organization,
+  type OrganizationManagerVerification,
 } from "../../lib/hub-client.ts";
+import { Handlers } from "fresh/compat";
 
 interface PageData {
   userId: string;
@@ -21,7 +22,8 @@ interface PageData {
 }
 
 export const handler: Handlers<PageData> = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(null, {

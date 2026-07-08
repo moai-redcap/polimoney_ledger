@@ -161,11 +161,11 @@ export default function UnlockRequestDialog({
             disabled={submitting || reason.trim().length < 10}
             onClick={handleSubmit}
           >
-            {submitting ? (
-              <span class="loading loading-spinner loading-sm" />
-            ) : (
-              "申請を送信"
-            )}
+            {submitting
+              ? <span class="loading loading-spinner loading-sm" />
+              : (
+                "申請を送信"
+              )}
           </button>
         </div>
       </div>

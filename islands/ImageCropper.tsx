@@ -43,7 +43,7 @@ interface CropperConstructor {
       cropBoxMovable?: boolean;
       cropBoxResizable?: boolean;
       toggleDragModeOnDblclick?: boolean;
-    }
+    },
   ): CropperInstance;
 }
 
@@ -65,10 +65,12 @@ export default function ImageCropper({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error";
+      text: string;
+    } | null
+  >(null);
   const [cropperLoaded, setCropperLoaded] = useState(false);
 
   const imageRef = useRef<HTMLImageElement>(null);
@@ -192,7 +194,7 @@ export default function ImageCropper({
             else reject(new Error("Failed to create blob"));
           },
           "image/png",
-          0.9
+          0.9,
         );
       });
 
@@ -229,8 +231,9 @@ export default function ImageCropper({
     } catch (error) {
       setMessage({
         type: "error",
-        text:
-          error instanceof Error ? error.message : "アップロードに失敗しました",
+        text: error instanceof Error
+          ? error.message
+          : "アップロードに失敗しました",
       });
     } finally {
       setIsUploading(false);
@@ -276,28 +279,30 @@ export default function ImageCropper({
             } bg-base-200 flex items-center justify-center overflow-hidden border-2 border-base-300`}
             style={{ width: previewSize, height: previewSize }}
           >
-            {currentImageUrl ? (
-              <img
-                src={currentImageUrl}
-                alt="Current"
-                class="w-full h-full object-cover"
-              />
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                class="w-12 h-12 text-base-content/30"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+            {currentImageUrl
+              ? (
+                <img
+                  src={currentImageUrl}
+                  alt="Current"
+                  class="w-full h-full object-cover"
                 />
-              </svg>
-            )}
+              )
+              : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  class="w-12 h-12 text-base-content/30"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                  />
+                </svg>
+              )}
           </div>
           <div>
             <input
@@ -337,12 +342,14 @@ export default function ImageCropper({
 
           {/* 円形プレビュー用のCSS追加 */}
           {shape === "circle" && (
-            <style>{`
+            <style>
+              {`
               .cropper-view-box,
               .cropper-face {
                 border-radius: 50%;
               }
-            `}</style>
+            `}
+            </style>
           )}
 
           {/* 操作ボタン */}
@@ -353,14 +360,16 @@ export default function ImageCropper({
               onClick={handleUpload}
               disabled={isUploading}
             >
-              {isUploading ? (
-                <>
-                  <span class="loading loading-spinner loading-sm" />
-                  アップロード中...
-                </>
-              ) : (
-                "アップロード"
-              )}
+              {isUploading
+                ? (
+                  <>
+                    <span class="loading loading-spinner loading-sm" />
+                    アップロード中...
+                  </>
+                )
+                : (
+                  "アップロード"
+                )}
             </button>
             <button
               type="button"

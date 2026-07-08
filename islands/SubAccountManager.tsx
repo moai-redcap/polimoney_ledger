@@ -27,11 +27,12 @@ export default function SubAccountManager({
   initialSubAccounts,
   accountMaster,
 }: SubAccountManagerProps) {
-  const [subAccounts, setSubAccounts] =
-    useState<SubAccount[]>(initialSubAccounts);
+  const [subAccounts, setSubAccounts] = useState<SubAccount[]>(
+    initialSubAccounts,
+  );
   const [modalMode, setModalMode] = useState<ModalMode>("closed");
   const [editingSubAccount, setEditingSubAccount] = useState<SubAccount | null>(
-    null
+    null,
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,10 +55,9 @@ export default function SubAccountManager({
       // 支出科目のみ補助科目を設定可能
       if (!account.code.startsWith("EXP_")) return false;
       // 台帳タイプでフィルタリング
-      const type =
-        ledgerType === "political_organization"
-          ? "political_organization"
-          : "election";
+      const type = ledgerType === "political_organization"
+        ? "political_organization"
+        : "election";
       return account.available_ledger_types?.includes(type);
     });
   };
@@ -68,10 +68,9 @@ export default function SubAccountManager({
   };
 
   // 表示用にフィルタリングされた補助科目
-  const filteredSubAccounts =
-    filterLedgerType === "all"
-      ? subAccounts
-      : subAccounts.filter((s) => s.ledger_type === filterLedgerType);
+  const filteredSubAccounts = filterLedgerType === "all"
+    ? subAccounts
+    : subAccounts.filter((s) => s.ledger_type === filterLedgerType);
 
   // 勘定科目ごとにグループ化
   const groupedSubAccounts = filteredSubAccounts.reduce(
@@ -83,7 +82,7 @@ export default function SubAccountManager({
       groups[key].push(subAccount);
       return groups;
     },
-    {} as Record<string, SubAccount[]>
+    {} as Record<string, SubAccount[]>,
   );
 
   const resetForm = () => {
@@ -156,7 +155,7 @@ export default function SubAccountManager({
         setSubAccounts(
           [...subAccounts, data].sort((a, b) =>
             a.parent_account_code.localeCompare(b.parent_account_code)
-          )
+          ),
         );
       } else if (modalMode === "edit" && editingSubAccount) {
         const res = await fetch(`/api/sub-accounts/${editingSubAccount.id}`, {
@@ -172,7 +171,7 @@ export default function SubAccountManager({
 
         const { data } = await res.json();
         setSubAccounts(
-          subAccounts.map((s) => (s.id === editingSubAccount.id ? data : s))
+          subAccounts.map((s) => (s.id === editingSubAccount.id ? data : s)),
         );
       }
 
@@ -222,8 +221,7 @@ export default function SubAccountManager({
             class="select select-bordered select-sm"
             value={filterLedgerType}
             onChange={(e) =>
-              setFilterLedgerType((e.target as HTMLSelectElement).value)
-            }
+              setFilterLedgerType((e.target as HTMLSelectElement).value)}
           >
             <option value="all">すべて</option>
             <option value="political_organization">政治団体用</option>
@@ -250,95 +248,99 @@ export default function SubAccountManager({
       </div>
 
       {/* 補助科目一覧 */}
-      {Object.keys(groupedSubAccounts).length === 0 ? (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body items-center text-center py-12">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-16 w-16 text-base-content/30 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-              />
-            </svg>
-            <h3 class="text-lg font-semibold">
-              補助科目がまだ登録されていません
-            </h3>
-            <p class="text-base-content/70">
-              「新規登録」ボタンから補助科目を追加してください。
-            </p>
+      {Object.keys(groupedSubAccounts).length === 0
+        ? (
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body items-center text-center py-12">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-16 w-16 text-base-content/30 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
+              </svg>
+              <h3 class="text-lg font-semibold">
+                補助科目がまだ登録されていません
+              </h3>
+              <p class="text-base-content/70">
+                「新規登録」ボタンから補助科目を追加してください。
+              </p>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div class="space-y-4">
-          {Object.entries(groupedSubAccounts).map(([accountCode, items]) => (
-            <div key={accountCode} class="card bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h3 class="card-title text-base">
-                  {getAccountName(accountCode)}
-                  <span class="badge badge-ghost">{accountCode}</span>
-                </h3>
-                <div class="overflow-x-auto">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>補助科目名</th>
-                        <th>台帳タイプ</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((subAccount) => (
-                        <tr key={subAccount.id} class="hover">
-                          <td class="font-medium">{subAccount.name}</td>
-                          <td>
-                            <span
-                              class={`badge badge-sm ${
-                                subAccount.ledger_type ===
-                                "political_organization"
-                                  ? "badge-info"
-                                  : "badge-warning"
-                              }`}
-                            >
-                              {subAccount.ledger_type ===
-                              "political_organization"
-                                ? "政治団体"
-                                : "選挙"}
-                            </span>
-                          </td>
-                          <td>
-                            <div class="flex gap-2 justify-end">
-                              <button
-                                class="btn btn-ghost btn-xs"
-                                onClick={() => openEditModal(subAccount)}
-                              >
-                                編集
-                              </button>
-                              <button
-                                class="btn btn-ghost btn-xs text-error"
-                                onClick={() => handleDelete(subAccount)}
-                                disabled={isLoading}
-                              >
-                                削除
-                              </button>
-                            </div>
-                          </td>
+        )
+        : (
+          <div class="space-y-4">
+            {Object.entries(groupedSubAccounts).map(([accountCode, items]) => (
+              <div key={accountCode} class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                  <h3 class="card-title text-base">
+                    {getAccountName(accountCode)}
+                    <span class="badge badge-ghost">{accountCode}</span>
+                  </h3>
+                  <div class="overflow-x-auto">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>補助科目名</th>
+                          <th>台帳タイプ</th>
+                          <th></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {items.map((subAccount) => (
+                          <tr key={subAccount.id} class="hover">
+                            <td class="font-medium">{subAccount.name}</td>
+                            <td>
+                              <span
+                                class={`badge badge-sm ${
+                                  subAccount.ledger_type ===
+                                      "political_organization"
+                                    ? "badge-info"
+                                    : "badge-warning"
+                                }`}
+                              >
+                                {subAccount.ledger_type ===
+                                    "political_organization"
+                                  ? "政治団体"
+                                  : "選挙"}
+                              </span>
+                            </td>
+                            <td>
+                              <div class="flex gap-2 justify-end">
+                                <button
+                                  class="btn btn-ghost btn-xs"
+                                  onClick={() =>
+                                    openEditModal(subAccount)}
+                                >
+                                  編集
+                                </button>
+                                <button
+                                  class="btn btn-ghost btn-xs text-error"
+                                  onClick={() =>
+                                    handleDelete(subAccount)}
+                                  disabled={isLoading}
+                                >
+                                  削除
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
       {/* モーダル */}
       {modalMode !== "closed" && (
@@ -367,9 +369,8 @@ export default function SubAccountManager({
                       type="radio"
                       name="ledger_type"
                       aria-label="政治団体"
-                      checked={
-                        formData.ledger_type === "political_organization"
-                      }
+                      checked={formData.ledger_type ===
+                        "political_organization"}
                       onChange={() => {
                         setFormData({
                           ...formData,
@@ -412,8 +413,7 @@ export default function SubAccountManager({
                         ...formData,
                         parent_account_code: (e.target as HTMLSelectElement)
                           .value,
-                      })
-                    }
+                      })}
                   >
                     <option value="">選択してください</option>
                     {getFilteredAccounts(formData.ledger_type).map(
@@ -421,7 +421,7 @@ export default function SubAccountManager({
                         <option key={account.code} value={account.code}>
                           {account.name}
                         </option>
-                      )
+                      ),
                     )}
                   </select>
                 </div>
@@ -437,7 +437,7 @@ export default function SubAccountManager({
                     type="text"
                     class="input input-bordered"
                     value={getAccountName(
-                      editingSubAccount.parent_account_code
+                      editingSubAccount.parent_account_code,
                     )}
                     disabled
                   />
@@ -459,8 +459,7 @@ export default function SubAccountManager({
                     setFormData({
                       ...formData,
                       name: (e.target as HTMLInputElement).value,
-                    })
-                  }
+                    })}
                   placeholder="例: 電気代、ガソリン代"
                 />
               </div>

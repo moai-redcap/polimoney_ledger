@@ -29,15 +29,19 @@ export default function PoliticianProfileForm({ politician }: Props) {
   const [party, setParty] = useState(politician.party || "");
   // SNS
   const [snsX, setSnsX] = useState(politician.sns_x || "");
-  const [snsInstagram, setSnsInstagram] = useState(politician.sns_instagram || "");
+  const [snsInstagram, setSnsInstagram] = useState(
+    politician.sns_instagram || "",
+  );
   const [snsFacebook, setSnsFacebook] = useState(politician.sns_facebook || "");
   const [snsTiktok, setSnsTiktok] = useState(politician.sns_tiktok || "");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error";
+      text: string;
+    } | null
+  >(null);
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -153,20 +157,22 @@ export default function PoliticianProfileForm({ politician }: Props) {
           <div class="card-body">
             <h3 class="card-title text-base">基本情報</h3>
             <p class="text-sm text-base-content/70 mb-4">
-              <span class="text-error">*</span> は必須項目です。この情報は公開ページで表示されます。
+              <span class="text-error">*</span>{" "}
+              は必須項目です。この情報は公開ページで表示されます。
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="form-control">
                 <label class="label">
-                  <span class="label-text">氏名 <span class="text-error">*</span></span>
+                  <span class="label-text">
+                    氏名 <span class="text-error">*</span>
+                  </span>
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) =>
-                    setName((e.target as HTMLInputElement).value)
-                  }
+                    setName((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   required
                 />
@@ -179,8 +185,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="text"
                   value={nameKana}
                   onChange={(e) =>
-                    setNameKana((e.target as HTMLInputElement).value)
-                  }
+                    setNameKana((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="やまだ たろう"
                 />
@@ -193,8 +198,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="text"
                   value={party}
                   onChange={(e) =>
-                    setParty((e.target as HTMLInputElement).value)
-                  }
+                    setParty((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="無所属"
                 />
@@ -207,8 +211,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="url"
                   value={officialUrl}
                   onChange={(e) =>
-                    setOfficialUrl((e.target as HTMLInputElement).value)
-                  }
+                    setOfficialUrl((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="https://"
                 />
@@ -239,8 +242,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="url"
                   value={snsX}
                   onChange={(e) =>
-                    setSnsX((e.target as HTMLInputElement).value)
-                  }
+                    setSnsX((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="https://x.com/username"
                 />
@@ -253,8 +255,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="url"
                   value={snsInstagram}
                   onChange={(e) =>
-                    setSnsInstagram((e.target as HTMLInputElement).value)
-                  }
+                    setSnsInstagram((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="https://instagram.com/username"
                 />
@@ -267,8 +268,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="url"
                   value={snsFacebook}
                   onChange={(e) =>
-                    setSnsFacebook((e.target as HTMLInputElement).value)
-                  }
+                    setSnsFacebook((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="https://facebook.com/pagename"
                 />
@@ -281,8 +281,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   type="url"
                   value={snsTiktok}
                   onChange={(e) =>
-                    setSnsTiktok((e.target as HTMLInputElement).value)
-                  }
+                    setSnsTiktok((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="https://tiktok.com/@username"
                 />

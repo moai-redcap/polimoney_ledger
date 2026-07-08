@@ -40,8 +40,8 @@ export default function AddContactModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hasPrivacySetting =
-    isNamePrivate || isAddressPrivate || isOccupationPrivate;
+  const hasPrivacySetting = isNamePrivate || isAddressPrivate ||
+    isOccupationPrivate;
 
   // 政治団体情報をHub APIから取得
   const fetchOrganizationInfo = async () => {
@@ -55,7 +55,7 @@ export default function AddContactModal({
 
     try {
       const response = await fetch(
-        `/api/hub-organizations/${hubOrganizationId.trim()}`
+        `/api/hub-organizations/${hubOrganizationId.trim()}`,
       );
 
       if (!response.ok) {
@@ -75,7 +75,7 @@ export default function AddContactModal({
       setOrgFetchError(null);
     } catch (err) {
       setOrgFetchError(
-        err instanceof Error ? err.message : "取得に失敗しました"
+        err instanceof Error ? err.message : "取得に失敗しました",
       );
     } finally {
       setIsFetchingOrg(false);
@@ -96,10 +96,9 @@ export default function AddContactModal({
           name,
           address: address || null,
           occupation: occupation || null,
-          hub_organization_id:
-            contactType === "political_organization"
-              ? hubOrganizationId.trim()
-              : null,
+          hub_organization_id: contactType === "political_organization"
+            ? hubOrganizationId.trim()
+            : null,
           is_name_private: isNamePrivate,
           is_address_private: isAddressPrivate,
           is_occupation_private: isOccupationPrivate,
@@ -207,8 +206,7 @@ export default function AddContactModal({
                   class="radio radio-secondary"
                   checked={contactType === "political_organization"}
                   onChange={() =>
-                    handleContactTypeChange("political_organization")
-                  }
+                    handleContactTypeChange("political_organization")}
                 />
                 <span class="label-text">政治団体</span>
               </label>
@@ -230,8 +228,7 @@ export default function AddContactModal({
                   placeholder="例: 12345678-1234-1234-1234-123456789012"
                   value={hubOrganizationId}
                   onChange={(e) =>
-                    setHubOrganizationId((e.target as HTMLInputElement).value)
-                  }
+                    setHubOrganizationId((e.target as HTMLInputElement).value)}
                   required
                 />
                 <button
@@ -264,26 +261,22 @@ export default function AddContactModal({
                   ? "氏名"
                   : contactType === "corporation"
                   ? "法人名"
-                  : "団体名"}{" "}
-                <span class="text-error">*</span>
+                  : "団体名"} <span class="text-error">*</span>
               </span>
             </label>
             <input
               type="text"
               class="input input-bordered"
-              placeholder={
-                contactType === "person"
-                  ? "例: 山田 太郎"
-                  : contactType === "corporation"
-                  ? "例: 株式会社○○"
-                  : "例: ○○後援会"
-              }
+              placeholder={contactType === "person"
+                ? "例: 山田 太郎"
+                : contactType === "corporation"
+                ? "例: 株式会社○○"
+                : "例: ○○後援会"}
               value={name}
               onChange={(e) => setName((e.target as HTMLInputElement).value)}
               required
-              disabled={
-                contactType === "political_organization" && isFetchingOrg
-              }
+              disabled={contactType === "political_organization" &&
+                isFetchingOrg}
             />
           </div>
 
@@ -298,9 +291,8 @@ export default function AddContactModal({
               placeholder="例: 東京都千代田区..."
               value={address}
               onChange={(e) => setAddress((e.target as HTMLInputElement).value)}
-              disabled={
-                contactType === "political_organization" && isFetchingOrg
-              }
+              disabled={contactType === "political_organization" &&
+                isFetchingOrg}
             />
           </div>
 
@@ -316,8 +308,7 @@ export default function AddContactModal({
                 placeholder="例: 会社員"
                 value={occupation}
                 onChange={(e) =>
-                  setOccupation((e.target as HTMLInputElement).value)
-                }
+                  setOccupation((e.target as HTMLInputElement).value)}
               />
             </div>
           )}
@@ -334,8 +325,7 @@ export default function AddContactModal({
                     class="checkbox checkbox-sm"
                     checked={isNamePrivate}
                     onChange={(e) =>
-                      setIsNamePrivate((e.target as HTMLInputElement).checked)
-                    }
+                      setIsNamePrivate((e.target as HTMLInputElement).checked)}
                   />
                   <span class="label-text">氏名を非公開にする</span>
                 </label>
@@ -347,9 +337,8 @@ export default function AddContactModal({
                     checked={isAddressPrivate}
                     onChange={(e) =>
                       setIsAddressPrivate(
-                        (e.target as HTMLInputElement).checked
-                      )
-                    }
+                        (e.target as HTMLInputElement).checked,
+                      )}
                   />
                   <span class="label-text">住所を非公開にする</span>
                 </label>
@@ -362,9 +351,8 @@ export default function AddContactModal({
                       checked={isOccupationPrivate}
                       onChange={(e) =>
                         setIsOccupationPrivate(
-                          (e.target as HTMLInputElement).checked
-                        )
-                      }
+                          (e.target as HTMLInputElement).checked,
+                        )}
                     />
                     <span class="label-text">職業を非公開にする</span>
                   </label>
@@ -384,9 +372,8 @@ export default function AddContactModal({
                       setPrivacyReasonType(
                         (e.target as HTMLSelectElement).value as
                           | "personal_info"
-                          | "other"
-                      )
-                    }
+                          | "other",
+                      )}
                   >
                     <option value="personal_info">個人情報保護のため</option>
                     <option value="other">その他</option>
@@ -400,9 +387,8 @@ export default function AddContactModal({
                       value={privacyReasonOther}
                       onChange={(e) =>
                         setPrivacyReasonOther(
-                          (e.target as HTMLInputElement).value
-                        )
-                      }
+                          (e.target as HTMLInputElement).value,
+                        )}
                     />
                   )}
                 </div>

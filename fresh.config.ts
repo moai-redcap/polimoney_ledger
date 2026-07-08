@@ -1,10 +1,9 @@
-import { defineConfig } from "$fresh/server.ts";
-import tailwind from "$fresh/plugins/tailwind.ts";
+import { defineConfig } from "fresh";
 
 export default defineConfig({
-  plugins: [tailwind()],
   server: {
     port: 3721,
     hostname: "0.0.0.0",
   },
 });
+

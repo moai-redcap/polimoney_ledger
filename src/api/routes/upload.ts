@@ -28,8 +28,9 @@ uploadRouter.post("/", async (c) => {
       return c.json({ error: "ファイルが必要です" }, 400);
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const timestamp = Date.now();
     const fileName = `${userId}/${timestamp}_${file.name}`;
@@ -56,7 +57,7 @@ uploadRouter.post("/", async (c) => {
           url: publicUrl.publicUrl,
         },
       },
-      201
+      201,
     );
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -84,8 +85,9 @@ uploadRouter.post("/image", async (c) => {
       return c.json({ error: "画像ファイルのみアップロードできます" }, 400);
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const timestamp = Date.now();
     const ext = file.name.split(".").pop() || "jpg";
@@ -113,7 +115,7 @@ uploadRouter.post("/image", async (c) => {
           url: publicUrl.publicUrl,
         },
       },
-      201
+      201,
     );
   } catch (error) {
     console.error("Error uploading image:", error);

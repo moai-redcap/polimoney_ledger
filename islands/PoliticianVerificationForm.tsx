@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 interface Politician {
   id: string;
@@ -87,7 +87,7 @@ export default function PoliticianVerificationForm({
       district: "",
       candidate_name: "",
       registration_date: "",
-    }
+    },
   );
   const [fundInfo, setFundInfo] = useState<PoliticalFundReportInfo>({
     organization_name: "",
@@ -98,15 +98,16 @@ export default function PoliticianVerificationForm({
   // ドメイン変更フォーム状態
   const [newEmail, setNewEmail] = useState("");
   const [newInfoType, setNewInfoType] = useState<"candidate" | "fund">(
-    "candidate"
+    "candidate",
   );
-  const [newCandidateInfo, setNewCandidateInfo] =
-    useState<CandidateRegistrationInfo>({
-      election_name: "",
-      district: "",
-      candidate_name: "",
-      registration_date: "",
-    });
+  const [newCandidateInfo, setNewCandidateInfo] = useState<
+    CandidateRegistrationInfo
+  >({
+    election_name: "",
+    district: "",
+    candidate_name: "",
+    registration_date: "",
+  });
   const [newFundInfo, setNewFundInfo] = useState<PoliticalFundReportInfo>({
     organization_name: "",
     representative_name: "",
@@ -120,10 +121,12 @@ export default function PoliticianVerificationForm({
   >(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [message, setMessage] = useState<
+    {
+      type: "success" | "error";
+      text: string;
+    } | null
+  >(null);
 
   // メールアドレス変更時にドメイン判定
   useEffect(() => {
@@ -239,7 +242,7 @@ export default function PoliticianVerificationForm({
     try {
       const response = await fetch(
         `/api/politicians/verify/${verificationId}/send-code`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!response.ok) {
@@ -252,8 +255,9 @@ export default function PoliticianVerificationForm({
     } catch (error) {
       setMessage({
         type: "error",
-        text:
-          error instanceof Error ? error.message : "コード送信に失敗しました",
+        text: error instanceof Error
+          ? error.message
+          : "コード送信に失敗しました",
       });
     } finally {
       setIsSubmitting(false);
@@ -268,7 +272,7 @@ export default function PoliticianVerificationForm({
     try {
       const response = await fetch(
         `/api/politicians/verify/${verificationId}/verify-dns`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!response.ok) {
@@ -284,8 +288,9 @@ export default function PoliticianVerificationForm({
     } catch (error) {
       setMessage({
         type: "error",
-        text:
-          error instanceof Error ? error.message : "DNS TXT検証に失敗しました",
+        text: error instanceof Error
+          ? error.message
+          : "DNS TXT検証に失敗しました",
       });
     } finally {
       setIsSubmitting(false);
@@ -307,7 +312,7 @@ export default function PoliticianVerificationForm({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: verificationCode }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -348,7 +353,8 @@ export default function PoliticianVerificationForm({
               strokeLinejoin="round"
               strokeWidth="2"
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
+            >
+            </path>
           </svg>
           <span>
             ドメインの所有権を確認するため、DNS TXTレコードを設定してください。
@@ -441,186 +447,182 @@ export default function PoliticianVerificationForm({
         </button>
       </div>
 
-      {type === "candidate" ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">選挙名 *</span>
-            </label>
-            <input
-              type="text"
-              value={candidate.election_name}
-              onChange={(e) =>
-                setCandidate({
-                  ...candidate,
-                  election_name: (e.target as HTMLInputElement).value,
-                })
-              }
-              class="input input-bordered"
-              placeholder="例: 第50回衆議院議員総選挙"
-              required
-            />
+      {type === "candidate"
+        ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">選挙名 *</span>
+              </label>
+              <input
+                type="text"
+                value={candidate.election_name}
+                onChange={(e) =>
+                  setCandidate({
+                    ...candidate,
+                    election_name: (e.target as HTMLInputElement).value,
+                  })}
+                class="input input-bordered"
+                placeholder="例: 第50回衆議院議員総選挙"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">選挙区 *</span>
+              </label>
+              <input
+                type="text"
+                value={candidate.district}
+                onChange={(e) =>
+                  setCandidate({
+                    ...candidate,
+                    district: (e.target as HTMLInputElement).value,
+                  })}
+                class="input input-bordered"
+                placeholder="例: 東京都第1区"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">氏名 *</span>
+              </label>
+              <input
+                type="text"
+                value={candidate.candidate_name}
+                onChange={(e) =>
+                  setCandidate({
+                    ...candidate,
+                    candidate_name: (e.target as HTMLInputElement).value,
+                  })}
+                class="input input-bordered"
+                placeholder="例: 山田太郎"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">届出年月日 *</span>
+              </label>
+              <input
+                type="date"
+                value={candidate.registration_date}
+                onChange={(e) =>
+                  setCandidate({
+                    ...candidate,
+                    registration_date: (e.target as HTMLInputElement).value,
+                  })}
+                class="input input-bordered"
+                required
+              />
+            </div>
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">選挙区 *</span>
-            </label>
-            <input
-              type="text"
-              value={candidate.district}
-              onChange={(e) =>
-                setCandidate({
-                  ...candidate,
-                  district: (e.target as HTMLInputElement).value,
-                })
-              }
-              class="input input-bordered"
-              placeholder="例: 東京都第1区"
-              required
-            />
+        )
+        : (
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">団体名 *</span>
+              </label>
+              <input
+                type="text"
+                value={fund.organization_name}
+                onChange={(e) =>
+                  setFund({
+                    ...fund,
+                    organization_name: (e.target as HTMLInputElement).value,
+                  })}
+                class="input input-bordered"
+                placeholder="例: 山田太郎後援会"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">代表者名 *</span>
+              </label>
+              <input
+                type="text"
+                value={fund.representative_name}
+                onChange={(e) =>
+                  setFund({
+                    ...fund,
+                    representative_name: (e.target as HTMLInputElement).value,
+                  })}
+                class="input input-bordered"
+                placeholder="例: 山田太郎"
+                required
+              />
+            </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">届出先 *</span>
+              </label>
+              <select
+                value={fund.registration_authority}
+                onChange={(e) =>
+                  setFund({
+                    ...fund,
+                    registration_authority:
+                      (e.target as HTMLSelectElement).value,
+                  })}
+                class="select select-bordered"
+                required
+              >
+                <option value="">選択してください</option>
+                <option value="総務省">総務省</option>
+                <option value="北海道選管">北海道選管</option>
+                <option value="青森県選管">青森県選管</option>
+                <option value="岩手県選管">岩手県選管</option>
+                <option value="宮城県選管">宮城県選管</option>
+                <option value="秋田県選管">秋田県選管</option>
+                <option value="山形県選管">山形県選管</option>
+                <option value="福島県選管">福島県選管</option>
+                <option value="茨城県選管">茨城県選管</option>
+                <option value="栃木県選管">栃木県選管</option>
+                <option value="群馬県選管">群馬県選管</option>
+                <option value="埼玉県選管">埼玉県選管</option>
+                <option value="千葉県選管">千葉県選管</option>
+                <option value="東京都選管">東京都選管</option>
+                <option value="神奈川県選管">神奈川県選管</option>
+                <option value="新潟県選管">新潟県選管</option>
+                <option value="富山県選管">富山県選管</option>
+                <option value="石川県選管">石川県選管</option>
+                <option value="福井県選管">福井県選管</option>
+                <option value="山梨県選管">山梨県選管</option>
+                <option value="長野県選管">長野県選管</option>
+                <option value="岐阜県選管">岐阜県選管</option>
+                <option value="静岡県選管">静岡県選管</option>
+                <option value="愛知県選管">愛知県選管</option>
+                <option value="三重県選管">三重県選管</option>
+                <option value="滋賀県選管">滋賀県選管</option>
+                <option value="京都府選管">京都府選管</option>
+                <option value="大阪府選管">大阪府選管</option>
+                <option value="兵庫県選管">兵庫県選管</option>
+                <option value="奈良県選管">奈良県選管</option>
+                <option value="和歌山県選管">和歌山県選管</option>
+                <option value="鳥取県選管">鳥取県選管</option>
+                <option value="島根県選管">島根県選管</option>
+                <option value="岡山県選管">岡山県選管</option>
+                <option value="広島県選管">広島県選管</option>
+                <option value="山口県選管">山口県選管</option>
+                <option value="徳島県選管">徳島県選管</option>
+                <option value="香川県選管">香川県選管</option>
+                <option value="愛媛県選管">愛媛県選管</option>
+                <option value="高知県選管">高知県選管</option>
+                <option value="福岡県選管">福岡県選管</option>
+                <option value="佐賀県選管">佐賀県選管</option>
+                <option value="長崎県選管">長崎県選管</option>
+                <option value="熊本県選管">熊本県選管</option>
+                <option value="大分県選管">大分県選管</option>
+                <option value="宮崎県選管">宮崎県選管</option>
+                <option value="鹿児島県選管">鹿児島県選管</option>
+                <option value="沖縄県選管">沖縄県選管</option>
+              </select>
+            </div>
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">氏名 *</span>
-            </label>
-            <input
-              type="text"
-              value={candidate.candidate_name}
-              onChange={(e) =>
-                setCandidate({
-                  ...candidate,
-                  candidate_name: (e.target as HTMLInputElement).value,
-                })
-              }
-              class="input input-bordered"
-              placeholder="例: 山田太郎"
-              required
-            />
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">届出年月日 *</span>
-            </label>
-            <input
-              type="date"
-              value={candidate.registration_date}
-              onChange={(e) =>
-                setCandidate({
-                  ...candidate,
-                  registration_date: (e.target as HTMLInputElement).value,
-                })
-              }
-              class="input input-bordered"
-              required
-            />
-          </div>
-        </div>
-      ) : (
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">団体名 *</span>
-            </label>
-            <input
-              type="text"
-              value={fund.organization_name}
-              onChange={(e) =>
-                setFund({
-                  ...fund,
-                  organization_name: (e.target as HTMLInputElement).value,
-                })
-              }
-              class="input input-bordered"
-              placeholder="例: 山田太郎後援会"
-              required
-            />
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">代表者名 *</span>
-            </label>
-            <input
-              type="text"
-              value={fund.representative_name}
-              onChange={(e) =>
-                setFund({
-                  ...fund,
-                  representative_name: (e.target as HTMLInputElement).value,
-                })
-              }
-              class="input input-bordered"
-              placeholder="例: 山田太郎"
-              required
-            />
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">届出先 *</span>
-            </label>
-            <select
-              value={fund.registration_authority}
-              onChange={(e) =>
-                setFund({
-                  ...fund,
-                  registration_authority: (e.target as HTMLSelectElement).value,
-                })
-              }
-              class="select select-bordered"
-              required
-            >
-              <option value="">選択してください</option>
-              <option value="総務省">総務省</option>
-              <option value="北海道選管">北海道選管</option>
-              <option value="青森県選管">青森県選管</option>
-              <option value="岩手県選管">岩手県選管</option>
-              <option value="宮城県選管">宮城県選管</option>
-              <option value="秋田県選管">秋田県選管</option>
-              <option value="山形県選管">山形県選管</option>
-              <option value="福島県選管">福島県選管</option>
-              <option value="茨城県選管">茨城県選管</option>
-              <option value="栃木県選管">栃木県選管</option>
-              <option value="群馬県選管">群馬県選管</option>
-              <option value="埼玉県選管">埼玉県選管</option>
-              <option value="千葉県選管">千葉県選管</option>
-              <option value="東京都選管">東京都選管</option>
-              <option value="神奈川県選管">神奈川県選管</option>
-              <option value="新潟県選管">新潟県選管</option>
-              <option value="富山県選管">富山県選管</option>
-              <option value="石川県選管">石川県選管</option>
-              <option value="福井県選管">福井県選管</option>
-              <option value="山梨県選管">山梨県選管</option>
-              <option value="長野県選管">長野県選管</option>
-              <option value="岐阜県選管">岐阜県選管</option>
-              <option value="静岡県選管">静岡県選管</option>
-              <option value="愛知県選管">愛知県選管</option>
-              <option value="三重県選管">三重県選管</option>
-              <option value="滋賀県選管">滋賀県選管</option>
-              <option value="京都府選管">京都府選管</option>
-              <option value="大阪府選管">大阪府選管</option>
-              <option value="兵庫県選管">兵庫県選管</option>
-              <option value="奈良県選管">奈良県選管</option>
-              <option value="和歌山県選管">和歌山県選管</option>
-              <option value="鳥取県選管">鳥取県選管</option>
-              <option value="島根県選管">島根県選管</option>
-              <option value="岡山県選管">岡山県選管</option>
-              <option value="広島県選管">広島県選管</option>
-              <option value="山口県選管">山口県選管</option>
-              <option value="徳島県選管">徳島県選管</option>
-              <option value="香川県選管">香川県選管</option>
-              <option value="愛媛県選管">愛媛県選管</option>
-              <option value="高知県選管">高知県選管</option>
-              <option value="福岡県選管">福岡県選管</option>
-              <option value="佐賀県選管">佐賀県選管</option>
-              <option value="長崎県選管">長崎県選管</option>
-              <option value="熊本県選管">熊本県選管</option>
-              <option value="大分県選管">大分県選管</option>
-              <option value="宮崎県選管">宮崎県選管</option>
-              <option value="鹿児島県選管">鹿児島県選管</option>
-              <option value="沖縄県選管">沖縄県選管</option>
-            </select>
-          </div>
-        </div>
-      )}
+        )}
     </div>
   );
 
@@ -631,7 +633,7 @@ export default function PoliticianVerificationForm({
       (v) =>
         v.request_type === "domain_change" &&
         v.status === "pending" &&
-        v.verification_method === "dns_txt"
+        v.verification_method === "dns_txt",
     );
 
     return (
@@ -664,8 +666,8 @@ export default function PoliticianVerificationForm({
                 <div>
                   {verifiedPolitician.verified_at
                     ? new Date(
-                        verifiedPolitician.verified_at
-                      ).toLocaleDateString("ja-JP")
+                      verifiedPolitician.verified_at,
+                    ).toLocaleDateString("ja-JP")
                     : "-"}
                 </div>
               </div>
@@ -692,8 +694,7 @@ export default function PoliticianVerificationForm({
                     type="text"
                     value={verificationCode}
                     onChange={(e) =>
-                      setVerificationCode((e.target as HTMLInputElement).value)
-                    }
+                      setVerificationCode((e.target as HTMLInputElement).value)}
                     class="input input-bordered flex-1"
                     placeholder="6桁のコード"
                     maxLength={6}
@@ -745,23 +746,24 @@ export default function PoliticianVerificationForm({
                   type="email"
                   value={newEmail}
                   onChange={(e) =>
-                    setNewEmail((e.target as HTMLInputElement).value)
-                  }
+                    setNewEmail((e.target as HTMLInputElement).value)}
                   class="input input-bordered"
                   placeholder="例: info@new-domain.jp"
                   required
                 />
                 {newEmail && (
                   <label class="label">
-                    {newIsLgDomain ? (
-                      <span class="label-text-alt text-success">
-                        🏛️ lg.jpドメイン - メール認証を使用します
-                      </span>
-                    ) : (
-                      <span class="label-text-alt text-warning">
-                        🔐 DNS TXT認証が必要です
-                      </span>
-                    )}
+                    {newIsLgDomain
+                      ? (
+                        <span class="label-text-alt text-success">
+                          🏛️ lg.jpドメイン - メール認証を使用します
+                        </span>
+                      )
+                      : (
+                        <span class="label-text-alt text-warning">
+                          🔐 DNS TXT認証が必要です
+                        </span>
+                      )}
                   </label>
                 )}
               </div>
@@ -794,8 +796,8 @@ export default function PoliticianVerificationForm({
 
         {/* 申請履歴（ドメイン変更のみ表示） */}
         {politicianVerifications.filter(
-          (v) => v.request_type === "domain_change"
-        ).length > 0 && (
+              (v) => v.request_type === "domain_change",
+            ).length > 0 && (
           <div class="card bg-base-100 shadow-xl">
             <div class="card-body">
               <h3 class="card-title text-base">ドメイン変更申請履歴</h3>
@@ -835,14 +837,14 @@ export default function PoliticianVerificationForm({
                         </span>
                         {v.status === "pending" &&
                           v.verification_method === "email" && (
-                            <button
-                              class="btn btn-sm btn-primary"
-                              onClick={() => handleSendCode(v.id)}
-                              disabled={isSubmitting}
-                            >
-                              認証コードを送信
-                            </button>
-                          )}
+                          <button
+                            class="btn btn-sm btn-primary"
+                            onClick={() => handleSendCode(v.id)}
+                            disabled={isSubmitting}
+                          >
+                            認証コードを送信
+                          </button>
+                        )}
                         {v.status === "email_sent" && (
                           <button
                             class="btn btn-sm btn-outline"
@@ -866,7 +868,7 @@ export default function PoliticianVerificationForm({
   // 通常モード
   // DNS TXT認証が必要な申請を探す
   const pendingDnsVerification = politicianVerifications.find(
-    (v) => v.status === "pending" && v.verification_method === "dns_txt"
+    (v) => v.status === "pending" && v.verification_method === "dns_txt",
   );
 
   return (
@@ -910,11 +912,10 @@ export default function PoliticianVerificationForm({
                   認証済み（{verifiedPolitician.verified_domain}）
                 </p>
                 <p class="text-sm text-base-content/50">
-                  認証日:{" "}
-                  {verifiedPolitician.verified_at
+                  認証日: {verifiedPolitician.verified_at
                     ? new Date(
-                        verifiedPolitician.verified_at
-                      ).toLocaleDateString("ja-JP")
+                      verifiedPolitician.verified_at,
+                    ).toLocaleDateString("ja-JP")
                     : "-"}
                 </p>
               </div>
@@ -971,14 +972,14 @@ export default function PoliticianVerificationForm({
                         </span>
                         {v.status === "pending" &&
                           v.verification_method === "email" && (
-                            <button
-                              class="btn btn-sm btn-primary"
-                              onClick={() => handleSendCode(v.id)}
-                              disabled={isSubmitting}
-                            >
-                              認証コードを送信
-                            </button>
-                          )}
+                          <button
+                            class="btn btn-sm btn-primary"
+                            onClick={() => handleSendCode(v.id)}
+                            disabled={isSubmitting}
+                          >
+                            認証コードを送信
+                          </button>
+                        )}
                         {v.status === "email_sent" && (
                           <button
                             class="btn btn-sm btn-outline"
@@ -1011,9 +1012,8 @@ export default function PoliticianVerificationForm({
                       value={verificationCode}
                       onChange={(e) =>
                         setVerificationCode(
-                          (e.target as HTMLInputElement).value
-                        )
-                      }
+                          (e.target as HTMLInputElement).value,
+                        )}
                       class="input input-bordered flex-1"
                       placeholder="6桁のコード"
                       maxLength={6}
@@ -1032,132 +1032,132 @@ export default function PoliticianVerificationForm({
           )}
 
           {/* 新規申請フォーム */}
-          {showForm ? (
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h3 class="card-title text-base">認証申請</h3>
-                <form onSubmit={handleSubmit} class="space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">氏名 *</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) =>
-                          setName((e.target as HTMLInputElement).value)
-                        }
-                        class="input input-bordered"
-                        placeholder="山田 太郎"
-                        required
-                      />
-                    </div>
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">公式メールアドレス *</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) =>
-                          setEmail((e.target as HTMLInputElement).value)
-                        }
-                        class="input input-bordered"
-                        placeholder="例: info@example.lg.jp"
-                        required
-                      />
-                      {email && (
+          {showForm
+            ? (
+              <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                  <h3 class="card-title text-base">認証申請</h3>
+                  <form onSubmit={handleSubmit} class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="form-control">
                         <label class="label">
-                          {isLgDomain ? (
-                            <span class="label-text-alt text-success">
-                              🏛️ lg.jpドメイン - メール認証を使用します
-                            </span>
-                          ) : (
-                            <span class="label-text-alt text-warning">
-                              🔐 DNS TXT認証が必要です
-                            </span>
-                          )}
+                          <span class="label-text">氏名 *</span>
                         </label>
-                      )}
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) =>
+                            setName((e.target as HTMLInputElement).value)}
+                          class="input input-bordered"
+                          placeholder="山田 太郎"
+                          required
+                        />
+                      </div>
+                      <div class="form-control">
+                        <label class="label">
+                          <span class="label-text">公式メールアドレス *</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) =>
+                            setEmail((e.target as HTMLInputElement).value)}
+                          class="input input-bordered"
+                          placeholder="例: info@example.lg.jp"
+                          required
+                        />
+                        {email && (
+                          <label class="label">
+                            {isLgDomain
+                              ? (
+                                <span class="label-text-alt text-success">
+                                  🏛️ lg.jpドメイン - メール認証を使用します
+                                </span>
+                              )
+                              : (
+                                <span class="label-text-alt text-warning">
+                                  🔐 DNS TXT認証が必要です
+                                </span>
+                              )}
+                          </label>
+                        )}
+                      </div>
+                      <div class="form-control">
+                        <label class="label">
+                          <span class="label-text">公式サイト URL</span>
+                        </label>
+                        <input
+                          type="url"
+                          value={url}
+                          onChange={(e) =>
+                            setUrl((e.target as HTMLInputElement).value)}
+                          class="input input-bordered"
+                          placeholder="https://"
+                        />
+                      </div>
+                      <div class="form-control">
+                        <label class="label">
+                          <span class="label-text">所属政党</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={party}
+                          onChange={(e) =>
+                            setParty((e.target as HTMLInputElement).value)}
+                          class="input input-bordered"
+                          placeholder="無所属"
+                        />
+                      </div>
                     </div>
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">公式サイト URL</span>
-                      </label>
-                      <input
-                        type="url"
-                        value={url}
-                        onChange={(e) =>
-                          setUrl((e.target as HTMLInputElement).value)
-                        }
-                        class="input input-bordered"
-                        placeholder="https://"
-                      />
-                    </div>
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">所属政党</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={party}
-                        onChange={(e) =>
-                          setParty((e.target as HTMLInputElement).value)
-                        }
-                        class="input input-bordered"
-                        placeholder="無所属"
-                      />
-                    </div>
-                  </div>
 
-                  {/* 認証情報入力 */}
-                  <VerificationInfoForm
-                    type={infoType}
-                    setType={setInfoType}
-                    candidate={candidateInfo}
-                    setCandidate={setCandidateInfo}
-                    fund={fundInfo}
-                    setFund={setFundInfo}
-                  />
+                    {/* 認証情報入力 */}
+                    <VerificationInfoForm
+                      type={infoType}
+                      setType={setInfoType}
+                      candidate={candidateInfo}
+                      setCandidate={setCandidateInfo}
+                      fund={fundInfo}
+                      setFund={setFundInfo}
+                    />
 
-                  <div class="flex gap-2">
-                    <button
-                      type="submit"
-                      class="btn btn-primary"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "送信中..." : "申請する"}
-                    </button>
-                    <button
-                      type="button"
-                      class="btn"
-                      onClick={() => setShowForm(false)}
-                    >
-                      キャンセル
-                    </button>
-                  </div>
-                </form>
+                    <div class="flex gap-2">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "送信中..." : "申請する"}
+                      </button>
+                      <button
+                        type="button"
+                        class="btn"
+                        onClick={() => setShowForm(false)}
+                      >
+                        キャンセル
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h3 class="card-title text-base">新規認証申請</h3>
-                <p class="text-base-content/70 mb-4">
-                  政治家として認証されると、選挙台帳を作成できるようになります。
-                  認証にはlg.jpドメインの場合はメール認証、それ以外はDNS
-                  TXT認証が必要です。
-                </p>
-                <button
-                  class="btn btn-primary"
-                  onClick={() => setShowForm(true)}
-                >
-                  認証を申請する
-                </button>
+            )
+            : (
+              <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                  <h3 class="card-title text-base">新規認証申請</h3>
+                  <p class="text-base-content/70 mb-4">
+                    政治家として認証されると、選挙台帳を作成できるようになります。
+                    認証にはlg.jpドメインの場合はメール認証、それ以外はDNS
+                    TXT認証が必要です。
+                  </p>
+                  <button
+                    class="btn btn-primary"
+                    onClick={() => setShowForm(true)}
+                  >
+                    認証を申請する
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </>
       )}
     </div>

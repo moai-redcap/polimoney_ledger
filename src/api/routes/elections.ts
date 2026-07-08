@@ -34,12 +34,13 @@ electionsRouter.post("/", async (c) => {
     if (!body.hub_politician_id) {
       return c.json(
         { error: "政治家IDは必須です（認証済みの政治家IDが必要です）" },
-        400
+        400,
       );
     }
 
-    const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
+    const supabase = userId === TEST_USER_ID
+      ? getServiceClient()
+      : getSupabaseClient(userId);
 
     const { data: election, error: electionError } = await supabase
       .from("elections")

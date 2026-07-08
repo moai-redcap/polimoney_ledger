@@ -39,7 +39,7 @@ export default function PendingTransfers({
           transfer.political_organizations?.name ||
           transfer.elections?.election_name ||
           "この台帳"
-        }」のオーナー譲渡を承認しますか？`
+        }」のオーナー譲渡を承認しますか？`,
       )
     ) {
       return;
@@ -51,7 +51,7 @@ export default function PendingTransfers({
     try {
       const res = await fetch(
         `/api/ownership-transfers/${transfer.id}/accept`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!res.ok) {
@@ -79,7 +79,7 @@ export default function PendingTransfers({
     try {
       const res = await fetch(
         `/api/ownership-transfers/${transfer.id}/decline`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       if (!res.ok) {

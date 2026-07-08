@@ -73,51 +73,52 @@ export default function ProfileEditor({
             <label class="label">
               <span class="label-text font-medium">姓名（本名）</span>
             </label>
-            {isEditing ? (
-              <div class="flex gap-2">
-                <input
-                  type="text"
-                  class="input input-bordered flex-1"
-                  value={displayName}
-                  onChange={(e) =>
-                    setDisplayName((e.target as HTMLInputElement).value)
-                  }
-                  placeholder="山田 太郎"
-                />
-                <button
-                  class="btn btn-ghost"
-                  onClick={handleCancel}
-                  disabled={isLoading}
-                >
-                  キャンセル
-                </button>
-                <button
-                  class="btn btn-primary"
-                  onClick={handleSave}
-                  disabled={isLoading}
-                >
-                  {isLoading && (
-                    <span class="loading loading-spinner loading-sm" />
-                  )}
-                  保存
-                </button>
-              </div>
-            ) : (
-              <div class="flex gap-2">
-                <input
-                  type="text"
-                  class="input input-bordered flex-1 bg-base-200"
-                  value={displayName || "（未設定）"}
-                  disabled
-                />
-                <button
-                  class="btn btn-ghost"
-                  onClick={() => setIsEditing(true)}
-                >
-                  編集
-                </button>
-              </div>
-            )}
+            {isEditing
+              ? (
+                <div class="flex gap-2">
+                  <input
+                    type="text"
+                    class="input input-bordered flex-1"
+                    value={displayName}
+                    onChange={(e) =>
+                      setDisplayName((e.target as HTMLInputElement).value)}
+                    placeholder="山田 太郎"
+                  />
+                  <button
+                    class="btn btn-ghost"
+                    onClick={handleCancel}
+                    disabled={isLoading}
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    class="btn btn-primary"
+                    onClick={handleSave}
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <span class="loading loading-spinner loading-sm" />
+                    )}
+                    保存
+                  </button>
+                </div>
+              )
+              : (
+                <div class="flex gap-2">
+                  <input
+                    type="text"
+                    class="input input-bordered flex-1 bg-base-200"
+                    value={displayName || "（未設定）"}
+                    disabled
+                  />
+                  <button
+                    class="btn btn-ghost"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    編集
+                  </button>
+                </div>
+              )}
             <label class="label">
               <span class="label-text-alt text-base-content/60">
                 政治家認証やメンバー一覧に表示されます。本名を入力してください。

@@ -19,10 +19,10 @@ const IS_PRODUCTION = Deno.env.get("APP_ENV") === "production";
  * 注意: テストユーザーのデータは is_test フラグで区別されます。
  * DEV キーで呼ぶと is_test=true、PROD キーで呼ぶと is_test=false のデータが返ります。
  */
-const HUB_API_URL_PROD =
-  Deno.env.get("HUB_API_URL_PROD") || "https://api.polimoney.dd2030.org";
-const HUB_API_URL_DEV =
-  Deno.env.get("HUB_API_URL_DEV") || "http://localhost:3722";
+const HUB_API_URL_PROD = Deno.env.get("HUB_API_URL_PROD") ||
+  "https://api.polimoney.dd2030.org";
+const HUB_API_URL_DEV = Deno.env.get("HUB_API_URL_DEV") ||
+  "http://localhost:3722";
 const HUB_API_KEY_PROD = Deno.env.get("HUB_API_KEY_PROD") || "";
 const HUB_API_KEY_DEV = Deno.env.get("HUB_API_KEY_DEV") || "";
 
@@ -320,8 +320,8 @@ async function fetchApi<T>(
         useDevKey
           ? "HUB_API_KEY_DEV"
           : IS_PRODUCTION
-            ? "HUB_API_KEY_PROD"
-            : "HUB_API_KEY_DEV"
+          ? "HUB_API_KEY_PROD"
+          : "HUB_API_KEY_DEV"
       } environment variable.`,
     );
   }
@@ -930,7 +930,6 @@ export async function syncContacts(
   );
   return result;
 }
-
 
 /** Ledger から Hub に送信する同期データ */
 export interface SyncJournalInput {

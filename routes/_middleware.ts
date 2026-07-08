@@ -7,7 +7,7 @@
  * - その他のルートはログイン必須
  */
 
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { getCookies } from "$std/http/cookie.ts";
 import { createClient } from "@supabase/supabase-js";
 
@@ -29,7 +29,8 @@ function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS_PREFIX.some((path) => pathname.startsWith(path));
 }
 
-export async function handler(req: Request, ctx: FreshContext) {
+export async function handler(ctx: FreshContext) {
+  const req = ctx.req;
   const url = new URL(req.url);
 
   // 静的ファイルはスキップ
@@ -103,8 +104,8 @@ export async function handler(req: Request, ctx: FreshContext) {
   if (error || !user) {
     // リフレッシュトークンで再取得を試みる
     if (refreshToken) {
-      const { data: refreshData, error: refreshError } =
-        await supabase.auth.refreshSession({
+      const { data: refreshData, error: refreshError } = await supabase.auth
+        .refreshSession({
           refresh_token: refreshToken,
         });
 
@@ -115,11 +116,11 @@ export async function handler(req: Request, ctx: FreshContext) {
 
         headers.append(
           "Set-Cookie",
-          `sb-access-token=${refreshData.session.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`
+          `sb-access-token=${refreshData.session.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`,
         );
         headers.append(
           "Set-Cookie",
-          `sb-refresh-token=${refreshData.session.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`
+          `sb-refresh-token=${refreshData.session.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`,
         );
 
         // ユーザー情報をコンテキストに追加

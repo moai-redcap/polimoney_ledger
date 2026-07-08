@@ -1,5 +1,5 @@
-import { Handlers } from "$fresh/server.ts";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
+import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -12,7 +12,8 @@ export const handler: Handlers = {
   /**
    * POST - 年度締めを解除してopenに戻す
    */
-  async POST(req, ctx) {
+  async POST(ctx) {
+    const req = ctx.req;
     const userId = ctx.state.userId as string;
     if (!userId) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -41,10 +42,9 @@ export const handler: Handlers = {
     }
 
     try {
-      const supabase =
-        userId === TEST_USER_ID
-          ? getServiceClient()
-          : getSupabaseClient(userId);
+      const supabase = userId === TEST_USER_ID
+        ? getServiceClient()
+        : getSupabaseClient(userId);
 
       // 組織の所有者確認
       const { data: org, error: orgError } = await supabase
@@ -80,7 +80,10 @@ export const handler: Handlers = {
       if (!existingClosure || existingClosure.status !== "closed") {
         return new Response(
           JSON.stringify({
-            error: `Year ${year} must be in 'closed' status to reopen. Current status: ${existingClosure?.status || "not found"}`,
+            error:
+              `Year ${year} must be in 'closed' status to reopen. Current status: ${
+                existingClosure?.status || "not found"
+              }`,
           }),
           { status: 400, headers: { "Content-Type": "application/json" } },
         );

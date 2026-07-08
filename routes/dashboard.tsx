@@ -1,4 +1,4 @@
-import { Head } from "$fresh/runtime.ts";
+import { Head } from "fresh/runtime";
 import { Layout } from "../components/Layout.tsx";
 
 export default function Home() {
