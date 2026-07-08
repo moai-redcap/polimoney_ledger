@@ -50,7 +50,7 @@ export const handler: Handlers<PageData> = {
 
     try {
       const supabase =
-        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+        userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
 
       // 政治団体情報を取得
       const { data: organization, error: orgError } = await supabase

@@ -26,6 +26,7 @@ interface PageData {
   members: Member[];
   isOwner: boolean;
   canManageMembers: boolean;
+  ledgerId?: string;
   error?: string;
 }
 
@@ -43,7 +44,7 @@ export const handler: Handlers<PageData> = {
 
     const electionId = ctx.params.id;
     const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
 
     // 選挙の情報を取得
     const { data: election, error: elecError } = await supabase
@@ -98,12 +99,13 @@ export const handler: Handlers<PageData> = {
       members: members || [],
       isOwner,
       canManageMembers,
+      ledgerId: ledgerData?.id,
     });
   },
 };
 
 export default function ElectionMembersPage({ data }: PageProps<PageData>) {
-  const { election, members, isOwner, canManageMembers, error } = data;
+  const { election, members, isOwner, canManageMembers, ledgerId, error } = data;
 
   if (error) {
     return (
@@ -164,7 +166,7 @@ export default function ElectionMembersPage({ data }: PageProps<PageData>) {
 
         <div class="max-w-4xl">
           <MemberManager
-            ledgerId={ledgerData?.id}
+            ledgerId={ledgerId}
             initialMembers={members}
             isOwner={isOwner}
             canManageMembers={canManageMembers}
