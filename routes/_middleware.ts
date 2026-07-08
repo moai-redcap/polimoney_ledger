@@ -7,7 +7,7 @@
  * - その他のルートはログイン必須
  */
 
-import { FreshContext } from "fresh";
+import { define } from "../lib/define.ts";
 import { getCookies } from "$std/http/cookie.ts";
 import { createClient } from "@supabase/supabase-js";
 
@@ -29,7 +29,7 @@ function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS_PREFIX.some((path) => pathname.startsWith(path));
 }
 
-export async function handler(ctx: FreshContext) {
+export const handler = define.middleware(async (ctx) => {
   const req = ctx.req;
   const url = new URL(req.url);
 
@@ -160,4 +160,4 @@ export async function handler(ctx: FreshContext) {
   ctx.state.userId = user.id;
 
   return ctx.next();
-}
+});

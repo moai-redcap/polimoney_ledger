@@ -1,9 +1,9 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../lib/supabase.ts";
 import ApproveButton from "../../islands/ApproveButton.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -49,7 +49,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const journalId = ctx.params.id;
@@ -109,22 +109,22 @@ export const handler: Handlers<PageData> = {
         .single();
 
       if (error || !journal) {
-        return ctx.render({
+        return page({
           journal: null,
           error: "仕訳が見つかりません",
         });
       }
 
-      return ctx.render({ journal });
+      return page({ journal });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         journal: null,
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
 // 勘定科目コードから名前を取得
 const ACCOUNT_NAMES: Record<string, string> = {
@@ -180,7 +180,7 @@ function formatDateTime(dateStr: string): string {
   });
 }
 
-export default function JournalDetailPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { journal, error } = data;
 
   if (error || !journal) {
@@ -398,4 +398,4 @@ export default function JournalDetailPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

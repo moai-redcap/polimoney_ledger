@@ -1,7 +1,7 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { createClient } from "@supabase/supabase-js";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
@@ -12,9 +12,9 @@ interface RegisterData {
   email?: string;
 }
 
-export const handler: Handlers<RegisterData> = {
+export const handler = define.handlers<RegisterData>({
   GET(ctx) {
-    return ctx.render({});
+    return page({});
   },
 
   async POST(ctx) {
@@ -29,27 +29,27 @@ export const handler: Handlers<RegisterData> = {
 
     // バリデーション
     if (!email || !password || !fullName) {
-      return ctx.render({ error: "すべての必須項目を入力してください" });
+      return page({ error: "すべての必須項目を入力してください" });
     }
 
     if (!tosAccepted) {
-      return ctx.render({ error: "利用規約への同意が必要です" });
+      return page({ error: "利用規約への同意が必要です" });
     }
 
     if (!privacyPolicyAccepted) {
-      return ctx.render({ error: "プライバシーポリシーへの同意が必要です" });
+      return page({ error: "プライバシーポリシーへの同意が必要です" });
     }
 
     if (password !== confirmPassword) {
-      return ctx.render({ error: "パスワードが一致しません" });
+      return page({ error: "パスワードが一致しません" });
     }
 
     if (password.length < 8) {
-      return ctx.render({ error: "パスワードは8文字以上で入力してください" });
+      return page({ error: "パスワードは8文字以上で入力してください" });
     }
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-      return ctx.render({ error: "Supabase が設定されていません" });
+      return page({ error: "Supabase が設定されていません" });
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -66,18 +66,18 @@ export const handler: Handlers<RegisterData> = {
     });
 
     if (authError) {
-      return ctx.render({ error: authError.message });
+      return page({ error: authError.message });
     }
 
     if (!authData.user?.id) {
-      return ctx.render({ error: "ユーザー作成に失敗しました" });
+      return page({ error: "ユーザー作成に失敗しました" });
     }
 
-    return ctx.render({ success: true, email });
+    return page({ success: true, email });
   },
-};
+});
 
-export default function RegisterPage({ data }: PageProps<RegisterData>) {
+export default define.page<typeof handler>(({ data }) => {
   if (data?.success) {
     return (
       <>
@@ -361,4 +361,4 @@ export default function RegisterPage({ data }: PageProps<RegisterData>) {
       </div>
     </>
   );
-}
+});

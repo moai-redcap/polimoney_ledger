@@ -1,10 +1,10 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getSupabaseClient } from "../lib/supabase.ts";
 import ProfileEditor from "../islands/ProfileEditor.tsx";
 import EmailChangeForm from "../islands/EmailChangeForm.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 interface PageData {
   email: string;
@@ -12,7 +12,7 @@ interface PageData {
   userId: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const userId = ctx.state.userId as string;
     if (!userId) {
@@ -31,15 +31,15 @@ export const handler: Handlers<PageData> = {
     const displayName = user?.user_metadata?.display_name ||
       user?.user_metadata?.full_name || "";
 
-    return ctx.render({
+    return page({
       email: user?.email || "",
       displayName,
       userId,
     });
   },
-};
+});
 
-export default function AccountPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { email, displayName, userId } = data;
 
   return (
@@ -121,4 +121,4 @@ export default function AccountPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

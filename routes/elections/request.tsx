@@ -1,15 +1,15 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import ElectionRequestForm from "../../islands/ElectionRequestForm.tsx";
 import { createClient } from "@supabase/supabase-js";
-import { Handlers } from "fresh/compat";
+import { define } from "../../lib/define.ts";
 
 interface ElectionRequestPageData {
   userEmail?: string;
 }
 
-export const handler: Handlers<ElectionRequestPageData> = {
+export const handler = define.handlers<ElectionRequestPageData>({
   async GET(ctx) {
     const userId = ctx.state.userId as string;
 
@@ -38,13 +38,13 @@ export const handler: Handlers<ElectionRequestPageData> = {
       console.error("Failed to fetch user profile:", error);
     }
 
-    return ctx.render({ userEmail });
+    return page({ userEmail });
   },
-};
+});
 
-export default function ElectionRequestPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<ElectionRequestPageData>) {
+}) => {
   const { userEmail } = data;
 
   return (
@@ -97,4 +97,4 @@ export default function ElectionRequestPage({
       </Layout>
     </>
   );
-}
+});

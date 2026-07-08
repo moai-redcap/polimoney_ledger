@@ -1,9 +1,9 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
 import PendingTransfers from "../islands/PendingTransfers.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -28,7 +28,7 @@ interface DashboardData {
   pendingTransfers: Transfer[];
 }
 
-export const handler: Handlers<DashboardData> = {
+export const handler = define.handlers<DashboardData>({
   async GET(ctx) {
     const req = ctx.req;
     const user = ctx.state.user as { email?: string } | undefined;
@@ -71,14 +71,14 @@ export const handler: Handlers<DashboardData> = {
       }
     }
 
-    return ctx.render({
+    return page({
       userName: user?.email || null,
       pendingTransfers,
     });
   },
-};
+});
 
-export default function DashboardPage({ data }: PageProps<DashboardData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { pendingTransfers } = data;
 
   return (
@@ -151,4 +151,4 @@ export default function DashboardPage({ data }: PageProps<DashboardData>) {
       </Layout>
     </>
   );
-}
+});

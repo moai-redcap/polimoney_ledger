@@ -1,9 +1,9 @@
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
+import { define } from "../../../lib/define.ts";
   checkUnlockStatus,
   createUnlockRequest,
 } from "../../../lib/hub-client.ts";
-import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -13,7 +13,7 @@ interface UnlockRequestBody {
   reason: string;
 }
 
-export const handler: Handlers = {
+export const handler = define.handlers({
   /**
    * POST - ロック解除リクエストを作成
    */
@@ -161,4 +161,4 @@ export const handler: Handlers = {
       });
     }
   },
-};
+});

@@ -1,10 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
-import { Handlers } from "fresh/compat";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
 
-export const handler: Handlers = {
+export const handler = define.handlers({
   async POST(ctx) {
     const req = ctx.req;
 
@@ -72,4 +71,4 @@ export const handler: Handlers = {
       });
     }
   },
-};
+});

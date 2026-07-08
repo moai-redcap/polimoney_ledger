@@ -1,9 +1,9 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
 import ContactManager from "../islands/ContactManager.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -26,7 +26,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -49,14 +49,14 @@ export const handler: Handlers<PageData> = {
 
     if (error) {
       console.error("Failed to fetch contacts:", error);
-      return ctx.render({ contacts: [], error: "関係者の取得に失敗しました" });
+      return page({ contacts: [], error: "関係者の取得に失敗しました" });
     }
 
-    return ctx.render({ contacts: data || [] });
+    return page({ contacts: data || [] });
   },
-};
+});
 
-export default function ContactsPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { contacts, error } = data;
 
   return (
@@ -77,4 +77,4 @@ export default function ContactsPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

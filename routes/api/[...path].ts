@@ -1,7 +1,6 @@
 import { api } from "../../src/api/index.ts";
-import { Handlers } from "fresh/compat";
 
-export const handler: Handlers = {
+export const handler = define.handlers({
   async GET(ctx) {
     const req = ctx.req;
 
@@ -27,7 +26,7 @@ export const handler: Handlers = {
 
     return handleRequest(req, ctx);
   },
-};
+});
 
 async function handleRequest(
   req: Request,

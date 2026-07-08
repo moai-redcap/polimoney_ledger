@@ -1,5 +1,5 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import {
   type Election,
@@ -8,7 +8,7 @@ import {
 } from "../../lib/hub-client.ts";
 import { getSupabaseClient } from "../../lib/supabase.ts";
 import NewElectionForm from "../../islands/NewElectionForm.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../lib/define.ts";
 
 interface VerifiedPolitician {
   id: string;
@@ -24,7 +24,7 @@ interface NewElectionPageData {
   error?: string;
 }
 
-export const handler: Handlers<NewElectionPageData> = {
+export const handler = define.handlers<NewElectionPageData>({
   async GET(ctx) {
     const userId = ctx.state.userId as string;
 
@@ -68,14 +68,14 @@ export const handler: Handlers<NewElectionPageData> = {
 
       // Hub から選挙一覧を取得
       const hubElections = await getElections();
-      return ctx.render({
+      return page({
         hubElections,
         verifiedPolitician,
         canCreateElection,
       });
     } catch (error) {
       console.error("Failed to fetch elections from Hub:", error);
-      return ctx.render({
+      return page({
         hubElections: [],
         verifiedPolitician: null,
         canCreateElection: false,
@@ -85,11 +85,11 @@ export const handler: Handlers<NewElectionPageData> = {
       });
     }
   },
-};
+});
 
-export default function NewElectionPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<NewElectionPageData>) {
+}) => {
   const { hubElections, verifiedPolitician, canCreateElection, error } = data;
 
   return (
@@ -245,4 +245,4 @@ export default function NewElectionPage({
       </Layout>
     </>
   );
-}
+});

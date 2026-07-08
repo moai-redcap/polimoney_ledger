@@ -1,8 +1,8 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
-import { Handlers } from "fresh/compat";
+import { define } from "../../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -40,7 +40,7 @@ const ASSET_TYPE_LABELS: Record<string, string> = {
   deposit: "敷金・保証金",
 };
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const electionId = ctx.params.id;
@@ -66,7 +66,7 @@ export const handler: Handlers<PageData> = {
         .single();
 
       if (electionError || !election) {
-        return ctx.render({
+        return page({
           election: null,
           assets: [],
           error: "選挙が見つかりません",
@@ -123,20 +123,20 @@ export const handler: Handlers<PageData> = {
         contact_name: j.contacts?.name || null,
       }));
 
-      return ctx.render({
+      return page({
         election,
         assets,
       });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         election: null,
         assets: [],
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
 // 金額をフォーマット
 function formatAmount(amount: number): string {
@@ -154,7 +154,7 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
-export default function ElectionAssetsPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { election, assets, error } = data;
 
   if (error || !election) {
@@ -329,4 +329,4 @@ export default function ElectionAssetsPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

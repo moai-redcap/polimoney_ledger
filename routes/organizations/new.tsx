@@ -1,12 +1,12 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import {
   getManagedOrganizations,
   type ManagedOrganization,
 } from "../../lib/hub-client.ts";
 import NewOrganizationForm from "../../islands/NewOrganizationForm.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../lib/define.ts";
 
 interface NewOrganizationPageData {
   managedOrganizations: ManagedOrganization[];
@@ -14,7 +14,7 @@ interface NewOrganizationPageData {
   error?: string;
 }
 
-export const handler: Handlers<NewOrganizationPageData> = {
+export const handler = define.handlers<NewOrganizationPageData>({
   async GET(ctx) {
     const userId = ctx.state.userId as string;
 
@@ -30,10 +30,10 @@ export const handler: Handlers<NewOrganizationPageData> = {
       const managedOrganizations = await getManagedOrganizations(userId);
       const canCreateOrganization = managedOrganizations.length > 0;
 
-      return ctx.render({ managedOrganizations, canCreateOrganization });
+      return page({ managedOrganizations, canCreateOrganization });
     } catch (error) {
       console.error("Failed to fetch managed organizations from Hub:", error);
-      return ctx.render({
+      return page({
         managedOrganizations: [],
         canCreateOrganization: false,
         error: error instanceof Error
@@ -42,11 +42,11 @@ export const handler: Handlers<NewOrganizationPageData> = {
       });
     }
   },
-};
+});
 
-export default function NewOrganizationPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<NewOrganizationPageData>) {
+}) => {
   const { managedOrganizations, canCreateOrganization, error } = data;
 
   return (
@@ -173,4 +173,4 @@ export default function NewOrganizationPage({
       </Layout>
     </>
   );
-}
+});

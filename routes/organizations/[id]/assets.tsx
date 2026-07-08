@@ -1,9 +1,9 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import { type AccountCode, getAccountCodes } from "../../../lib/hub-client.ts";
-import { Handlers } from "fresh/compat";
+import { define } from "../../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -37,7 +37,7 @@ const ASSET_TYPE_LABELS: Record<string, string> = {
   deposit: "敷金・保証金",
 };
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const organizationId = ctx.params.id;
@@ -63,7 +63,7 @@ export const handler: Handlers<PageData> = {
         .single();
 
       if (orgError || !organization) {
-        return ctx.render({
+        return page({
           organization: null,
           assets: [],
           error: "政治団体が見つかりません",
@@ -120,20 +120,20 @@ export const handler: Handlers<PageData> = {
         contact_name: j.contacts?.name || null,
       }));
 
-      return ctx.render({
+      return page({
         organization,
         assets,
       });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         organization: null,
         assets: [],
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
 // 金額をフォーマット
 function formatAmount(amount: number): string {
@@ -151,7 +151,7 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
-export default function OrganizationAssetsPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { organization, assets, error } = data;
 
   if (error || !organization) {
@@ -335,4 +335,4 @@ export default function OrganizationAssetsPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

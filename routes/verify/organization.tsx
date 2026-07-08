@@ -1,8 +1,9 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import OrganizationManagerVerificationForm from "../../islands/OrganizationManagerVerificationForm.tsx";
 import {
+import { define } from "../../lib/define.ts";
   getManagedOrganizations,
   getOrganizationManagerVerificationsByUser,
   getOrganizations,
@@ -10,7 +11,6 @@ import {
   type Organization,
   type OrganizationManagerVerification,
 } from "../../lib/hub-client.ts";
-import { Handlers } from "fresh/compat";
 
 interface PageData {
   userId: string;
@@ -21,7 +21,7 @@ interface PageData {
   targetOrganizationId: string | null;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -48,7 +48,7 @@ export const handler: Handlers<PageData> = {
       getOrganizations().catch(() => []),
     ]);
 
-    return ctx.render({
+    return page({
       userId,
       managedOrganizations,
       organizationManagerVerifications,
@@ -57,11 +57,11 @@ export const handler: Handlers<PageData> = {
       targetOrganizationId,
     });
   },
-};
+});
 
-export default function OrganizationVerificationPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<PageData>) {
+}) => {
   const {
     userId,
     managedOrganizations,
@@ -114,4 +114,4 @@ export default function OrganizationVerificationPage({
       </Layout>
     </>
   );
-}
+});

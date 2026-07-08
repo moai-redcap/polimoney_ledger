@@ -1,5 +1,4 @@
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
-import { Handlers } from "fresh/compat";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -23,7 +22,7 @@ interface Issue {
   description?: string;
 }
 
-export const handler: Handlers = {
+export const handler = define.handlers({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -178,4 +177,4 @@ export const handler: Handlers = {
       });
     }
   },
-};
+});

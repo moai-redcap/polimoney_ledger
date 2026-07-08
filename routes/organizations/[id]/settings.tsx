@@ -1,5 +1,5 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import {
@@ -7,7 +7,7 @@ import {
   type ManagedOrganization,
 } from "../../../lib/hub-client.ts";
 import OrganizationSettingsForm from "../../../islands/OrganizationSettingsForm.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -23,7 +23,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const organizationId = ctx.params.id;
@@ -49,7 +49,7 @@ export const handler: Handlers<PageData> = {
         .single();
 
       if (orgError || !organization) {
-        return ctx.render({
+        return page({
           organization: null,
           hubOrganization: null,
           error: "政治団体が見つかりません",
@@ -69,24 +69,24 @@ export const handler: Handlers<PageData> = {
         }
       }
 
-      return ctx.render({
+      return page({
         organization,
         hubOrganization,
       });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         organization: null,
         hubOrganization: null,
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
-export default function OrganizationSettingsPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<PageData>) {
+}) => {
   const { organization, hubOrganization, error } = data;
 
   if (!organization) {
@@ -249,4 +249,4 @@ export default function OrganizationSettingsPage({
       </Layout>
     </>
   );
-}
+});

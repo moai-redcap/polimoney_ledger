@@ -1,8 +1,8 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../lib/supabase.ts";
-import { Handlers } from "fresh/compat";
+import { define } from "../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -31,7 +31,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const url = new URL(req.url);
@@ -86,27 +86,27 @@ export const handler: Handlers<PageData> = {
 
       if (error) {
         console.error("Failed to fetch journals:", error);
-        return ctx.render({
+        return page({
           journals: [],
           filter,
           error: "仕訳の取得に失敗しました",
         });
       }
 
-      return ctx.render({
+      return page({
         journals: journals || [],
         filter,
       });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         journals: [],
         filter,
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
 // 金額をフォーマット
 function formatAmount(amount: number): string {
@@ -128,7 +128,7 @@ function calculateTotal(entries: Journal["journal_entries"]): number {
   return entries.reduce((sum, entry) => sum + entry.debit_amount, 0);
 }
 
-export default function JournalsPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { journals, filter, error } = data;
 
   const draftCount = journals.filter((j) => j.status === "draft").length;
@@ -241,4 +241,4 @@ export default function JournalsPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

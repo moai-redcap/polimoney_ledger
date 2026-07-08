@@ -1,6 +1,6 @@
-import { type PageProps } from "fresh";
+import { define } from "../lib/define.ts";
 
-export default function App({ Component }: PageProps) {
+export default define.layout(({ Component }) => {
   return (
     <html lang="ja" data-theme="polimoney">
       <head>
@@ -27,4 +27,4 @@ export default function App({ Component }: PageProps) {
       </body>
     </html>
   );
-}
+});

@@ -1,9 +1,9 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
 import SubAccountManager from "../islands/SubAccountManager.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -29,7 +29,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -59,21 +59,21 @@ export const handler: Handlers<PageData> = {
 
     if (subAccountsResult.error) {
       console.error("Failed to fetch sub_accounts:", subAccountsResult.error);
-      return ctx.render({
+      return page({
         subAccounts: [],
         accountMaster: [],
         error: "補助科目の取得に失敗しました",
       });
     }
 
-    return ctx.render({
+    return page({
       subAccounts: subAccountsResult.data || [],
       accountMaster: accountMasterResult.data || [],
     });
   },
-};
+});
 
-export default function SubAccountsPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { subAccounts, accountMaster, error } = data;
 
   return (
@@ -97,4 +97,4 @@ export default function SubAccountsPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

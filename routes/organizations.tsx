@@ -1,8 +1,8 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -17,7 +17,7 @@ interface OrganizationsPageData {
   error?: string;
 }
 
-export const handler: Handlers<OrganizationsPageData> = {
+export const handler = define.handlers<OrganizationsPageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -43,22 +43,22 @@ export const handler: Handlers<OrganizationsPageData> = {
 
       if (error) {
         console.error("Failed to fetch organizations:", error);
-        return ctx.render({
+        return page({
           organizations: [],
           error: "政治団体台帳の取得に失敗しました",
         });
       }
 
-      return ctx.render({ organizations: organizations || [] });
+      return page({ organizations: organizations || [] });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         organizations: [],
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
 // 日付をフォーマット
 function formatDate(dateStr: string): string {
@@ -70,9 +70,9 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export default function OrganizationsPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<OrganizationsPageData>) {
+}) => {
   const { organizations, error } = data;
 
   return (
@@ -165,4 +165,4 @@ export default function OrganizationsPage({
       </Layout>
     </>
   );
-}
+});

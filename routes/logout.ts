@@ -1,7 +1,7 @@
 import { deleteCookie } from "$std/http/cookie.ts";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
-export const handler: Handlers = {
+export const handler = define.handlers({
   GET() {
     const headers = new Headers();
     headers.set("Location", "/login");
@@ -12,4 +12,4 @@ export const handler: Handlers = {
 
     return new Response(null, { status: 302, headers });
   },
-};
+});

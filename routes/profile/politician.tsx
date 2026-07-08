@@ -1,19 +1,19 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import PoliticianProfileForm from "../../islands/PoliticianProfileForm.tsx";
 import {
+import { define } from "../../lib/define.ts";
   getVerifiedPoliticianByUserId,
   type Politician,
 } from "../../lib/hub-client.ts";
-import { Handlers } from "fresh/compat";
 
 interface PageData {
   userId: string;
   politician: Politician | null;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const userId = ctx.state.userId as string;
     if (!userId) {
@@ -26,14 +26,14 @@ export const handler: Handlers<PageData> = {
     // Hub から認証済み政治家情報を取得
     const politician = await getVerifiedPoliticianByUserId(userId);
 
-    return ctx.render({
+    return page({
       userId,
       politician,
     });
   },
-};
+});
 
-export default function PoliticianProfilePage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { politician } = data;
 
   return (
@@ -81,4 +81,4 @@ export default function PoliticianProfilePage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

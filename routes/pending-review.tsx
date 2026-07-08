@@ -1,8 +1,8 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { getCookies } from "$std/http/cookie.ts";
 import { createClient } from "@supabase/supabase-js";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
@@ -20,7 +20,7 @@ interface PendingReviewData {
   rejectionReason?: string;
 }
 
-export const handler: Handlers<PendingReviewData> = {
+export const handler = define.handlers<PendingReviewData>({
   async GET(ctx) {
     const req = ctx.req;
     const cookies = getCookies(req.headers);
@@ -84,18 +84,18 @@ export const handler: Handlers<PendingReviewData> = {
       }
     }
 
-    return ctx.render({
+    return page({
       email: user.email,
       fullName: user.user_metadata?.full_name,
       status: hubStatus,
       rejectionReason,
     });
   },
-};
+});
 
-export default function PendingReviewPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<PendingReviewData>) {
+}) => {
   return (
     <>
       <Head>
@@ -189,4 +189,4 @@ export default function PendingReviewPage({
       </div>
     </>
   );
-}
+});

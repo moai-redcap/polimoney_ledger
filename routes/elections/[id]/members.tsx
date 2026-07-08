@@ -1,10 +1,10 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import { AppRole, hasPermission } from "../../../lib/permissions.ts";
 import MemberManager from "../../../islands/MemberManager.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -31,7 +31,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -57,7 +57,7 @@ export const handler: Handlers<PageData> = {
       .single();
 
     if (elecError || !election) {
-      return ctx.render({
+      return page({
         election: { id: "", election_name: "", owner_user_id: "" },
         members: [],
         isOwner: false,
@@ -97,7 +97,7 @@ export const handler: Handlers<PageData> = {
       }
     }
 
-    return ctx.render({
+    return page({
       election,
       members: members || [],
       isOwner,
@@ -105,9 +105,9 @@ export const handler: Handlers<PageData> = {
       ledgerId: ledgerData?.id,
     });
   },
-};
+});
 
-export default function ElectionMembersPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { election, members, isOwner, canManageMembers, ledgerId, error } =
     data;
 
@@ -179,4 +179,4 @@ export default function ElectionMembersPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

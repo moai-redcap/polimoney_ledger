@@ -1,14 +1,14 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import PoliticianVerificationForm from "../../islands/PoliticianVerificationForm.tsx";
 import {
+import { define } from "../../lib/define.ts";
   getPoliticianVerificationsByUser,
   getVerifiedPoliticianByUserId,
   type Politician,
   type PoliticianVerification,
 } from "../../lib/hub-client.ts";
-import { Handlers } from "fresh/compat";
 
 interface PageData {
   userId: string;
@@ -17,7 +17,7 @@ interface PageData {
   changeDomain: boolean;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -38,18 +38,18 @@ export const handler: Handlers<PageData> = {
       getPoliticianVerificationsByUser(userId).catch(() => []),
     ]);
 
-    return ctx.render({
+    return page({
       userId,
       verifiedPolitician,
       politicianVerifications,
       changeDomain,
     });
   },
-};
+});
 
-export default function PoliticianVerificationPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<PageData>) {
+}) => {
   const { userId, verifiedPolitician, politicianVerifications, changeDomain } =
     data;
 
@@ -94,4 +94,4 @@ export default function PoliticianVerificationPage({
       </Layout>
     </>
   );
-}
+});

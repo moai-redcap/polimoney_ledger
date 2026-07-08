@@ -1,8 +1,8 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../lib/supabase.ts";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -19,7 +19,7 @@ interface ElectionsPageData {
   error?: string;
 }
 
-export const handler: Handlers<ElectionsPageData> = {
+export const handler = define.handlers<ElectionsPageData>({
   async GET(ctx) {
     const req = ctx.req;
     const userId = ctx.state.userId as string;
@@ -53,22 +53,22 @@ export const handler: Handlers<ElectionsPageData> = {
 
       if (error) {
         console.error("Failed to fetch elections:", error);
-        return ctx.render({
+        return page({
           elections: [],
           error: "選挙台帳の取得に失敗しました",
         });
       }
 
-      return ctx.render({ elections: elections || [] });
+      return page({ elections: elections || [] });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         elections: [],
         error: "エラーが発生しました",
       });
     }
   },
-};
+});
 
 // 日付をフォーマット
 function formatDate(dateStr: string): string {
@@ -80,7 +80,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export default function ElectionsPage({ data }: PageProps<ElectionsPageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { elections, error } = data;
 
   return (
@@ -173,4 +173,4 @@ export default function ElectionsPage({ data }: PageProps<ElectionsPageData>) {
       </Layout>
     </>
   );
-}
+});

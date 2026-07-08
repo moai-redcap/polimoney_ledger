@@ -1,5 +1,5 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import { type AccountCode, getAccountCodes } from "../../../lib/hub-client.ts";
@@ -8,7 +8,7 @@ import JournalList from "../../../islands/JournalList.tsx";
 import ExportCSVButton from "../../../islands/ExportCSVButton.tsx";
 import YearSelector from "../../../islands/YearSelector.tsx";
 import ReSyncButton from "../../../islands/ReSyncButton.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -67,7 +67,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const req = ctx.req;
     const organizationId = ctx.params.id;
@@ -100,7 +100,7 @@ export const handler: Handlers<PageData> = {
 
       if (orgError || !organization) {
         const currentYear = new Date().getFullYear();
-        return ctx.render({
+        return page({
           organization: null,
           journals: [],
           accountCodes: [],
@@ -218,7 +218,7 @@ export const handler: Handlers<PageData> = {
         closed_at: c.closed_at as string | undefined,
       }));
 
-      return ctx.render({
+      return page({
         organization,
         journals: journalsResult.data || [],
         accountCodes,
@@ -231,7 +231,7 @@ export const handler: Handlers<PageData> = {
     } catch (error) {
       console.error("Error:", error);
       const currentYear = new Date().getFullYear();
-      return ctx.render({
+      return page({
         organization: null,
         journals: [],
         accountCodes: [],
@@ -244,9 +244,9 @@ export const handler: Handlers<PageData> = {
       });
     }
   },
-};
+});
 
-export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const {
     organization,
     journals,
@@ -404,4 +404,4 @@ export default function OrganizationLedgerPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

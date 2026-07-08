@@ -1,21 +1,21 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { CSS, render as renderMarkdown } from "@deno/gfm";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 interface PageData {
   content: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const markdown = await Deno.readTextFile("docs/privacy-policy.md");
     const content = renderMarkdown(markdown);
-    return ctx.render({ content });
+    return page({ content });
   },
-};
+});
 
-export default function PrivacyPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   return (
     <>
       <Head>
@@ -81,4 +81,4 @@ export default function PrivacyPage({ data }: PageProps<PageData>) {
       </div>
     </>
   );
-}
+});

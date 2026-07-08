@@ -1,11 +1,11 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import {
+import { define } from "../../../lib/define.ts";
   getManagedOrganizations,
   type ManagedOrganization,
 } from "../../../lib/hub-client.ts";
-import { Handlers } from "fresh/compat";
 
 interface PageData {
   userId: string;
@@ -19,7 +19,7 @@ const organizationTypeLabels: Record<string, string> = {
   other: "その他",
 };
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const userId = ctx.state.userId as string;
     if (!userId) {
@@ -34,16 +34,16 @@ export const handler: Handlers<PageData> = {
       () => [],
     );
 
-    return ctx.render({
+    return page({
       userId,
       managedOrganizations,
     });
   },
-};
+});
 
-export default function OrganizationProfileListPage({
+export default define.page<typeof handler>(({
   data,
-}: PageProps<PageData>) {
+}) => {
   const { managedOrganizations } = data;
 
   return (
@@ -169,4 +169,4 @@ export default function OrganizationProfileListPage({
       </Layout>
     </>
   );
-}
+});

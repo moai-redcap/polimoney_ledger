@@ -1,5 +1,5 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { Layout } from "../../../components/Layout.tsx";
 import { getServiceClient, getSupabaseClient } from "../../../lib/supabase.ts";
 import { type AccountCode, getAccountCodes } from "../../../lib/hub-client.ts";
@@ -8,7 +8,7 @@ import JournalList from "../../../islands/JournalList.tsx";
 import ExportCSVButton from "../../../islands/ExportCSVButton.tsx";
 import { type Journal } from "../../../lib/types.ts";
 import ReSyncButton from "../../../islands/ReSyncButton.tsx";
-import { Handlers } from "fresh/compat";
+import { define } from "../../../lib/define.ts";
 
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 
@@ -40,7 +40,7 @@ interface PageData {
   error?: string;
 }
 
-export const handler: Handlers<PageData> = {
+export const handler = define.handlers<PageData>({
   async GET(ctx) {
     const electionId = ctx.params.id;
     const userId = ctx.state.userId as string;
@@ -65,7 +65,7 @@ export const handler: Handlers<PageData> = {
         .single();
 
       if (electionError || !election) {
-        return ctx.render({
+        return page({
           election: null,
           journals: [],
           accountCodes: [],
@@ -138,7 +138,7 @@ export const handler: Handlers<PageData> = {
         console.error("Failed to fetch journals:", journalsResult.error);
       }
 
-      return ctx.render({
+      return page({
         election,
         journals: journalsResult.data || [],
         accountCodes,
@@ -147,7 +147,7 @@ export const handler: Handlers<PageData> = {
       });
     } catch (error) {
       console.error("Error:", error);
-      return ctx.render({
+      return page({
         election: null,
         journals: [],
         accountCodes: [],
@@ -157,7 +157,7 @@ export const handler: Handlers<PageData> = {
       });
     }
   },
-};
+});
 
 // 日付をフォーマット
 function formatDate(dateStr: string): string {
@@ -169,7 +169,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
+export default define.page<typeof handler>(({ data }) => {
   const { election, journals, accountCodes, contacts, subAccounts, error } =
     data;
 
@@ -295,4 +295,4 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
       </Layout>
     </>
   );
-}
+});

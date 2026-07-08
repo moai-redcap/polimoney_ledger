@@ -2,13 +2,14 @@
 
 import "$std/dotenv/load.ts";
 
-import { Builder } from "fresh/dev";
-import { app } from "./main.ts";
+import { Builder } from "jsr:@fresh/core@^2.3.3/dev";
 
 const builder = new Builder();
 
 if (Deno.args.includes("build")) {
-  await builder.build(app);
+  const applySnapshot = await builder.build();
+  const { app } = await import("./main.ts");
+  applySnapshot(app);
 } else {
-  await builder.listen(app);
+  await builder.listen(async () => (await import("./main.ts")).app);
 }

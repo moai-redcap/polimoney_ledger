@@ -1,8 +1,8 @@
 import { Head } from "fresh/runtime";
-import { PageProps } from "fresh";
+import { page } from "fresh";
 import { setCookie } from "$std/http/cookie.ts";
 import { createClient } from "@supabase/supabase-js";
-import { Handlers } from "fresh/compat";
+import { define } from "../lib/define.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
@@ -12,12 +12,12 @@ interface LoginData {
   redirect?: string;
 }
 
-export const handler: Handlers<LoginData> = {
+export const handler = define.handlers<LoginData>({
   GET(ctx) {
     const req = ctx.req;
     const url = new URL(req.url);
     const redirect = url.searchParams.get("redirect") || "/dashboard";
-    return ctx.render({ redirect });
+    return page({ redirect });
   },
 
   async POST(ctx) {
@@ -28,14 +28,14 @@ export const handler: Handlers<LoginData> = {
     const redirect = form.get("redirect")?.toString() || "/";
 
     if (!email || !password) {
-      return ctx.render({
+      return page({
         error: "メールアドレスとパスワードを入力してください",
         redirect,
       });
     }
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-      return ctx.render({ error: "Supabase が設定されていません", redirect });
+      return page({ error: "Supabase が設定されていません", redirect });
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -46,11 +46,11 @@ export const handler: Handlers<LoginData> = {
     });
 
     if (error) {
-      return ctx.render({ error: error.message, redirect });
+      return page({ error: error.message, redirect });
     }
 
     if (!data.session) {
-      return ctx.render({ error: "ログインに失敗しました", redirect });
+      return page({ error: "ログインに失敗しました", redirect });
     }
 
     // Cookie にトークンをセット
@@ -77,9 +77,9 @@ export const handler: Handlers<LoginData> = {
 
     return new Response(null, { status: 302, headers });
   },
-};
+});
 
-export default function LoginPage({ data }: PageProps<LoginData>) {
+export default define.page<typeof handler>(({ data }) => {
   return (
     <>
       <Head>
@@ -177,4 +177,4 @@ export default function LoginPage({ data }: PageProps<LoginData>) {
       </div>
     </>
   );
-}
+});
