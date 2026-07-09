@@ -175,7 +175,7 @@ export default function JournalList({
                             </span>
                           )
                           : (
-                            <span class="badge badge-error badge-sm">支出</span>
+                            <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-error); color: var(--st-sys-color-on-error);">支出</span>
                           )}
                       </td>
                       <td class="whitespace-nowrap">
@@ -183,7 +183,7 @@ export default function JournalList({
                           ? (
                             formatDate(journal.journal_date)
                           )
-                          : <span class="text-base-content/50">-</span>}
+                          : <span style="color: var(--st-sys-color-on-surface-variant);">-</span>}
                       </td>
                       <td>
                         <div style="font-size: var(--st-sys-typescale-body-small-size);">
@@ -210,7 +210,7 @@ export default function JournalList({
                       </td>
                       <td>
                         {journal.contacts?.[0]?.name || (
-                          <span class="text-base-content/50">-</span>
+                          <span style="color: var(--st-sys-color-on-surface-variant);">-</span>
                         )}
                       </td>
                       <td class="text-right font-mono">
@@ -219,7 +219,7 @@ export default function JournalList({
                       <td>
                         {journal.status === "draft"
                           ? (
-                            <span class="badge badge-warning badge-sm">
+                            <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">
                               下書き
                             </span>
                           )

@@ -1156,7 +1156,7 @@ export default function JournalForm({
                 証憑 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
-            <div class="flex flex-col gap-2">
+            <div class="st-stack st-stack--sm">
               <label class="label cursor-pointer justify-start gap-2 p-3 border rounded-lg hover:bg-base-200">
                 <input
                   type="radio"

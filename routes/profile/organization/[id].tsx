@@ -180,7 +180,7 @@ export default define.page<typeof handler>(({
                         <p class="font-bold text-success">
                           管理者として認証済み
                         </p>
-                        <p class="text-sm text-base-content/70">
+                        <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                           {organization.name}
                         </p>
                       </div>

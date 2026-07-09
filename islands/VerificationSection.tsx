@@ -303,7 +303,7 @@ export default function VerificationSection({
           {verifiedPolitician
             ? (
               <div class="st-flex st-flex--items-center st-gap-3">
-                <div class="badge badge-success gap-1">
+                <div class="st-badge" style="background: var(--st-sys-color-tertiary-container); color: var(--st-sys-color-on-tertiary-container); gap: var(--st-sys-spacing-1);">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-4 w-4"
@@ -319,7 +319,7 @@ export default function VerificationSection({
                   認証済み
                 </div>
                 <span style="font-weight: 500;">{verifiedPolitician.name}</span>
-                <span class="text-sm text-base-content/70">
+                <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                   ({verifiedPolitician.verified_domain})
                 </span>
               </div>
@@ -334,11 +334,11 @@ export default function VerificationSection({
                       {politicianVerifications.map((v) => (
                         <div
                           key={v.id}
-                          class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
+                          style="display: flex; align-items: center; justify-content: space-between; padding: var(--st-sys-spacing-3); background: var(--st-sys-color-surface-variant); border-radius: var(--st-sys-shape-corner-large);"
                         >
                           <div>
                             <span style="font-weight: 500;">{v.name}</span>
-                            <span class="text-sm text-base-content/70 ml-2">
+                            <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-left: var(--st-sys-spacing-2);">
                               ({v.official_email})
                             </span>
                           </div>
@@ -531,10 +531,10 @@ export default function VerificationSection({
                 {managedOrganizations.map((org) => (
                   <div
                     key={org.id}
-                    class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: var(--st-sys-spacing-3); background: var(--st-sys-color-surface-variant); border-radius: var(--st-sys-shape-corner-large);"
                   >
                     <div class="st-flex st-flex--items-center st-gap-2">
-                      <div class="badge badge-success gap-1">
+                      <div class="st-badge" style="background: var(--st-sys-color-tertiary-container); color: var(--st-sys-color-on-tertiary-container); gap: var(--st-sys-spacing-1);">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="h-3 w-3"
@@ -554,7 +554,7 @@ export default function VerificationSection({
                         {organizationTypeLabels[org.type] || org.type}
                       </span>
                     </div>
-                    <span class="text-sm text-base-content/70">
+                    <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                       {org.manager_verified_domain}
                     </span>
                   </div>
@@ -573,11 +573,11 @@ export default function VerificationSection({
                   .map((v) => (
                     <div
                       key={v.id}
-                      class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
+                      style="display: flex; align-items: center; justify-content: space-between; padding: var(--st-sys-spacing-3); background: var(--st-sys-color-surface-variant); border-radius: var(--st-sys-shape-corner-large);"
                     >
                       <div>
                         <span style="font-weight: 500;">{v.organization_name}</span>
-                        <span class="text-sm text-base-content/70 ml-2">
+                        <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-left: var(--st-sys-spacing-2);">
                           ({v.official_email})
                         </span>
                       </div>

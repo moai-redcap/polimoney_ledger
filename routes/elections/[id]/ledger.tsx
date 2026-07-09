@@ -241,7 +241,7 @@ export default define.page<typeof handler>(({ data }) => {
 
         {/* 勘定科目取得エラー警告 */}
         {accountCodes.length === 0 && (
-          <div class="alert alert-warning mb-4">
+          <div class="st-alert st-alert--warning" style="margin-bottom: var(--st-sys-spacing-4);">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
@@ -267,7 +267,7 @@ export default define.page<typeof handler>(({ data }) => {
             <div class="flex items-center justify-between mb-4">
               <h2 class="card-title text-lg">
                 仕訳一覧
-                <span class="badge badge-ghost">{journals.length}件</span>
+                <span class="st-badge st-badge--outline">{journals.length}件</span>
               </h2>
               <div class="st-flex st-flex--items-center st-gap-2">
                 <ExportCSVButton ledgerId={ledgerId || ""} />

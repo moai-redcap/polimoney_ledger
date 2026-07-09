@@ -161,7 +161,7 @@ export default define.page<typeof handler>(({
             // 管理者として認証されている場合
             <div class="st-card st-card--elevated">
               <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
-                <p class="text-base-content/70 mb-4">
+                <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                   あなたが管理者として認証されている政治団体から選択してください。
                 </p>
                 <NewOrganizationForm

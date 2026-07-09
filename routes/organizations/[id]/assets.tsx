@@ -265,7 +265,7 @@ export default define.page<typeof handler>(({ data }) => {
           <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h2 class="card-title text-lg">
               資産等一覧
-              <span class="badge badge-ghost">{assets.length}件</span>
+              <span class="st-badge st-badge--outline">{assets.length}件</span>
             </h2>
 
             {assets.length === 0
@@ -310,7 +310,7 @@ export default define.page<typeof handler>(({ data }) => {
                           </td>
                           <td>
                             {asset.contact_name || (
-                              <span class="text-base-content/50">-</span>
+                              <span style="color: var(--st-sys-color-on-surface-variant);">-</span>
                             )}
                           </td>
                           <td class="text-right font-mono">

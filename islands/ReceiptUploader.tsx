@@ -197,7 +197,7 @@ export default function ReceiptUploader({
             ? (
               <div class="flex flex-col items-center gap-2">
                 <span class="loading loading-spinner loading-lg"></span>
-                <span class="text-sm text-base-content/70">
+                <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                   アップロード中...
                 </span>
               </div>
@@ -205,10 +205,10 @@ export default function ReceiptUploader({
             : (
               <>
                 <div class="text-4xl mb-2">📎</div>
-                <p class="text-base-content/70 mb-2">
+                <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-2);">
                   ファイルをドラッグ＆ドロップ
                 </p>
-                <p class="text-sm text-base-content/50 mb-4">または</p>
+                <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">または</p>
                 <label class="st-button st-button--outlined">
                   <input
                     type="file"
@@ -230,14 +230,14 @@ export default function ReceiptUploader({
       {receipts.length > 0
         ? (
           <div class="space-y-2">
-            <h4 class="font-medium text-sm text-base-content/70">
+            <h4 style="font-weight: 500; font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
               添付ファイル ({receipts.length})
             </h4>
-            <ul class="divide-y divide-base-200">
+            <ul style="border-top: 1px solid var(--st-sys-color-outline-variant);">
               {receipts.map((receipt) => (
                 <li key={receipt.id} class="py-2 flex items-center gap-3">
                   {/* サムネイル or アイコン */}
-                  <div class="flex-shrink-0 w-12 h-12 bg-base-200 rounded flex items-center justify-center overflow-hidden">
+                  <div style="flex-shrink: 0; width: 3rem; height: 3rem; background: var(--st-sys-color-surface-variant); border-radius: var(--st-sys-shape-corner-medium); display: flex; align-items: center; justify-content: center; overflow: hidden;">
                     {receipt.mime_type.startsWith("image/") && receipt.url
                       ? (
                         <img
@@ -258,7 +258,7 @@ export default function ReceiptUploader({
                     <p class="text-sm font-medium truncate">
                       {receipt.file_name}
                     </p>
-                    <p class="text-xs text-base-content/60">
+                    <p style="font-size: var(--st-sys-typescale-label-small-size); color: var(--st-sys-color-on-surface-variant);">
                       {formatFileSize(receipt.file_size)}
                     </p>
                   </div>
@@ -319,7 +319,7 @@ export default function ReceiptUploader({
         )
         : (
           !readOnly && (
-            <p class="text-center text-sm text-base-content/50 py-4">
+            <p style="text-align: center; font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); padding: var(--st-sys-spacing-4) 0;">
               証憑がまだ添付されていません
             </p>
           )

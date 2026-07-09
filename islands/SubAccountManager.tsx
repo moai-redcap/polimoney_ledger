@@ -254,7 +254,7 @@ export default function SubAccountManager({
             <div class="st-card__content" style="padding: var(--st-sys-spacing-10); text-align: center; display: flex; flex-direction: column; align-items: center;">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-16 w-16 text-base-content/30 mb-4"
+                style="width: 4rem; height: 4rem; color: var(--st-sys-color-on-surface-variant); opacity: 0.3; margin-bottom: var(--st-sys-spacing-4);"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -282,7 +282,7 @@ export default function SubAccountManager({
                 <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                   <h3 class="card-title text-base">
                     {getAccountName(accountCode)}
-                    <span class="badge badge-ghost">{accountCode}</span>
+                    <span class="st-badge st-badge--outline">{accountCode}</span>
                   </h3>
                   <div style="overflow-x: auto;">
                     <table class="table table-sm">
@@ -365,7 +365,7 @@ export default function SubAccountManager({
                   </label>
                   <div class="join">
                     <input
-                      class="join-item btn btn-sm"
+                      class="st-button st-button--sm"
                       type="radio"
                       name="ledger_type"
                       aria-label="政治団体"
@@ -380,7 +380,7 @@ export default function SubAccountManager({
                       }}
                     />
                     <input
-                      class="join-item btn btn-sm"
+                      class="st-button st-button--sm"
                       type="radio"
                       name="ledger_type"
                       aria-label="選挙"

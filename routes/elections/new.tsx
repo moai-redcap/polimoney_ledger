@@ -207,7 +207,7 @@ export default define.page<typeof handler>(({
               <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                 {/* 認証済み政治家情報 */}
                 {verifiedPolitician && (
-                  <div class="alert alert-success mb-4">
+                  <div class="st-alert st-alert--success" style="margin-bottom: var(--st-sys-spacing-4);">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
@@ -232,7 +232,7 @@ export default define.page<typeof handler>(({
                   </div>
                 )}
 
-                <p class="text-base-content/70 mb-4">
+                <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                   登録されている選挙から選択するか、該当する選挙がない場合は新規登録をリクエストしてください。
                 </p>
                 <NewElectionForm

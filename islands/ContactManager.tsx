@@ -293,7 +293,7 @@ export default function ContactManager({
             <div class="st-card__content" style="padding: var(--st-sys-spacing-10); text-align: center; display: flex; flex-direction: column; align-items: center;">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-16 w-16 text-base-content/30 mb-4"
+                style="width: 4rem; height: 4rem; color: var(--st-sys-color-on-surface-variant); opacity: 0.3; margin-bottom: var(--st-sys-spacing-4);"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -353,7 +353,7 @@ export default function ContactManager({
                       <td class="text-sm text-base-content/70 max-w-xs truncate">
                         {contact.address || "-"}
                       </td>
-                      <td class="text-sm text-base-content/70">
+                      <td style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                         {contact.contact_type === "person"
                           ? contact.occupation || "-"
                           : "-"}

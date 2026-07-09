@@ -127,7 +127,7 @@ export default function PendingTransfers({
         )}
 
         {success && (
-          <div class="alert alert-success mb-4">
+          <div class="st-alert st-alert--success" style="margin-bottom: var(--st-sys-spacing-4);">
             <span>{success}</span>
             <button
               class="st-button st-button--text st-button--sm"

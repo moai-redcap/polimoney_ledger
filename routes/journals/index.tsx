@@ -202,7 +202,7 @@ export default define.page<typeof handler>(({ data }) => {
                       </td>
                       <td>
                         {journal.contacts?.name || (
-                          <span class="text-base-content/50">-</span>
+                          <span style="color: var(--st-sys-color-on-surface-variant);">-</span>
                         )}
                       </td>
                       <td class="text-right font-mono">
@@ -211,7 +211,7 @@ export default define.page<typeof handler>(({ data }) => {
                       <td>
                         {journal.status === "draft"
                           ? (
-                            <span class="badge badge-warning badge-sm">
+                            <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">
                               下書ぁE                            </span>
                           )
                           : (

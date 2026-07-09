@@ -193,7 +193,7 @@ export default define.page<typeof handler>(({
             <>
               {/* 認証済みバッジ */}
               <div class="flex items-center gap-2 mb-6">
-                <div class="badge badge-success gap-1">
+                <div class="st-badge" style="background: var(--st-sys-color-tertiary-container); color: var(--st-sys-color-on-tertiary-container); gap: var(--st-sys-spacing-1);">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-4 w-4"
@@ -208,14 +208,14 @@ export default define.page<typeof handler>(({
                   </svg>
                   認証済み
                 </div>
-                <span class="text-sm text-base-content/70">
+                <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                   認証日: {hubOrganization.manager_verified_at
                     ? new Date(
                       hubOrganization.manager_verified_at,
                     ).toLocaleDateString("ja-JP")
                     : "-"}
                 </span>
-                <span class="text-sm text-base-content/70">
+                <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                   認証ドメイン: {hubOrganization.manager_verified_domain || "-"}
                 </span>
               </div>

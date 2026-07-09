@@ -149,7 +149,7 @@ export default function YearClosureDialog({
 
             {/* 締め可能 */}
             {result.canClose && result.issues.length === 0 && (
-              <div class="alert alert-success mb-4">
+              <div class="st-alert st-alert--success" style="margin-bottom: var(--st-sys-spacing-4);">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
@@ -171,7 +171,7 @@ export default function YearClosureDialog({
 
             {/* 警告のみで締め可能 */}
             {result.canClose && warningCount > 0 && (
-              <div class="alert alert-warning mb-4">
+              <div class="st-alert st-alert--warning" style="margin-bottom: var(--st-sys-spacing-4);">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
@@ -237,12 +237,12 @@ export default function YearClosureDialog({
                           <td>
                             {issue.type === "error"
                               ? (
-                                <span class="badge badge-error badge-sm">
+                                <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-error); color: var(--st-sys-color-on-error);">
                                   必須
                                 </span>
                               )
                               : (
-                                <span class="badge badge-warning badge-sm">
+                                <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">
                                   注意
                                 </span>
                               )}

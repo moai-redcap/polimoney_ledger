@@ -215,7 +215,7 @@ export default function NewElectionForm({
         </div>
 
         {/* 選挙が見つからない場合 */}
-        <div class="alert alert-warning mt-4">
+        <div class="st-alert st-alert--warning" style="margin-top: var(--st-sys-spacing-4);">
           <span>
             該当する選挙がない場合は、
             <a href="/elections/request" style="color: var(--st-sys-color-primary); text-decoration: underline;">

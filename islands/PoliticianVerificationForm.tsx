@@ -378,7 +378,7 @@ export default function PoliticianVerificationForm({
           </div>
         </div>
 
-        <p class="text-sm text-base-content/70 mt-4">
+        <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-top: var(--st-sys-spacing-4);">
           DNS設定が反映されるまで数分〜数時間かかる場合があります。
           設定後、「検証する」ボタンをクリックしてください。
         </p>
@@ -683,7 +683,7 @@ export default function PoliticianVerificationForm({
           <div class="st-card st-card--elevated">
             <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">認証コードを入力</h3>
-              <p class="text-sm text-base-content/70 mb-4">
+              <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                 メールに送信された6桁のコードを入力してください。
               </p>
               <form onSubmit={handleVerifyCode}>
@@ -714,7 +714,7 @@ export default function PoliticianVerificationForm({
         <div class="st-card st-card--elevated">
           <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">ドメイン変更申請</h3>
-            <div class="alert alert-warning mb-4">
+            <div class="st-alert st-alert--warning" style="margin-bottom: var(--st-sys-spacing-4);">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
@@ -805,21 +805,21 @@ export default function PoliticianVerificationForm({
                   .map((v) => (
                     <div
                       key={v.id}
-                      class="flex items-center justify-between p-4 bg-base-200 rounded-lg"
+                      style="display: flex; align-items: center; justify-content: space-between; padding: var(--st-sys-spacing-4); background: var(--st-sys-color-surface-variant); border-radius: var(--st-sys-shape-corner-large);"
                     >
                       <div>
-                        <span class="text-sm text-base-content/70">
+                        <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                           {v.official_email}
                         </span>
-                        <p class="text-xs text-base-content/50">
+                        <p style="font-size: var(--st-sys-typescale-label-small-size); color: var(--st-sys-color-on-surface-variant);">
                           {new Date(v.created_at).toLocaleDateString("ja-JP")}
                           {v.is_lg_domain && (
-                            <span class="badge badge-primary badge-sm ml-2">
+                            <span class="st-badge st-badge--sm st-badge--primary" style="margin-left: var(--st-sys-spacing-2);">
                               lg.jp
                             </span>
                           )}
                           {v.verification_method === "dns_txt" && (
-                            <span class="badge badge-secondary badge-sm ml-2">
+                            <span class="st-badge st-badge--sm" style="margin-left: var(--st-sys-spacing-2);">
                               DNS TXT
                             </span>
                           )}
@@ -907,7 +907,7 @@ export default function PoliticianVerificationForm({
                 <p style="color: var(--st-sys-color-on-surface-variant);">
                   認証済み（{verifiedPolitician.verified_domain}）
                 </p>
-                <p class="text-sm text-base-content/50">
+                <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                   認証日: {verifiedPolitician.verified_at
                     ? new Date(
                       verifiedPolitician.verified_at,
@@ -937,22 +937,22 @@ export default function PoliticianVerificationForm({
                   {politicianVerifications.map((v) => (
                     <div
                       key={v.id}
-                      class="flex items-center justify-between p-4 bg-base-200 rounded-lg"
+                      style="display: flex; align-items: center; justify-content: space-between; padding: var(--st-sys-spacing-4); background: var(--st-sys-color-surface-variant); border-radius: var(--st-sys-shape-corner-large);"
                     >
                       <div>
                         <span style="font-weight: 500;">{v.name}</span>
-                        <span class="text-sm text-base-content/70 ml-2">
+                        <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-left: var(--st-sys-spacing-2);">
                           ({v.official_email})
                         </span>
-                        <p class="text-xs text-base-content/50">
+                        <p style="font-size: var(--st-sys-typescale-label-small-size); color: var(--st-sys-color-on-surface-variant);">
                           {new Date(v.created_at).toLocaleDateString("ja-JP")}
                           {v.is_lg_domain && (
-                            <span class="badge badge-primary badge-sm ml-2">
+                            <span class="st-badge st-badge--sm st-badge--primary" style="margin-left: var(--st-sys-spacing-2);">
                               lg.jp
                             </span>
                           )}
                           {v.verification_method === "dns_txt" && (
-                            <span class="badge badge-secondary badge-sm ml-2">
+                            <span class="st-badge st-badge--sm" style="margin-left: var(--st-sys-spacing-2);">
                               DNS TXT
                             </span>
                           )}
@@ -998,7 +998,7 @@ export default function PoliticianVerificationForm({
             <div class="st-card st-card--elevated">
               <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                 <h3 class="card-title text-base">認証コードを入力</h3>
-                <p class="text-sm text-base-content/70 mb-4">
+                <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                   メールに送信された6桁のコードを入力してください。
                 </p>
                 <form onSubmit={handleVerifyCode}>
@@ -1140,7 +1140,7 @@ export default function PoliticianVerificationForm({
               <div class="st-card st-card--elevated">
                 <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                   <h3 class="card-title text-base">新規認証申請</h3>
-                  <p class="text-base-content/70 mb-4">
+                  <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                     政治家として認証されると、選挙台帳を作成できるようになります。
                     認証にはlg.jpドメインの場合はメール認証、それ以外はDNS
                     TXT認証が必要です。

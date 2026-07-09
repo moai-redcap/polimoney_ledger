@@ -98,7 +98,7 @@ export default define.page<typeof handler>(({ data }) => {
                   メール内の「メールアドレスを確認する」ボタンをクリックして、確認を完了してください。
                   確認が完了すると、ログインできるようになります。
                 </p>
-                <div class="alert alert-warning mt-4">
+                <div class="st-alert st-alert--warning" style="margin-top: var(--st-sys-spacing-4);">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -326,7 +326,7 @@ export default define.page<typeof handler>(({ data }) => {
               </div>
 
               <div style="margin-top: var(--st-sys-spacing-6);">
-                <button type="submit" class="btn btn-primary w-full">
+                <button type="submit" class="st-button st-button--filled" style="width: 100%;">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

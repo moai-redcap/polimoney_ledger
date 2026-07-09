@@ -105,7 +105,7 @@ export default define.page<typeof handler>(({
                               <span class="badge badge-outline badge-sm ml-2">
                                 {organizationTypeLabels[org.type] || org.type}
                               </span>
-                              <p class="text-xs text-base-content/50">
+                              <p style="font-size: var(--st-sys-typescale-label-small-size); color: var(--st-sys-color-on-surface-variant);">
                                 認証ドメイン: {org.manager_verified_domain}
                               </p>
                             </div>

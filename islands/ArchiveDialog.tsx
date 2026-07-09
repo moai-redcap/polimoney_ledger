@@ -43,7 +43,7 @@ export default function ArchiveDialog({
       <div class="modal-box">
         <h3 class="font-bold text-lg mb-4">{year}年度のアーカイブ</h3>
 
-        <div class="alert alert-warning mb-4">
+        <div class="st-alert st-alert--warning" style="margin-bottom: var(--st-sys-spacing-4);">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"

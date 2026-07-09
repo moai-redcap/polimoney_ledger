@@ -68,7 +68,7 @@ export default define.page<typeof handler>(({
 
         <div class="st-card st-card--elevated">
           <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
-            <div class="alert alert-warning mb-4">
+            <div class="st-alert st-alert--warning" style="margin-bottom: var(--st-sys-spacing-4);">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
@@ -87,7 +87,7 @@ export default define.page<typeof handler>(({
               </span>
             </div>
 
-            <p class="text-base-content/70 mb-4">
+            <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
               選挙の情報を入力してください。運営が確認後、承認されると選挙が利用可能になります。
             </p>
 

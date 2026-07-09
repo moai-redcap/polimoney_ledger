@@ -104,16 +104,16 @@ export default function PoliticianProfileForm({ politician }: Props) {
             </div>
             <div>
               <p class="font-bold text-success">認証済み</p>
-              <p class="text-sm text-base-content/70">
+              <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                 ドメイン: {politician.verified_domain}
               </p>
               {politician.verified_at && (
-                <p class="text-xs text-base-content/50">
+                <p style="font-size: var(--st-sys-typescale-label-small-size); color: var(--st-sys-color-on-surface-variant);">
                   認証日:{" "}
                   {new Date(politician.verified_at).toLocaleDateString("ja-JP")}
                 </p>
               )}
-              <p class="text-xs text-base-content/50 mt-1 font-mono">
+              <p style="font-size: var(--st-sys-typescale-label-small-size); color: var(--st-sys-color-on-surface-variant); margin-top: var(--st-sys-spacing-1); font-family: monospace;">
                 政治家ID: {politician.id}
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
       <div class="st-card st-card--elevated">
         <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h3 class="card-title text-base">プロフィール写真</h3>
-          <p class="text-sm text-base-content/70 mb-4">
+          <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
             Polimoney の政治家ページで表示される顔写真です。円形で表示されます。
           </p>
           <ImageCropper
@@ -154,7 +154,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
         <div class="st-card st-card--elevated">
           <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">基本情報</h3>
-            <p class="text-sm text-base-content/70 mb-4">
+            <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
               <span style="color: var(--st-sys-color-error);">*</span>{" "}
               は必須項目です。この情報は公開ページで表示されます。
             </p>
@@ -227,7 +227,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
         <div class="st-card st-card--elevated">
           <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">SNS リンク</h3>
-            <p class="text-sm text-base-content/70 mb-4">
+            <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
               公式アカウントのURLを入力してください。すべて任意項目です。
             </p>
 
@@ -293,12 +293,12 @@ export default function PoliticianProfileForm({ politician }: Props) {
           <div class="st-card st-card--elevated">
             <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">認証ドメイン</h3>
-              <p class="text-sm text-base-content/70 mb-4">
+              <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                 公式サイト URL は認証済みドメインである必要があります。
               </p>
-              <div class="flex items-center justify-between">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div>
-                  <p class="text-sm text-base-content/70">現在の認証ドメイン</p>
+                  <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">現在の認証ドメイン</p>
                   <p class="font-mono text-lg">{politician.verified_domain}</p>
                 </div>
                 <a

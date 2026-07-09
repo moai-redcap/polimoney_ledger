@@ -116,7 +116,7 @@ export default function OrganizationSettingsForm({
       <div class="st-card st-card--elevated">
         <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h2 class="st-card__title">団体ロゴ</h2>
-          <p class="text-sm text-base-content/70 mb-4">
+          <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
             政治団体のロゴ画像を設定できます。正方形で表示されます。
           </p>
           <ImageCropper
@@ -134,7 +134,7 @@ export default function OrganizationSettingsForm({
       <div class="st-card st-card--elevated">
         <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h2 class="st-card__title">基本情報</h2>
-          <p class="text-sm text-base-content/70 mb-4">
+          <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
             <span style="color: var(--st-sys-color-error);">*</span> は必須項目です。
           </p>
 
@@ -283,7 +283,7 @@ export default function OrganizationSettingsForm({
       <div class="st-card st-card--elevated">
         <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h2 class="st-card__title">SNS リンク</h2>
-          <p class="text-sm text-base-content/70 mb-4">
+          <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
             公式アカウントのURLを入力してください。すべて任意項目です。
           </p>
 
@@ -352,12 +352,12 @@ export default function OrganizationSettingsForm({
         <div class="st-card st-card--elevated">
           <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h2 class="st-card__title">認証ドメイン</h2>
-            <p class="text-sm text-base-content/70 mb-4">
+            <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
               公式サイト URL は認証済みドメインである必要があります。
             </p>
-            <div class="flex items-center justify-between">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
               <div>
-                <p class="text-sm text-base-content/70">現在の認証ドメイン</p>
+                <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">現在の認証ドメイン</p>
                 <p class="font-mono text-lg">{verifiedDomain}</p>
               </div>
               <a

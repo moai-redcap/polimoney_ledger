@@ -85,7 +85,7 @@ export default function AuthCallback() {
       <h1 class="text-xl font-bold text-error">認証に失敗しました</h1>
       <p class="text-base-content/60 mt-2">{errorMessage}</p>
       <div class="mt-6 space-y-2">
-        <a href="/login" class="btn btn-primary w-full">
+        <a href="/login" class="st-button st-button--filled" style="width: 100%;">
           ログインページへ
         </a>
         <a href="/register" class="btn btn-outline w-full">

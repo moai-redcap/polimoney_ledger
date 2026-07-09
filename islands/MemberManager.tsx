@@ -253,7 +253,7 @@ export default function MemberManager({
       )}
 
       {success && (
-        <div class="alert alert-success mb-4">
+        <div class="st-alert st-alert--success" style="margin-bottom: var(--st-sys-spacing-4);">
           <span>{success}</span>
           <button class="st-button st-button--text st-button--sm" onClick={() => setSuccess(null)}>
             ✕
@@ -418,7 +418,7 @@ export default function MemberManager({
                               </span>
                             )}
                         </td>
-                        <td class="text-sm text-base-content/70">
+                        <td style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                           {new Date(member.created_at).toLocaleDateString(
                             "ja-JP",
                           )}
@@ -563,7 +563,7 @@ export default function MemberManager({
           <div class="modal-box">
             <h3 class="font-bold text-lg mb-4">オーナーを譲渡</h3>
 
-            <div class="alert alert-warning mb-4">
+            <div class="st-alert st-alert--warning" style="margin-bottom: var(--st-sys-spacing-4);">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
