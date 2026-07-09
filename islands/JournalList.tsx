@@ -93,7 +93,7 @@ export default function JournalList({
     <div>
       {/* フィルタータブ */}
       <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <div class="tabs tabs-boxed">
+        <div class="st-tabs">
           <button
             class={`tab ${filter === "all" ? "tab-active" : ""}`}
             onClick={() => setFilter("all")}
@@ -117,7 +117,7 @@ export default function JournalList({
         </div>
 
         {/* 収支サマリー */}
-        <div class="text-sm">
+        <div style="font-size: var(--st-sys-typescale-body-small-size);">
           <span class="text-primary font-medium">
             収入: ¥{formatAmount(totals.income)}
           </span>
@@ -132,12 +132,12 @@ export default function JournalList({
       {filteredJournals.length === 0
         ? (
           <div class="text-center py-12">
-            <div class="text-6xl mb-4">📋</div>
-            <p class="text-base-content/70">仕訳がありません</p>
+            <div style="font-size: 4rem; margin-bottom: var(--st-sys-spacing-4);">📋</div>
+            <p style="color: var(--st-sys-color-on-surface-variant);">仕訳がありません</p>
           </div>
         )
         : (
-          <div class="overflow-x-auto">
+          <div style="overflow-x: auto;">
             <table class="table table-zebra">
               <thead>
                 <tr>
@@ -186,7 +186,7 @@ export default function JournalList({
                           : <span class="text-base-content/50">-</span>}
                       </td>
                       <td>
-                        <div class="text-sm">
+                        <div style="font-size: var(--st-sys-typescale-body-small-size);">
                           {debitEntries.map((e, i) => (
                             <div key={i} class="text-primary">
                               {getAccountName(e.account_code)}
@@ -195,7 +195,7 @@ export default function JournalList({
                         </div>
                       </td>
                       <td>
-                        <div class="text-sm">
+                        <div style="font-size: var(--st-sys-typescale-body-small-size);">
                           {creditEntries.map((e, i) => (
                             <div key={i} class="text-secondary">
                               {getAccountName(e.account_code)}
@@ -232,7 +232,7 @@ export default function JournalList({
                       <td>
                         <a
                           href={`/journals/${journal.id}`}
-                          class="btn btn-ghost btn-sm"
+                          class="st-button st-button--text st-button--sm"
                         >
                           詳細
                         </a>

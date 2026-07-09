@@ -46,7 +46,7 @@ export default function ArchiveDialog({
         <div class="alert alert-warning mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
+            style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -58,7 +58,7 @@ export default function ArchiveDialog({
             />
           </svg>
           <div>
-            <p class="font-bold">アーカイブすると：</p>
+            <p style="font-weight: 700;">アーカイブすると：</p>
             <ul class="text-sm mt-1 list-disc list-inside">
               <li>このデータは完全にロックされます</li>
               <li>編集にはHub管理者への解除申請が必要です</li>
@@ -67,23 +67,23 @@ export default function ArchiveDialog({
         </div>
 
         {error && (
-          <div class="alert alert-error mb-4">
+          <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
             <span>{error}</span>
           </div>
         )}
 
         <div class="modal-action">
-          <button type="button" class="btn" onClick={onClose}>
+          <button type="button" class="st-button" onClick={onClose}>
             キャンセル
           </button>
           <button
             type="button"
-            class="btn btn-warning"
+            class="st-button st-button--filled" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);"
             disabled={archiving}
             onClick={executeArchive}
           >
             {archiving
-              ? <span class="loading loading-spinner loading-sm"></span>
+              ? <span class="st-spinner st-spinner--sm"></span>
               : (
                 "アーカイブを実行"
               )}

@@ -120,7 +120,7 @@ export default function YearClosureDialog({
         )}
 
         {error && (
-          <div class="alert alert-error mb-4">
+          <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
             <span>{error}</span>
           </div>
         )}
@@ -152,7 +152,7 @@ export default function YearClosureDialog({
               <div class="alert alert-success mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
+                  style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
@@ -174,7 +174,7 @@ export default function YearClosureDialog({
               <div class="alert alert-warning mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
+                  style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
@@ -191,10 +191,10 @@ export default function YearClosureDialog({
 
             {/* 締め不可 */}
             {!result.canClose && (
-              <div class="alert alert-error mb-4">
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
+                  style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
@@ -211,12 +211,12 @@ export default function YearClosureDialog({
 
             {/* 不備リスト */}
             {result.issues.length > 0 && (
-              <div class="mb-4">
+              <div style="margin-bottom: var(--st-sys-spacing-4);">
                 <div class="flex items-center justify-between mb-2">
-                  <h4 class="font-bold">不備リスト</h4>
+                  <h4 style="font-weight: 700;">不備リスト</h4>
                   <button
                     type="button"
-                    class="btn btn-sm btn-outline"
+                    class="st-button st-button--outlined st-button--sm"
                     onClick={copyIssues}
                   >
                     📋 コピー
@@ -263,17 +263,17 @@ export default function YearClosureDialog({
 
         {/* アクション */}
         <div class="modal-action">
-          <button type="button" class="btn" onClick={onClose}>
+          <button type="button" class="st-button" onClick={onClose}>
             キャンセル
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="st-button st-button--filled"
             disabled={!result?.canClose || closing}
             onClick={executeClosure}
           >
             {closing
-              ? <span class="loading loading-spinner loading-sm"></span>
+              ? <span class="st-spinner st-spinner--sm"></span>
               : (
                 "年度締めを実行"
               )}

@@ -140,7 +140,7 @@ export default function ExportCSVButton({
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          class="w-5 h-5"
+          style="width: 1.25rem; height: 1.25rem;"
         >
           <path
             strokeLinecap="round"
@@ -190,7 +190,7 @@ export default function ExportCSVButton({
               type="button"
               onClick={() => handleExport("expense")}
               disabled={isLoading !== null}
-              class="flex items-center gap-2"
+              class="st-flex st-flex--items-center st-gap-2"
             >
               {isLoading === "expense" && (
                 <span class="loading loading-spinner loading-xs"></span>
@@ -203,7 +203,7 @@ export default function ExportCSVButton({
               type="button"
               onClick={() => handleExport("revenue")}
               disabled={isLoading !== null}
-              class="flex items-center gap-2"
+              class="st-flex st-flex--items-center st-gap-2"
             >
               {isLoading === "revenue" && (
                 <span class="loading loading-spinner loading-xs"></span>
@@ -216,7 +216,7 @@ export default function ExportCSVButton({
               type="button"
               onClick={() => handleExport("summary")}
               disabled={isLoading !== null}
-              class="flex items-center gap-2"
+              class="st-flex st-flex--items-center st-gap-2"
             >
               {isLoading === "summary" && (
                 <span class="loading loading-spinner loading-xs"></span>
@@ -229,7 +229,7 @@ export default function ExportCSVButton({
               type="button"
               onClick={() => handleExport("assets")}
               disabled={isLoading !== null}
-              class="flex items-center gap-2"
+              class="st-flex st-flex--items-center st-gap-2"
             >
               {isLoading === "assets" && (
                 <span class="loading loading-spinner loading-xs"></span>

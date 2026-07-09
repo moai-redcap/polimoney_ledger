@@ -94,7 +94,7 @@ export default define.page<typeof handler>(({
           <title>政治団体設定 - Polimoney Ledger</title>
         </Head>
         <Layout currentPath="/organizations" title="政治団体設定">
-          <div role="alert" class="alert alert-error">
+          <div role="alert" class="st-alert st-alert--error">
             <span>{error || "政治団体が見つかりません"}</span>
           </div>
         </Layout>
@@ -144,7 +144,7 @@ export default define.page<typeof handler>(({
           >
             メンバー
           </a>
-          <a role="tab" class="tab tab-active">
+          <a role="tab" class="st-tab st-tab--active">
             設定
           </a>
         </div>
@@ -159,11 +159,11 @@ export default define.page<typeof handler>(({
         {!hubOrganization
           ? (
             <div class="card bg-base-100 shadow mb-6">
-              <div class="card-body">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                 <h2 class="card-title text-warning">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
+                    style="width: 1.5rem; height: 1.5rem;"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -177,12 +177,12 @@ export default define.page<typeof handler>(({
                   </svg>
                   政治団体認証が必要です
                 </h2>
-                <p class="text-base-content/70">
+                <p style="color: var(--st-sys-color-on-surface-variant);">
                   この政治団体は Hub
                   に認証されていません。詳細情報を編集するには、まず政治団体管理者認証を完了してください。
                 </p>
                 <div class="card-actions justify-end">
-                  <a href="/settings" class="btn btn-primary">
+                  <a href="/settings" class="st-button st-button--filled">
                     認証申請へ
                   </a>
                 </div>

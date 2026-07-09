@@ -101,23 +101,21 @@ export default function OrganizationSettingsForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} class="space-y-6">
+    <form onSubmit={handleSubmit} class="st-stack st-stack--lg">
       {/* メッセージ表示 */}
       {message && (
         <div
           role="alert"
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
       )}
 
       {/* ロゴ */}
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title">団体ロゴ</h2>
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <h2 class="st-card__title">団体ロゴ</h2>
           <p class="text-sm text-base-content/70 mb-4">
             政治団体のロゴ画像を設定できます。正方形で表示されます。
           </p>
@@ -133,18 +131,18 @@ export default function OrganizationSettingsForm({
       </div>
 
       {/* 基本情報 */}
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title">基本情報</h2>
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <h2 class="st-card__title">基本情報</h2>
           <p class="text-sm text-base-content/70 mb-4">
-            <span class="text-error">*</span> は必須項目です。
+            <span style="color: var(--st-sys-color-error);">*</span> は必須項目です。
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">
-                  団体名 <span class="text-error">*</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">
+                  団体名 <span style="color: var(--st-sys-color-error);">*</span>
                 </span>
               </label>
               <input
@@ -152,22 +150,22 @@ export default function OrganizationSettingsForm({
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 required
               />
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">
-                  団体種別 <span class="text-error">*</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">
+                  団体種別 <span style="color: var(--st-sys-color-error);">*</span>
                 </span>
               </label>
               <select
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                class="select select-bordered"
+                class="st-select"
                 required
               >
                 {organizationTypes.map((t) => (
@@ -178,46 +176,46 @@ export default function OrganizationSettingsForm({
               </select>
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">届出先選挙管理委員会</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">届出先選挙管理委員会</span>
               </label>
               <input
                 type="text"
                 name="registration_authority"
                 value={formData.registration_authority}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 東京都選挙管理委員会"
               />
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">届出年月日</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">届出年月日</span>
               </label>
               <input
                 type="date"
                 name="established_date"
                 value={formData.established_date}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
               />
             </div>
 
             <div class="form-control md:col-span-2">
-              <label class="label">
-                <span class="label-text">主たる事務所の所在地</span>
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">主たる事務所の所在地</span>
               </label>
               <input
                 type="text"
                 name="office_address"
                 value={formData.office_address}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 東京都千代田区"
               />
-              <label class="label">
+              <label class="st-field__label-wrapper">
                 <span class="label-text-alt text-base-content/70">
                   公開時は都道府県レベルまでの表示となります
                 </span>
@@ -225,19 +223,19 @@ export default function OrganizationSettingsForm({
             </div>
 
             <div class="form-control md:col-span-2">
-              <label class="label">
-                <span class="label-text">公式サイト URL</span>
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">公式サイト URL</span>
               </label>
               <input
                 type="url"
                 name="official_url"
                 value={formData.official_url}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="https://example.com"
               />
-              <label class="label">
-                <span class="label-text-alt text-base-content/60">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__helper">
                   認証済みドメインのURLを入力してください
                 </span>
               </label>
@@ -247,34 +245,34 @@ export default function OrganizationSettingsForm({
       </div>
 
       {/* 役職者情報 */}
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title">役職者情報</h2>
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <h2 class="st-card__title">役職者情報</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">代表者名</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">代表者名</span>
               </label>
               <input
                 type="text"
                 name="representative_name"
                 value={formData.representative_name}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
               />
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">会計責任者名</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">会計責任者名</span>
               </label>
               <input
                 type="text"
                 name="accountant_name"
                 value={formData.accountant_name}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
               />
             </div>
           </div>
@@ -282,66 +280,66 @@ export default function OrganizationSettingsForm({
       </div>
 
       {/* SNS リンク */}
-      <div class="card bg-base-100 shadow">
-        <div class="card-body">
-          <h2 class="card-title">SNS リンク</h2>
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <h2 class="st-card__title">SNS リンク</h2>
           <p class="text-sm text-base-content/70 mb-4">
             公式アカウントのURLを入力してください。すべて任意項目です。
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">X (Twitter)</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">X (Twitter)</span>
               </label>
               <input
                 type="url"
                 name="sns_x"
                 value={formData.sns_x}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="https://x.com/username"
               />
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Instagram</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">Instagram</span>
               </label>
               <input
                 type="url"
                 name="sns_instagram"
                 value={formData.sns_instagram}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="https://instagram.com/username"
               />
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Facebook</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">Facebook</span>
               </label>
               <input
                 type="url"
                 name="sns_facebook"
                 value={formData.sns_facebook}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="https://facebook.com/pagename"
               />
             </div>
 
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">TikTok</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">TikTok</span>
               </label>
               <input
                 type="url"
                 name="sns_tiktok"
                 value={formData.sns_tiktok}
                 onChange={handleChange}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="https://tiktok.com/@username"
               />
             </div>
@@ -351,9 +349,9 @@ export default function OrganizationSettingsForm({
 
       {/* 認証ドメイン変更 */}
       {verifiedDomain && (
-        <div class="card bg-base-100 shadow">
-          <div class="card-body">
-            <h2 class="card-title">認証ドメイン</h2>
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+            <h2 class="st-card__title">認証ドメイン</h2>
             <p class="text-sm text-base-content/70 mb-4">
               公式サイト URL は認証済みドメインである必要があります。
             </p>
@@ -364,7 +362,7 @@ export default function OrganizationSettingsForm({
               </div>
               <a
                 href={`/verify/organization?change_domain=true&organization_id=${organizationId}`}
-                class="btn btn-outline btn-sm"
+                class="st-button st-button--outlined st-button--sm"
               >
                 ドメインを変更
               </a>
@@ -377,7 +375,7 @@ export default function OrganizationSettingsForm({
       <div class="flex justify-end">
         <button
           type="submit"
-          class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+          class="st-button st-button--filled"
           disabled={isSubmitting}
         >
           {isSubmitting ? "更新中..." : "変更を保存"}

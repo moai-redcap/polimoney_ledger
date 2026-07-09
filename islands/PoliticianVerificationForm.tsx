@@ -338,15 +338,15 @@ export default function PoliticianVerificationForm({
   }: {
     verification: PoliticianVerification;
   }) => (
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
+    <div class="st-card st-card--elevated">
+      <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
         <h3 class="card-title text-base">DNS TXT認証</h3>
-        <div class="alert alert-info mb-4">
+        <div class="st-alert st-alert--info" style="margin-bottom: var(--st-sys-spacing-4);">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            class="stroke-current shrink-0 w-6 h-6"
+            style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           >
             <path
               strokeLinecap="round"
@@ -363,15 +363,15 @@ export default function PoliticianVerificationForm({
 
         <div class="bg-base-200 p-4 rounded-lg font-mono text-sm space-y-2">
           <div>
-            <span class="text-base-content/70">ドメイン:</span>{" "}
-            <span class="font-bold">{verification.official_domain}</span>
+            <span style="color: var(--st-sys-color-on-surface-variant);">ドメイン:</span>{" "}
+            <span style="font-weight: 700;">{verification.official_domain}</span>
           </div>
           <div>
-            <span class="text-base-content/70">タイプ:</span>{" "}
-            <span class="font-bold">TXT</span>
+            <span style="color: var(--st-sys-color-on-surface-variant);">タイプ:</span>{" "}
+            <span style="font-weight: 700;">TXT</span>
           </div>
           <div>
-            <span class="text-base-content/70">値:</span>{" "}
+            <span style="color: var(--st-sys-color-on-surface-variant);">値:</span>{" "}
             <code class="bg-base-300 px-2 py-1 rounded break-all">
               polimoney-verify={verification.dns_txt_token}
             </code>
@@ -385,7 +385,7 @@ export default function PoliticianVerificationForm({
 
         <div class="card-actions justify-end mt-4">
           <button
-            class="btn btn-primary"
+            class="st-button st-button--filled"
             onClick={() => handleVerifyDns(verification.id)}
             disabled={isSubmitting}
           >
@@ -412,11 +412,11 @@ export default function PoliticianVerificationForm({
     fund: PoliticalFundReportInfo;
     setFund: (v: PoliticalFundReportInfo) => void;
   }) => (
-    <div class="space-y-4">
-      <div class="alert alert-warning">
+    <div class="st-stack st-stack--md">
+      <div class="st-alert st-alert--warning">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
+          style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -430,7 +430,7 @@ export default function PoliticianVerificationForm({
         <span>本人確認のため、以下のいずれかの情報を入力してください。</span>
       </div>
 
-      <div class="tabs tabs-boxed">
+      <div class="st-tabs">
         <button
           class={`tab ${type === "candidate" ? "tab-active" : ""}`}
           onClick={() => setType("candidate")}
@@ -450,9 +450,9 @@ export default function PoliticianVerificationForm({
       {type === "candidate"
         ? (
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">選挙名 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">選挙名 *</span>
               </label>
               <input
                 type="text"
@@ -462,14 +462,14 @@ export default function PoliticianVerificationForm({
                     ...candidate,
                     election_name: (e.target as HTMLInputElement).value,
                   })}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 第50回衆議院議員総選挙"
                 required
               />
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">選挙区 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">選挙区 *</span>
               </label>
               <input
                 type="text"
@@ -479,14 +479,14 @@ export default function PoliticianVerificationForm({
                     ...candidate,
                     district: (e.target as HTMLInputElement).value,
                   })}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 東京都第1区"
                 required
               />
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">氏名 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">氏名 *</span>
               </label>
               <input
                 type="text"
@@ -496,14 +496,14 @@ export default function PoliticianVerificationForm({
                     ...candidate,
                     candidate_name: (e.target as HTMLInputElement).value,
                   })}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 山田太郎"
                 required
               />
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">届出年月日 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">届出年月日 *</span>
               </label>
               <input
                 type="date"
@@ -513,7 +513,7 @@ export default function PoliticianVerificationForm({
                     ...candidate,
                     registration_date: (e.target as HTMLInputElement).value,
                   })}
-                class="input input-bordered"
+                class="st-input"
                 required
               />
             </div>
@@ -521,9 +521,9 @@ export default function PoliticianVerificationForm({
         )
         : (
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">団体名 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">団体名 *</span>
               </label>
               <input
                 type="text"
@@ -533,14 +533,14 @@ export default function PoliticianVerificationForm({
                     ...fund,
                     organization_name: (e.target as HTMLInputElement).value,
                   })}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 山田太郎後援会"
                 required
               />
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">代表者名 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">代表者名 *</span>
               </label>
               <input
                 type="text"
@@ -550,14 +550,14 @@ export default function PoliticianVerificationForm({
                     ...fund,
                     representative_name: (e.target as HTMLInputElement).value,
                   })}
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 山田太郎"
                 required
               />
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">届出先 *</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">届出先 *</span>
               </label>
               <select
                 value={fund.registration_authority}
@@ -567,7 +567,7 @@ export default function PoliticianVerificationForm({
                     registration_authority:
                       (e.target as HTMLSelectElement).value,
                   })}
-                class="select select-bordered"
+                class="st-select"
                 required
               >
                 <option value="">選択してください</option>
@@ -637,32 +637,30 @@ export default function PoliticianVerificationForm({
     );
 
     return (
-      <div class="space-y-6">
+      <div class="st-stack st-stack--lg">
         {/* メッセージ */}
         {message && (
           <div
             role="alert"
-            class={`alert ${
-              message.type === "success" ? "alert-success" : "alert-error"
-            }`}
+            class="st-alert"
           >
             <span>{message.text}</span>
           </div>
         )}
 
         {/* 現在の認証情報 */}
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">現在の認証情報</h3>
             <div class="bg-base-200 p-4 rounded-lg">
               <div class="grid grid-cols-2 gap-2 text-sm">
-                <div class="text-base-content/70">氏名</div>
-                <div class="font-medium">{verifiedPolitician.name}</div>
-                <div class="text-base-content/70">認証ドメイン</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">氏名</div>
+                <div style="font-weight: 500;">{verifiedPolitician.name}</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">認証ドメイン</div>
                 <div class="font-mono">
                   {verifiedPolitician.verified_domain}
                 </div>
-                <div class="text-base-content/70">認証日</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">認証日</div>
                 <div>
                   {verifiedPolitician.verified_at
                     ? new Date(
@@ -682,26 +680,26 @@ export default function PoliticianVerificationForm({
 
         {/* 認証コード入力（メール認証の場合） */}
         {activeVerificationId && (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">認証コードを入力</h3>
               <p class="text-sm text-base-content/70 mb-4">
                 メールに送信された6桁のコードを入力してください。
               </p>
               <form onSubmit={handleVerifyCode}>
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <input
                     type="text"
                     value={verificationCode}
                     onChange={(e) =>
                       setVerificationCode((e.target as HTMLInputElement).value)}
-                    class="input input-bordered flex-1"
+                    class="st-input" style="flex: 1;"
                     placeholder="6桁のコード"
                     maxLength={6}
                   />
                   <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     disabled={isSubmitting || verificationCode.length !== 6}
                   >
                     認証
@@ -713,13 +711,13 @@ export default function PoliticianVerificationForm({
         )}
 
         {/* ドメイン変更フォーム */}
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">ドメイン変更申請</h3>
             <div class="alert alert-warning mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current shrink-0 h-6 w-6"
+                style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -735,11 +733,11 @@ export default function PoliticianVerificationForm({
               </span>
             </div>
 
-            <form onSubmit={handleDomainChangeSubmit} class="space-y-4">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    新しい公式メールアドレス <span class="text-error">*</span>
+            <form onSubmit={handleDomainChangeSubmit} class="st-stack st-stack--md">
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    新しい公式メールアドレス <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
@@ -747,12 +745,12 @@ export default function PoliticianVerificationForm({
                   value={newEmail}
                   onChange={(e) =>
                     setNewEmail((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="例: info@new-domain.jp"
                   required
                 />
                 {newEmail && (
-                  <label class="label">
+                  <label class="st-field__label-wrapper">
                     {newIsLgDomain
                       ? (
                         <span class="label-text-alt text-success">
@@ -778,15 +776,15 @@ export default function PoliticianVerificationForm({
                 setFund={setNewFundInfo}
               />
 
-              <div class="flex gap-2">
+              <div class="st-flex st-gap-2">
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isSubmitting || !newEmail}
                 >
                   {isSubmitting ? "送信中..." : "変更を申請"}
                 </button>
-                <a href="/profile/politician" class="btn">
+                <a href="/profile/politician" class="st-button">
                   キャンセル
                 </a>
               </div>
@@ -798,8 +796,8 @@ export default function PoliticianVerificationForm({
         {politicianVerifications.filter(
               (v) => v.request_type === "domain_change",
             ).length > 0 && (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">ドメイン変更申請履歴</h3>
               <div class="space-y-3">
                 {politicianVerifications
@@ -827,7 +825,7 @@ export default function PoliticianVerificationForm({
                           )}
                         </p>
                       </div>
-                      <div class="flex items-center gap-2">
+                      <div class="st-flex st-flex--items-center st-gap-2">
                         <span
                           class={`badge ${
                             statusLabels[v.status]?.class || "badge-ghost"
@@ -847,7 +845,7 @@ export default function PoliticianVerificationForm({
                         )}
                         {v.status === "email_sent" && (
                           <button
-                            class="btn btn-sm btn-outline"
+                            class="st-button st-button--outlined st-button--sm"
                             onClick={() => handleSendCode(v.id)}
                             disabled={isSubmitting}
                           >
@@ -872,14 +870,12 @@ export default function PoliticianVerificationForm({
   );
 
   return (
-    <div class="space-y-6">
+    <div class="st-stack st-stack--lg">
       {/* メッセージ */}
       {message && (
         <div
           role="alert"
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
@@ -887,9 +883,9 @@ export default function PoliticianVerificationForm({
 
       {/* 認証済み表示 */}
       {verifiedPolitician && (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <div class="flex items-center gap-4">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+            <div class="st-flex st-flex--items-center st-gap-4">
               <div class="avatar placeholder">
                 <div class="bg-success text-success-content rounded-full w-16">
                   <svg
@@ -907,8 +903,8 @@ export default function PoliticianVerificationForm({
                 </div>
               </div>
               <div>
-                <h3 class="text-lg font-bold">{verifiedPolitician.name}</h3>
-                <p class="text-base-content/70">
+                <h3 style="font-size: var(--st-sys-typescale-title-medium-size); font-weight: 700;">{verifiedPolitician.name}</h3>
+                <p style="color: var(--st-sys-color-on-surface-variant);">
                   認証済み（{verifiedPolitician.verified_domain}）
                 </p>
                 <p class="text-sm text-base-content/50">
@@ -934,8 +930,8 @@ export default function PoliticianVerificationForm({
 
           {/* 申請履歴 */}
           {politicianVerifications.length > 0 && (
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
+            <div class="st-card st-card--elevated">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                 <h3 class="card-title text-base">申請履歴</h3>
                 <div class="space-y-3">
                   {politicianVerifications.map((v) => (
@@ -944,7 +940,7 @@ export default function PoliticianVerificationForm({
                       class="flex items-center justify-between p-4 bg-base-200 rounded-lg"
                     >
                       <div>
-                        <span class="font-medium">{v.name}</span>
+                        <span style="font-weight: 500;">{v.name}</span>
                         <span class="text-sm text-base-content/70 ml-2">
                           ({v.official_email})
                         </span>
@@ -962,7 +958,7 @@ export default function PoliticianVerificationForm({
                           )}
                         </p>
                       </div>
-                      <div class="flex items-center gap-2">
+                      <div class="st-flex st-flex--items-center st-gap-2">
                         <span
                           class={`badge ${
                             statusLabels[v.status]?.class || "badge-ghost"
@@ -982,7 +978,7 @@ export default function PoliticianVerificationForm({
                         )}
                         {v.status === "email_sent" && (
                           <button
-                            class="btn btn-sm btn-outline"
+                            class="st-button st-button--outlined st-button--sm"
                             onClick={() => handleSendCode(v.id)}
                             disabled={isSubmitting}
                           >
@@ -999,14 +995,14 @@ export default function PoliticianVerificationForm({
 
           {/* 認証コード入力 */}
           {activeVerificationId && (
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
+            <div class="st-card st-card--elevated">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                 <h3 class="card-title text-base">認証コードを入力</h3>
                 <p class="text-sm text-base-content/70 mb-4">
                   メールに送信された6桁のコードを入力してください。
                 </p>
                 <form onSubmit={handleVerifyCode}>
-                  <div class="flex gap-2">
+                  <div class="st-flex st-gap-2">
                     <input
                       type="text"
                       value={verificationCode}
@@ -1014,13 +1010,13 @@ export default function PoliticianVerificationForm({
                         setVerificationCode(
                           (e.target as HTMLInputElement).value,
                         )}
-                      class="input input-bordered flex-1"
+                      class="st-input" style="flex: 1;"
                       placeholder="6桁のコード"
                       maxLength={6}
                     />
                     <button
                       type="submit"
-                      class="btn btn-primary"
+                      class="st-button st-button--filled"
                       disabled={isSubmitting || verificationCode.length !== 6}
                     >
                       認証
@@ -1034,40 +1030,40 @@ export default function PoliticianVerificationForm({
           {/* 新規申請フォーム */}
           {showForm
             ? (
-              <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
+              <div class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                   <h3 class="card-title text-base">認証申請</h3>
-                  <form onSubmit={handleSubmit} class="space-y-4">
+                  <form onSubmit={handleSubmit} class="st-stack st-stack--md">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div class="form-control">
-                        <label class="label">
-                          <span class="label-text">氏名 *</span>
+                      <div class="st-field">
+                        <label class="st-field__label-wrapper">
+                          <span class="st-field__label">氏名 *</span>
                         </label>
                         <input
                           type="text"
                           value={name}
                           onChange={(e) =>
                             setName((e.target as HTMLInputElement).value)}
-                          class="input input-bordered"
+                          class="st-input"
                           placeholder="山田 太郎"
                           required
                         />
                       </div>
-                      <div class="form-control">
-                        <label class="label">
-                          <span class="label-text">公式メールアドレス *</span>
+                      <div class="st-field">
+                        <label class="st-field__label-wrapper">
+                          <span class="st-field__label">公式メールアドレス *</span>
                         </label>
                         <input
                           type="email"
                           value={email}
                           onChange={(e) =>
                             setEmail((e.target as HTMLInputElement).value)}
-                          class="input input-bordered"
+                          class="st-input"
                           placeholder="例: info@example.lg.jp"
                           required
                         />
                         {email && (
-                          <label class="label">
+                          <label class="st-field__label-wrapper">
                             {isLgDomain
                               ? (
                                 <span class="label-text-alt text-success">
@@ -1082,29 +1078,29 @@ export default function PoliticianVerificationForm({
                           </label>
                         )}
                       </div>
-                      <div class="form-control">
-                        <label class="label">
-                          <span class="label-text">公式サイト URL</span>
+                      <div class="st-field">
+                        <label class="st-field__label-wrapper">
+                          <span class="st-field__label">公式サイト URL</span>
                         </label>
                         <input
                           type="url"
                           value={url}
                           onChange={(e) =>
                             setUrl((e.target as HTMLInputElement).value)}
-                          class="input input-bordered"
+                          class="st-input"
                           placeholder="https://"
                         />
                       </div>
-                      <div class="form-control">
-                        <label class="label">
-                          <span class="label-text">所属政党</span>
+                      <div class="st-field">
+                        <label class="st-field__label-wrapper">
+                          <span class="st-field__label">所属政党</span>
                         </label>
                         <input
                           type="text"
                           value={party}
                           onChange={(e) =>
                             setParty((e.target as HTMLInputElement).value)}
-                          class="input input-bordered"
+                          class="st-input"
                           placeholder="無所属"
                         />
                       </div>
@@ -1120,17 +1116,17 @@ export default function PoliticianVerificationForm({
                       setFund={setFundInfo}
                     />
 
-                    <div class="flex gap-2">
+                    <div class="st-flex st-gap-2">
                       <button
                         type="submit"
-                        class="btn btn-primary"
+                        class="st-button st-button--filled"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? "送信中..." : "申請する"}
                       </button>
                       <button
                         type="button"
-                        class="btn"
+                        class="st-button"
                         onClick={() => setShowForm(false)}
                       >
                         キャンセル
@@ -1141,8 +1137,8 @@ export default function PoliticianVerificationForm({
               </div>
             )
             : (
-              <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
+              <div class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                   <h3 class="card-title text-base">新規認証申請</h3>
                   <p class="text-base-content/70 mb-4">
                     政治家として認証されると、選挙台帳を作成できるようになります。
@@ -1150,7 +1146,7 @@ export default function PoliticianVerificationForm({
                     TXT認証が必要です。
                   </p>
                   <button
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     onClick={() => setShowForm(true)}
                   >
                     認証を申請する

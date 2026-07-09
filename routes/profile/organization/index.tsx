@@ -52,16 +52,16 @@ export default define.page<typeof handler>(({
         <title>政治団体情報編集 - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/profile/organization" title="政治団体情報編集">
-        <div class="max-w-2xl">
+        <div style="max-width: 42rem;">
           {managedOrganizations.length > 0
             ? (
-              <div class="space-y-6">
-                <div class="alert alert-info">
+              <div class="st-stack st-stack--lg">
+                <div class="st-alert st-alert--info">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    class="stroke-current shrink-0 w-6 h-6"
+                    style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   >
                     <path
                       strokeLinecap="round"
@@ -73,8 +73,8 @@ export default define.page<typeof handler>(({
                   <span>編集したい政治団体を選択してください。</span>
                 </div>
 
-                <div class="card bg-base-100 shadow-xl">
-                  <div class="card-body">
+                <div class="st-card st-card--elevated">
+                  <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                     <h3 class="card-title text-base">管理している政治団体</h3>
                     <div class="space-y-3">
                       {managedOrganizations.map((org) => (
@@ -83,12 +83,12 @@ export default define.page<typeof handler>(({
                           href={`/profile/organization/${org.id}`}
                           class="flex items-center justify-between p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors"
                         >
-                          <div class="flex items-center gap-3">
+                          <div class="st-flex st-flex--items-center st-gap-3">
                             <div class="avatar placeholder">
                               <div class="bg-success text-success-content rounded-full w-10">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  class="h-5 w-5"
+                                  style="width: 1.25rem; height: 1.25rem;"
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
@@ -101,7 +101,7 @@ export default define.page<typeof handler>(({
                               </div>
                             </div>
                             <div>
-                              <span class="font-medium">{org.name}</span>
+                              <span style="font-weight: 500;">{org.name}</span>
                               <span class="badge badge-outline badge-sm ml-2">
                                 {organizationTypeLabels[org.type] || org.type}
                               </span>
@@ -132,12 +132,12 @@ export default define.page<typeof handler>(({
               </div>
             )
             : (
-              <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                  <div class="alert alert-warning">
+              <div class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                  <div class="st-alert st-alert--warning">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="stroke-current shrink-0 h-6 w-6"
+                      style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -149,16 +149,16 @@ export default define.page<typeof handler>(({
                       />
                     </svg>
                     <div>
-                      <h3 class="font-bold">
+                      <h3 style="font-weight: 700;">
                         管理している政治団体がありません
                       </h3>
-                      <p class="text-sm">
+                      <p style="font-size: var(--st-sys-typescale-body-small-size);">
                         政治団体情報を編集するには、まず政治団体管理者認証を完了してください。
                       </p>
                     </div>
                   </div>
                   <div class="card-actions mt-4">
-                    <a href="/verify/organization" class="btn btn-primary">
+                    <a href="/verify/organization" class="st-button st-button--filled">
                       政治団体管理者認証を申請
                     </a>
                   </div>

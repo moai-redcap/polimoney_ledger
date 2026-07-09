@@ -188,11 +188,11 @@ export default define.page<typeof handler>(({ data }) => {
           <title>仕訳が見つかりません - Polimoney Ledger</title>
         </Head>
         <Layout currentPath="/journals" title="仕訳詳細">
-          <div class="alert alert-error">
+          <div class="st-alert st-alert--error">
             <span>{error || "仕訳が見つかりません"}</span>
           </div>
-          <div class="mt-4">
-            <a href="/journals" class="btn btn-outline">
+          <div style="margin-top: var(--st-sys-spacing-4);">
+            <a href="/journals" class="st-button st-button--outlined">
               ← 仕訳一覧に戻る
             </a>
           </div>
@@ -219,16 +219,16 @@ export default define.page<typeof handler>(({ data }) => {
       <Layout currentPath="/journals" title="仕訳詳細">
         {/* ヘッダー */}
         <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-4">
-            <a href="/journals" class="btn btn-ghost btn-sm">
+          <div class="st-flex st-flex--items-center st-gap-4">
+            <a href="/journals" class="st-button st-button--text st-button--sm">
               ← 戻る
             </a>
-            <h2 class="text-xl font-bold">
+            <h2 style="font-size: var(--st-sys-typescale-title-large-size); font-weight: 700;">
               {formatDate(journal.journal_date)}
             </h2>
             {journal.status === "draft"
-              ? <span class="badge badge-warning">下書き</span>
-              : <span class="badge badge-success">承認済</span>}
+              ? <span class="st-badge" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">下書き</span>
+              : <span class="st-badge" style="background: var(--st-sys-color-tertiary-container); color: var(--st-sys-color-on-tertiary-container);">承認済</span>}
           </div>
 
           {/* 承認ボタン */}
@@ -239,18 +239,18 @@ export default define.page<typeof handler>(({ data }) => {
 
         {/* 基本情報 */}
         <div class="card bg-base-100 shadow mb-6">
-          <div class="card-body">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-lg mb-4">基本情報</h3>
             <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <dt class="text-sm text-base-content/60">摘要</dt>
-                <dd class="font-medium">{journal.description}</dd>
+                <dd style="font-weight: 500;">{journal.description}</dd>
               </div>
 
               {journal.contacts && (
                 <div>
                   <dt class="text-sm text-base-content/60">関係者</dt>
-                  <dd class="font-medium">
+                  <dd style="font-weight: 500;">
                     {journal.contacts.name}
                     <span class="text-sm text-base-content/60 ml-2">
                       (
@@ -266,7 +266,7 @@ export default define.page<typeof handler>(({ data }) => {
               {journal.political_organizations && (
                 <div>
                   <dt class="text-sm text-base-content/60">政治団体</dt>
-                  <dd class="font-medium">
+                  <dd style="font-weight: 500;">
                     {journal.political_organizations.name}
                   </dd>
                 </div>
@@ -275,14 +275,14 @@ export default define.page<typeof handler>(({ data }) => {
               {journal.elections && (
                 <div>
                   <dt class="text-sm text-base-content/60">選挙</dt>
-                  <dd class="font-medium">{journal.elections.election_name}</dd>
+                  <dd style="font-weight: 500;">{journal.elections.election_name}</dd>
                 </div>
               )}
 
               {journal.classification && (
                 <div>
                   <dt class="text-sm text-base-content/60">活動区分</dt>
-                  <dd class="font-medium">
+                  <dd style="font-weight: 500;">
                     {journal.classification === "campaign"
                       ? "選挙運動期間中"
                       : "選挙運動期間外"}
@@ -293,7 +293,7 @@ export default define.page<typeof handler>(({ data }) => {
               {journal.notes && (
                 <div class="md:col-span-2">
                   <dt class="text-sm text-base-content/60">備考</dt>
-                  <dd class="font-medium">{journal.notes}</dd>
+                  <dd style="font-weight: 500;">{journal.notes}</dd>
                 </div>
               )}
             </dl>
@@ -302,10 +302,10 @@ export default define.page<typeof handler>(({ data }) => {
 
         {/* 仕訳明細 */}
         <div class="card bg-base-100 shadow mb-6">
-          <div class="card-body">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-lg mb-4">仕訳明細</h3>
-            <div class="overflow-x-auto">
-              <table class="table">
+            <div style="overflow-x: auto;">
+              <table class="st-table">
                 <thead>
                   <tr>
                     <th>勘定科目</th>
@@ -331,7 +331,7 @@ export default define.page<typeof handler>(({ data }) => {
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr class="font-bold">
+                  <tr style="font-weight: 700;">
                     <td>合計</td>
                     <td class="text-right font-mono">
                       ¥{formatAmount(totalDebit)}
@@ -351,7 +351,7 @@ export default define.page<typeof handler>(({ data }) => {
           journal.is_receipt_hard_to_collect ||
           journal.non_monetary_basis) && (
           <div class="card bg-base-100 shadow mb-6">
-            <div class="card-body">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-lg mb-4">追加情報</h3>
               <dl class="space-y-3">
                 {journal.amount_public_subsidy !== null &&
@@ -367,7 +367,7 @@ export default define.page<typeof handler>(({ data }) => {
                 {journal.is_receipt_hard_to_collect && (
                   <div>
                     <dt class="text-sm text-base-content/60">証憑添付不可</dt>
-                    <dd class="font-medium">
+                    <dd style="font-weight: 500;">
                       {journal.receipt_hard_to_collect_reason || "理由未記載"}
                     </dd>
                   </div>
@@ -378,7 +378,7 @@ export default define.page<typeof handler>(({ data }) => {
                     <dt class="text-sm text-base-content/60">
                       金銭以外の寄附の見積根拠
                     </dt>
-                    <dd class="font-medium">{journal.non_monetary_basis}</dd>
+                    <dd style="font-weight: 500;">{journal.non_monetary_basis}</dd>
                   </div>
                 )}
               </dl>

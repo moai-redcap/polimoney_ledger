@@ -252,19 +252,17 @@ export default function ImageCropper({
   };
 
   return (
-    <div class="space-y-4">
+    <div class="st-stack st-stack--md">
       {label && (
-        <label class="label">
-          <span class="label-text font-medium">{label}</span>
+        <label class="st-field__label-wrapper">
+          <span class="st-field__label" style="font-weight: 500;">{label}</span>
         </label>
       )}
 
       {message && (
         <div
           role="alert"
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
@@ -272,7 +270,7 @@ export default function ImageCropper({
 
       {/* 現在の画像またはプレースホルダー */}
       {!previewUrl && (
-        <div class="flex items-center gap-4">
+        <div class="st-flex st-flex--items-center st-gap-4">
           <div
             class={`${
               shape === "circle" ? "rounded-full" : "rounded-lg"
@@ -320,7 +318,7 @@ export default function ImageCropper({
 
       {/* Cropper エディタ */}
       {previewUrl && (
-        <div class="space-y-4">
+        <div class="st-stack st-stack--md">
           {/* Cropper コンテナ */}
           <div
             class="w-full max-w-md mx-auto bg-base-200 rounded-lg overflow-hidden"
@@ -356,14 +354,14 @@ export default function ImageCropper({
           <div class="flex justify-center gap-2">
             <button
               type="button"
-              class="btn btn-primary"
+              class="st-button st-button--filled"
               onClick={handleUpload}
               disabled={isUploading}
             >
               {isUploading
                 ? (
                   <>
-                    <span class="loading loading-spinner loading-sm" />
+                    <span class="st-spinner st-spinner--sm" />
                     アップロード中...
                   </>
                 )
@@ -373,7 +371,7 @@ export default function ImageCropper({
             </button>
             <button
               type="button"
-              class="btn"
+              class="st-button"
               onClick={handleCancel}
               disabled={isUploading}
             >

@@ -268,26 +268,24 @@ export default function VerificationSection({
   };
 
   return (
-    <div class="space-y-6">
+    <div class="st-stack st-stack--lg">
       {/* メッセージ */}
       {message && (
         <div
           role="alert"
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
       )}
 
       {/* 政治家認証セクション */}
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title">
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <h2 class="st-card__title">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
+              style="width: 1.5rem; height: 1.5rem;"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -304,7 +302,7 @@ export default function VerificationSection({
 
           {verifiedPolitician
             ? (
-              <div class="flex items-center gap-3">
+              <div class="st-flex st-flex--items-center st-gap-3">
                 <div class="badge badge-success gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -320,7 +318,7 @@ export default function VerificationSection({
                   </svg>
                   認証済み
                 </div>
-                <span class="font-medium">{verifiedPolitician.name}</span>
+                <span style="font-weight: 500;">{verifiedPolitician.name}</span>
                 <span class="text-sm text-base-content/70">
                   ({verifiedPolitician.verified_domain})
                 </span>
@@ -330,7 +328,7 @@ export default function VerificationSection({
               <>
                 {/* 申請履歴 */}
                 {politicianVerifications.length > 0 && (
-                  <div class="mb-4">
+                  <div style="margin-bottom: var(--st-sys-spacing-4);">
                     <h3 class="text-sm font-medium mb-2">申請履歴</h3>
                     <div class="space-y-2">
                       {politicianVerifications.map((v) => (
@@ -339,12 +337,12 @@ export default function VerificationSection({
                           class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
                         >
                           <div>
-                            <span class="font-medium">{v.name}</span>
+                            <span style="font-weight: 500;">{v.name}</span>
                             <span class="text-sm text-base-content/70 ml-2">
                               ({v.official_email})
                             </span>
                           </div>
-                          <div class="flex items-center gap-2">
+                          <div class="st-flex st-flex--items-center st-gap-2">
                             <span
                               class={`badge ${
                                 statusLabels[v.status]?.class || "badge-ghost"
@@ -375,12 +373,12 @@ export default function VerificationSection({
                 {/* 認証コード入力 */}
                 {activeVerificationId &&
                   activeVerificationType === "politician" && (
-                  <form onSubmit={handleVerifyCode} class="mb-4">
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">認証コード</span>
+                  <form onSubmit={handleVerifyCode} style="margin-bottom: var(--st-sys-spacing-4);">
+                    <div class="st-field">
+                      <label class="st-field__label-wrapper">
+                        <span class="st-field__label">認証コード</span>
                       </label>
-                      <div class="flex gap-2">
+                      <div class="st-flex st-gap-2">
                         <input
                           type="text"
                           value={verificationCode}
@@ -388,13 +386,13 @@ export default function VerificationSection({
                             setVerificationCode(
                               (e.target as HTMLInputElement).value,
                             )}
-                          class="input input-bordered flex-1"
+                          class="st-input" style="flex: 1;"
                           placeholder="6桁のコード"
                           maxLength={6}
                         />
                         <button
                           type="submit"
-                          class="btn btn-primary"
+                          class="st-button st-button--filled"
                           disabled={isSubmitting ||
                             verificationCode.length !== 6}
                         >
@@ -408,11 +406,11 @@ export default function VerificationSection({
                 {/* 新規申請フォーム */}
                 {showPoliticianForm
                   ? (
-                    <form onSubmit={handlePoliticianSubmit} class="space-y-4">
+                    <form onSubmit={handlePoliticianSubmit} class="st-stack st-stack--md">
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-control">
-                          <label class="label">
-                            <span class="label-text">氏名 *</span>
+                        <div class="st-field">
+                          <label class="st-field__label-wrapper">
+                            <span class="st-field__label">氏名 *</span>
                           </label>
                           <input
                             type="text"
@@ -421,13 +419,13 @@ export default function VerificationSection({
                               setPoliticianName(
                                 (e.target as HTMLInputElement).value,
                               )}
-                            class="input input-bordered"
+                            class="st-input"
                             required
                           />
                         </div>
-                        <div class="form-control">
-                          <label class="label">
-                            <span class="label-text">公式メールアドレス *</span>
+                        <div class="st-field">
+                          <label class="st-field__label-wrapper">
+                            <span class="st-field__label">公式メールアドレス *</span>
                           </label>
                           <input
                             type="email"
@@ -436,14 +434,14 @@ export default function VerificationSection({
                               setPoliticianEmail(
                                 (e.target as HTMLInputElement).value,
                               )}
-                            class="input input-bordered"
+                            class="st-input"
                             placeholder="例: info@example.lg.jp"
                             required
                           />
                         </div>
-                        <div class="form-control">
-                          <label class="label">
-                            <span class="label-text">公式サイト URL</span>
+                        <div class="st-field">
+                          <label class="st-field__label-wrapper">
+                            <span class="st-field__label">公式サイト URL</span>
                           </label>
                           <input
                             type="url"
@@ -452,13 +450,13 @@ export default function VerificationSection({
                               setPoliticianUrl(
                                 (e.target as HTMLInputElement).value,
                               )}
-                            class="input input-bordered"
+                            class="st-input"
                             placeholder="https://"
                           />
                         </div>
-                        <div class="form-control">
-                          <label class="label">
-                            <span class="label-text">所属政党</span>
+                        <div class="st-field">
+                          <label class="st-field__label-wrapper">
+                            <span class="st-field__label">所属政党</span>
                           </label>
                           <input
                             type="text"
@@ -467,21 +465,21 @@ export default function VerificationSection({
                               setPoliticianParty(
                                 (e.target as HTMLInputElement).value,
                               )}
-                            class="input input-bordered"
+                            class="st-input"
                           />
                         </div>
                       </div>
-                      <div class="flex gap-2">
+                      <div class="st-flex st-gap-2">
                         <button
                           type="submit"
-                          class="btn btn-primary"
+                          class="st-button st-button--filled"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? "送信中..." : "申請する"}
                         </button>
                         <button
                           type="button"
-                          class="btn"
+                          class="st-button"
                           onClick={() => setShowPoliticianForm(false)}
                         >
                           キャンセル
@@ -490,9 +488,9 @@ export default function VerificationSection({
                     </form>
                   )
                   : (
-                    <div class="card-actions">
+                    <div class="st-card__actions">
                       <button
-                        class="btn btn-primary"
+                        class="st-button st-button--filled"
                         onClick={() => setShowPoliticianForm(true)}
                       >
                         政治家認証を申請
@@ -505,12 +503,12 @@ export default function VerificationSection({
       </div>
 
       {/* 政治団体管理者認証セクション */}
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title">
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <h2 class="st-card__title">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
+              style="width: 1.5rem; height: 1.5rem;"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -527,7 +525,7 @@ export default function VerificationSection({
 
           {/* 認証済み団体一覧 */}
           {managedOrganizations.length > 0 && (
-            <div class="mb-4">
+            <div style="margin-bottom: var(--st-sys-spacing-4);">
               <h3 class="text-sm font-medium mb-2">管理している政治団体</h3>
               <div class="space-y-2">
                 {managedOrganizations.map((org) => (
@@ -535,7 +533,7 @@ export default function VerificationSection({
                     key={org.id}
                     class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
                   >
-                    <div class="flex items-center gap-2">
+                    <div class="st-flex st-flex--items-center st-gap-2">
                       <div class="badge badge-success gap-1">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -551,8 +549,8 @@ export default function VerificationSection({
                         </svg>
                         認証済
                       </div>
-                      <span class="font-medium">{org.name}</span>
-                      <span class="badge badge-outline">
+                      <span style="font-weight: 500;">{org.name}</span>
+                      <span class="st-badge st-badge--outline">
                         {organizationTypeLabels[org.type] || org.type}
                       </span>
                     </div>
@@ -567,7 +565,7 @@ export default function VerificationSection({
 
           {/* 申請履歴 */}
           {organizationManagerVerifications.length > 0 && (
-            <div class="mb-4">
+            <div style="margin-bottom: var(--st-sys-spacing-4);">
               <h3 class="text-sm font-medium mb-2">申請履歴</h3>
               <div class="space-y-2">
                 {organizationManagerVerifications
@@ -578,12 +576,12 @@ export default function VerificationSection({
                       class="flex items-center justify-between p-3 bg-base-200 rounded-lg"
                     >
                       <div>
-                        <span class="font-medium">{v.organization_name}</span>
+                        <span style="font-weight: 500;">{v.organization_name}</span>
                         <span class="text-sm text-base-content/70 ml-2">
                           ({v.official_email})
                         </span>
                       </div>
-                      <div class="flex items-center gap-2">
+                      <div class="st-flex st-flex--items-center st-gap-2">
                         <span
                           class={`badge ${
                             statusLabels[v.status]?.class || "badge-ghost"
@@ -610,24 +608,24 @@ export default function VerificationSection({
 
           {/* 認証コード入力 */}
           {activeVerificationId && activeVerificationType === "org_manager" && (
-            <form onSubmit={handleVerifyCode} class="mb-4">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">認証コード</span>
+            <form onSubmit={handleVerifyCode} style="margin-bottom: var(--st-sys-spacing-4);">
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">認証コード</span>
                 </label>
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <input
                     type="text"
                     value={verificationCode}
                     onChange={(e) =>
                       setVerificationCode((e.target as HTMLInputElement).value)}
-                    class="input input-bordered flex-1"
+                    class="st-input" style="flex: 1;"
                     placeholder="6桁のコード"
                     maxLength={6}
                   />
                   <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     disabled={isSubmitting || verificationCode.length !== 6}
                   >
                     認証
@@ -640,15 +638,15 @@ export default function VerificationSection({
           {/* 新規申請フォーム */}
           {showOrgManagerForm
             ? (
-              <form onSubmit={handleOrgManagerSubmit} class="space-y-4">
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text">既存の政治団体を選択</span>
+              <form onSubmit={handleOrgManagerSubmit} class="st-stack st-stack--md">
+                <div class="st-field">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label">既存の政治団体を選択</span>
                   </label>
                   <select
                     value={orgId}
                     onChange={handleOrgSelect}
-                    class="select select-bordered"
+                    class="st-select"
                   >
                     <option value="">-- 新規作成 --</option>
                     {hubOrganizations.map((org) => (
@@ -659,37 +657,37 @@ export default function VerificationSection({
                       </option>
                     ))}
                   </select>
-                  <label class="label">
-                    <span class="label-text-alt">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__helper">
                       既存の政治団体を選択するか、新規作成できます
                     </span>
                   </label>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">政治団体名 *</span>
+                  <div class="st-field">
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__label">政治団体名 *</span>
                     </label>
                     <input
                       type="text"
                       value={orgName}
                       onChange={(e) =>
                         setOrgName((e.target as HTMLInputElement).value)}
-                      class="input input-bordered"
+                      class="st-input"
                       required
                       disabled={!!orgId}
                     />
                   </div>
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">団体種別 *</span>
+                  <div class="st-field">
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__label">団体種別 *</span>
                     </label>
                     <select
                       value={orgType}
                       onChange={(e) =>
                         setOrgType((e.target as HTMLSelectElement).value)}
-                      class="select select-bordered"
+                      class="st-select"
                       required
                       disabled={!!orgId}
                     >
@@ -703,49 +701,49 @@ export default function VerificationSection({
                     </select>
                   </div>
                   <div class="form-control md:col-span-2">
-                    <label class="label">
-                      <span class="label-text">公式メールアドレス *</span>
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__label">公式メールアドレス *</span>
                     </label>
                     <input
                       type="email"
                       value={orgEmail}
                       onChange={(e) =>
                         setOrgEmail((e.target as HTMLInputElement).value)}
-                      class="input input-bordered"
+                      class="st-input"
                       placeholder="例: info@party.example.jp"
                       required
                     />
-                    <label class="label">
-                      <span class="label-text-alt">
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__helper">
                         この政治団体の公式メールアドレスで認証を行います
                       </span>
                     </label>
                   </div>
                   <div class="form-control md:col-span-2">
-                    <label class="label">
-                      <span class="label-text">役職</span>
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__label">役職</span>
                     </label>
                     <input
                       type="text"
                       value={orgRole}
                       onChange={(e) =>
                         setOrgRole((e.target as HTMLInputElement).value)}
-                      class="input input-bordered"
+                      class="st-input"
                       placeholder="例: 事務局長、会計責任者"
                     />
                   </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "送信中..." : "申請する"}
                   </button>
                   <button
                     type="button"
-                    class="btn"
+                    class="st-button"
                     onClick={() => setShowOrgManagerForm(false)}
                   >
                     キャンセル
@@ -754,9 +752,9 @@ export default function VerificationSection({
               </form>
             )
             : (
-              <div class="card-actions">
+              <div class="st-card__actions">
                 <button
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   onClick={() => setShowOrgManagerForm(true)}
                 >
                   政治団体管理者認証を申請

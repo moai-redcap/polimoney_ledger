@@ -85,11 +85,11 @@ export default define.page<typeof handler>(({ data }) => {
           <title>登録完了 - Polimoney Ledger</title>
           <link href="/styles.css" rel="stylesheet" />
         </Head>
-        <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
-          <div class="card w-full max-w-md bg-base-100 shadow-xl">
+        <div style="min-height: 100vh; background: var(--st-sys-color-surface); display: flex; align-items: center; justify-content: center; padding: var(--st-sys-spacing-4);">
+          <div class="st-card st-card--elevated" style="width: 100%; max-width: 28rem;">
             <div class="card-body text-center">
               <div class="text-5xl mb-4">✉️</div>
-              <h1 class="text-2xl font-bold">確認メールを送信しました</h1>
+              <h1 style="font-size: var(--st-sys-typescale-headline-small-size); font-weight: 700;">確認メールを送信しました</h1>
               <div class="mt-4 space-y-3 text-left">
                 <p class="text-base-content/80">
                   <strong>{data.email}</strong> 宛に確認メールを送信しました。
@@ -103,7 +103,7 @@ export default define.page<typeof handler>(({ data }) => {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    class="stroke-current shrink-0 w-6 h-6"
+                    style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   >
                     <path
                       stroke-linecap="round"
@@ -112,8 +112,8 @@ export default define.page<typeof handler>(({ data }) => {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <div class="text-xs">
-                    <p class="font-bold">送信元について</p>
+                  <div style="font-size: var(--st-sys-typescale-label-small-size);">
+                    <p style="font-weight: 700;">送信元について</p>
                     <p>
                       メールは{" "}
                       <code class="bg-warning-content/20 px-1 rounded">
@@ -124,12 +124,12 @@ export default define.page<typeof handler>(({ data }) => {
                     </p>
                   </div>
                 </div>
-                <div class="alert alert-info mt-4">
+                <div class="st-alert st-alert--info" style="margin-top: var(--st-sys-spacing-4);">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    class="stroke-current shrink-0 w-6 h-6"
+                    style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   >
                     <path
                       stroke-linecap="round"
@@ -138,16 +138,16 @@ export default define.page<typeof handler>(({ data }) => {
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <div class="text-xs">
-                    <p class="font-bold">政治家認証について</p>
+                  <div style="font-size: var(--st-sys-typescale-label-small-size);">
+                    <p style="font-weight: 700;">政治家認証について</p>
                     <p>
                       政治家本人として選挙台帳を作成するには、ログイン後に政治家認証を申請してください。
                     </p>
                   </div>
                 </div>
               </div>
-              <div class="mt-6">
-                <a href="/login" class="btn btn-primary">
+              <div style="margin-top: var(--st-sys-spacing-6);">
+                <a href="/login" class="st-button st-button--filled">
                   ログインページへ
                 </a>
               </div>
@@ -164,20 +164,20 @@ export default define.page<typeof handler>(({ data }) => {
         <title>新規登録 - Polimoney Ledger</title>
         <link href="/styles.css" rel="stylesheet" />
       </Head>
-      <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
-        <div class="card w-full max-w-md bg-base-100 shadow-xl">
-          <div class="card-body">
-            <div class="text-center mb-4">
-              <span class="text-5xl">📒</span>
+      <div style="min-height: 100vh; background: var(--st-sys-color-surface); display: flex; align-items: center; justify-content: center; padding: var(--st-sys-spacing-4);">
+        <div class="st-card st-card--elevated" style="width: 100%; max-width: 28rem;">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+            <div style="text-align: center; margin-bottom: var(--st-sys-spacing-4);">
+              <span style="font-size: 3rem;">📒</span>
               <h1 class="text-2xl font-bold mt-2">Polimoney Ledger</h1>
               <p class="text-base-content/60 mt-1">新規登録</p>
             </div>
 
             {data?.error && (
-              <div class="alert alert-error mb-4">
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
+                  style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
@@ -192,84 +192,84 @@ export default define.page<typeof handler>(({ data }) => {
               </div>
             )}
 
-            <form method="POST" class="space-y-4">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    姓名（本名） <span class="text-error">*</span>
+            <form method="POST" class="st-stack st-stack--md">
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    姓名（本名） <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
                   type="text"
                   name="fullName"
                   placeholder="山田 太郎"
-                  class="input input-bordered w-full"
+                  class="st-input" style="width: 100%;"
                   required
                 />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/60">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__helper">
                     政治家認証などに使用されます。本名を入力してください。
                   </span>
                 </label>
               </div>
 
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    メールアドレス <span class="text-error">*</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    メールアドレス <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
                   type="email"
                   name="email"
                   placeholder="email@example.com"
-                  class="input input-bordered w-full"
+                  class="st-input" style="width: 100%;"
                   required
                 />
               </div>
 
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    パスワード（8文字以上） <span class="text-error">*</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    パスワード（8文字以上） <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
                   type="password"
                   name="password"
                   placeholder="パスワード"
-                  class="input input-bordered w-full"
+                  class="st-input" style="width: 100%;"
                   minLength={8}
                   required
                 />
               </div>
 
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    パスワード（確認） <span class="text-error">*</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    パスワード（確認） <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
                   type="password"
                   name="confirmPassword"
                   placeholder="パスワード（確認）"
-                  class="input input-bordered w-full"
+                  class="st-input" style="width: 100%;"
                   minLength={8}
                   required
                 />
               </div>
 
               {/* 利用規約・プライバシーポリシー同意 */}
-              <div class="divider text-sm text-base-content/60">同意事項</div>
+              <div style="display: flex; align-items: center; gap: var(--st-sys-spacing-4); color: var(--st-sys-color-on-surface-variant); font-size: var(--st-sys-typescale-body-small-size);">同意事項</div>
 
               {/* フィッシング注意 */}
-              <div class="alert alert-info">
+              <div class="st-alert st-alert--info">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  class="stroke-current shrink-0 w-6 h-6"
+                  style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                 >
                   <path
                     stroke-linecap="round"
@@ -278,8 +278,8 @@ export default define.page<typeof handler>(({ data }) => {
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <div class="text-xs">
-                  <p class="font-bold">フィッシングサイトにご注意ください</p>
+                <div style="font-size: var(--st-sys-typescale-label-small-size);">
+                  <p style="font-weight: 700;">フィッシングサイトにご注意ください</p>
                   <p>
                     Polimoney Ledger
                     はオープンソースソフトウェアです。偽サイトに個人情報を入力しないよう、URLをご確認ください。
@@ -287,45 +287,45 @@ export default define.page<typeof handler>(({ data }) => {
                 </div>
               </div>
 
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start gap-3">
+              <div class="st-field">
+                <label style="display: flex; align-items: center; cursor: pointer; gap: var(--st-sys-spacing-3);">
                   <input
                     type="checkbox"
                     name="tosAccepted"
-                    class="checkbox checkbox-primary"
+                    style="accent-color: var(--st-sys-color-primary);"
                     required
                   />
-                  <span class="label-text">
-                    <a href="/terms" target="_blank" class="link link-primary">
+                  <span class="st-field__label">
+                    <a href="/terms" target="_blank" style="color: var(--st-sys-color-primary); text-decoration: underline;">
                       利用規約
                     </a>
-                    に同意する <span class="text-error">*</span>
+                    に同意する <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
               </div>
 
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start gap-3">
+              <div class="st-field">
+                <label style="display: flex; align-items: center; cursor: pointer; gap: var(--st-sys-spacing-3);">
                   <input
                     type="checkbox"
                     name="privacyPolicyAccepted"
-                    class="checkbox checkbox-primary"
+                    style="accent-color: var(--st-sys-color-primary);"
                     required
                   />
-                  <span class="label-text">
+                  <span class="st-field__label">
                     <a
                       href="/privacy"
                       target="_blank"
-                      class="link link-primary"
+                      style="color: var(--st-sys-color-primary); text-decoration: underline;"
                     >
                       プライバシーポリシー
                     </a>
-                    に同意する <span class="text-error">*</span>
+                    に同意する <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
               </div>
 
-              <div class="mt-6">
+              <div style="margin-top: var(--st-sys-spacing-6);">
                 <button type="submit" class="btn btn-primary w-full">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -333,7 +333,7 @@ export default define.page<typeof handler>(({ data }) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="w-5 h-5"
+                    style="width: 1.25rem; height: 1.25rem;"
                   >
                     <path
                       stroke-linecap="round"
@@ -346,13 +346,13 @@ export default define.page<typeof handler>(({ data }) => {
               </div>
             </form>
 
-            <div class="divider">または</div>
+            <div style="border-top: 1px solid var(--st-sys-color-outline-variant); margin: var(--st-sys-spacing-4) 0;">または</div>
 
-            <div class="text-center">
+            <div style="text-align: center;">
               <p class="text-sm text-base-content/60">
                 すでにアカウントをお持ちの場合は
               </p>
-              <a href="/login" class="link link-primary">
+              <a href="/login" style="color: var(--st-sys-color-primary); text-decoration: underline;">
                 ログイン
               </a>
             </div>

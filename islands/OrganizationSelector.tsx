@@ -44,11 +44,11 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
     <div>
       {/* 検索・フィルター */}
       <div class="card bg-base-100 shadow-xl mb-6">
-        <div class="card-body">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <div class="flex flex-wrap gap-4">
             <div class="form-control flex-1 min-w-[200px]">
-              <label class="label">
-                <span class="label-text">🔍 検索</span>
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">🔍 検索</span>
               </label>
               <input
                 type="text"
@@ -56,18 +56,18 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
                 onInput={(e) =>
                   setSearchTerm((e.target as HTMLInputElement).value)}
                 placeholder="団体名で検索..."
-                class="input input-bordered w-full"
+                class="st-input" style="width: 100%;"
               />
             </div>
             <div class="form-control w-48">
-              <label class="label">
-                <span class="label-text">種別</span>
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">種別</span>
               </label>
               <select
                 value={selectedType}
                 onChange={(e) =>
                   setSelectedType((e.target as HTMLSelectElement).value)}
-                class="select select-bordered w-full"
+                class="st-select" style="width: 100%;"
               >
                 <option value="">すべて</option>
                 {Object.entries(ORGANIZATION_TYPES).map(([code, name]) => (
@@ -82,7 +82,7 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
       </div>
 
       {/* 団体一覧 */}
-      <div class="space-y-6">
+      <div class="st-stack st-stack--lg">
         {Object.keys(groupedByType).length > 0
           ? (
             Object.entries(ORGANIZATION_TYPES).map(([type, typeName]) => {
@@ -94,14 +94,14 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
                     <span class="mr-2">🏛️</span>
                     {typeName}
                   </h2>
-                  <div class="card bg-base-100 shadow-xl">
+                  <div class="st-card st-card--elevated">
                     <div class="card-body p-0">
                       <ul class="menu p-0">
                         {orgs.map((org) => (
                           <li key={org.id}>
                             <div class="flex justify-between items-center py-4 px-6 border-b border-base-200 last:border-b-0">
                               <div>
-                                <h3 class="font-medium">{org.name}</h3>
+                                <h3 style="font-weight: 500;">{org.name}</h3>
                                 <div class="mt-1 flex items-center gap-2">
                                   <span class="badge badge-success badge-sm">
                                     {ORGANIZATION_TYPES[org.type] || org.type}
@@ -116,7 +116,7 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
                               </div>
                               <a
                                 href={`/organizations/${org.id}/ledger`}
-                                class="btn btn-primary btn-sm"
+                                class="st-button st-button--filled st-button--sm"
                               >
                                 台帳を開く
                               </a>
@@ -131,9 +131,9 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
             })
           )
           : (
-            <div class="card bg-base-100 shadow-xl">
+            <div class="st-card st-card--elevated">
               <div class="card-body items-center text-center">
-                <p class="text-base-content/70">
+                <p style="color: var(--st-sys-color-on-surface-variant);">
                   該当する政治団体が見つかりません
                 </p>
               </div>
@@ -145,7 +145,7 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
       <div role="alert" class="alert alert-warning mt-8">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
+          style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -157,8 +157,8 @@ export default function OrganizationSelector({ initialOrganizations }: Props) {
           />
         </svg>
         <div>
-          <h3 class="font-bold">該当する政治団体がない場合</h3>
-          <p class="text-sm">
+          <h3 style="font-weight: 700;">該当する政治団体がない場合</h3>
+          <p style="font-size: var(--st-sys-typescale-body-small-size);">
             お探しの政治団体が見つからない場合は、証明書類を添付して登録をリクエストできます。
           </p>
         </div>
@@ -277,10 +277,10 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
         <h3 class="font-bold text-lg mb-4">政治団体の登録リクエスト</h3>
 
         {error && (
-          <div role="alert" class="alert alert-error mb-4">
+          <div role="alert" class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="stroke-current shrink-0 h-6 w-6"
+              style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -295,11 +295,11 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} class="space-y-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                団体名 <span class="text-error">*</span>
+        <form onSubmit={handleSubmit} class="st-stack st-stack--md">
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                団体名 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
@@ -312,14 +312,14 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
                   name: (e.target as HTMLInputElement).value,
                 })}
               placeholder="例: 山田太郎後援会"
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                団体種別 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                団体種別 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <select
@@ -330,7 +330,7 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
                   ...formData,
                   type: (e.target as HTMLSelectElement).value,
                 })}
-              class="select select-bordered w-full"
+              class="st-select" style="width: 100%;"
             >
               {Object.entries(ORGANIZATION_TYPES).map(([code, name]) => (
                 <option key={code} value={code}>
@@ -340,9 +340,9 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">届出先</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">届出先</span>
             </label>
             <input
               type="text"
@@ -353,14 +353,14 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
                   registration_authority: (e.target as HTMLInputElement).value,
                 })}
               placeholder="例: 東京都選挙管理委員会"
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                証明書類の種類 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                証明書類の種類 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <select
@@ -371,7 +371,7 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
                   ...formData,
                   evidence_type: (e.target as HTMLSelectElement).value,
                 })}
-              class="select select-bordered w-full"
+              class="st-select" style="width: 100%;"
             >
               {Object.entries(EVIDENCE_TYPES).map(([code, name]) => (
                 <option key={code} value={code}>
@@ -381,10 +381,10 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                証明書類のアップロード <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                証明書類のアップロード <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
@@ -405,16 +405,16 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
                 ✅ {formData.evidence_file_name}
               </span>
             )}
-            <label class="label">
-              <span class="label-text-alt">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__helper">
                 政治団体設立届出書の控え、名簿のスクリーンショット等をアップロードしてください
               </span>
             </label>
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">連絡先メールアドレス</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">連絡先メールアドレス</span>
             </label>
             <input
               type="email"
@@ -425,13 +425,13 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
                   requested_by_email: (e.target as HTMLInputElement).value,
                 })}
               placeholder="example@email.com"
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">備考</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">備考</span>
             </label>
             <textarea
               value={formData.notes}
@@ -446,12 +446,12 @@ function OrganizationRequestModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div class="modal-action">
-            <button type="button" class="btn btn-ghost" onClick={onClose}>
+            <button type="button" class="st-button st-button--text" onClick={onClose}>
               キャンセル
             </button>
             <button
               type="submit"
-              class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+              class="st-button st-button--filled"
               disabled={isSubmitting || !formData.evidence_file_url}
             >
               {isSubmitting ? "送信中..." : "リクエストを送信"}

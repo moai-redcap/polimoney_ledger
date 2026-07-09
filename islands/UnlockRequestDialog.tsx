@@ -55,12 +55,12 @@ export default function UnlockRequestDialog({
         <div class="modal-box">
           <h3 class="font-bold text-lg mb-4">{year}年度のロック解除申請</h3>
 
-          <div class="alert alert-info mb-4">
+          <div class="st-alert st-alert--info" style="margin-bottom: var(--st-sys-spacing-4);">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              class="stroke-current shrink-0 w-6 h-6"
+              style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
             >
               <path
                 strokeLinecap="round"
@@ -70,8 +70,8 @@ export default function UnlockRequestDialog({
               />
             </svg>
             <div>
-              <p class="font-bold">申請中です</p>
-              <p class="text-sm">
+              <p style="font-weight: 700;">申請中です</p>
+              <p style="font-size: var(--st-sys-typescale-body-small-size);">
                 この年度のロック解除リクエストは既に申請されています。
                 Hub管理者の審査をお待ちください。
               </p>
@@ -79,7 +79,7 @@ export default function UnlockRequestDialog({
           </div>
 
           <div class="modal-action">
-            <button type="button" class="btn" onClick={onClose}>
+            <button type="button" class="st-button" onClick={onClose}>
               閉じる
             </button>
           </div>
@@ -101,7 +101,7 @@ export default function UnlockRequestDialog({
         <div class="alert alert-warning mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
+            style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -113,7 +113,7 @@ export default function UnlockRequestDialog({
             />
           </svg>
           <div>
-            <p class="font-bold">ご注意</p>
+            <p style="font-weight: 700;">ご注意</p>
             <ul class="text-sm mt-1 list-disc list-inside">
               <li>申請は1件のみ有効です</li>
               <li>Hub管理者による審査に時間がかかる場合があります</li>
@@ -123,8 +123,8 @@ export default function UnlockRequestDialog({
         </div>
 
         <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text font-medium">解除理由</span>
+          <label class="st-field__label-wrapper">
+            <span class="st-field__label" style="font-weight: 500;">解除理由</span>
             <span class="label-text-alt text-error">必須（10文字以上）</span>
           </label>
           <textarea
@@ -133,8 +133,8 @@ export default function UnlockRequestDialog({
             value={reason}
             onInput={(e) => setReason((e.target as HTMLTextAreaElement).value)}
           />
-          <label class="label">
-            <span class="label-text-alt">
+          <label class="st-field__label-wrapper">
+            <span class="st-field__helper">
               {reason.length}文字
               {reason.length < 10 && reason.length > 0 && (
                 <span class="text-error ml-2">
@@ -146,23 +146,23 @@ export default function UnlockRequestDialog({
         </div>
 
         {error && (
-          <div class="alert alert-error mb-4">
+          <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
             <span>{error}</span>
           </div>
         )}
 
         <div class="modal-action">
-          <button type="button" class="btn" onClick={onClose}>
+          <button type="button" class="st-button" onClick={onClose}>
             キャンセル
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="st-button st-button--filled"
             disabled={submitting || reason.trim().length < 10}
             onClick={handleSubmit}
           >
             {submitting
-              ? <span class="loading loading-spinner loading-sm" />
+              ? <span class="st-spinner st-spinner--sm" />
               : (
                 "申請を送信"
               )}

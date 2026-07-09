@@ -77,7 +77,7 @@ export default define.page<typeof handler>(({
         </title>
       </Head>
       <Layout currentPath="/profile/organization" title="政治団体情報編集">
-        <div class="max-w-2xl">
+        <div style="max-width: 42rem;">
           {/* パンくず */}
           <div class="text-sm breadcrumbs mb-6">
             <ul>
@@ -90,12 +90,12 @@ export default define.page<typeof handler>(({
 
           {!isManager
             ? (
-              <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                  <div class="alert alert-error">
+              <div class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                  <div class="st-alert st-alert--error">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="stroke-current shrink-0 h-6 w-6"
+                      style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -107,14 +107,14 @@ export default define.page<typeof handler>(({
                       />
                     </svg>
                     <div>
-                      <h3 class="font-bold">アクセス権限がありません</h3>
-                      <p class="text-sm">
+                      <h3 style="font-weight: 700;">アクセス権限がありません</h3>
+                      <p style="font-size: var(--st-sys-typescale-body-small-size);">
                         この政治団体を編集する権限がありません。
                       </p>
                     </div>
                   </div>
                   <div class="card-actions mt-4">
-                    <a href="/profile/organization" class="btn">
+                    <a href="/profile/organization" class="st-button">
                       一覧に戻る
                     </a>
                   </div>
@@ -123,12 +123,12 @@ export default define.page<typeof handler>(({
             )
             : !organization
             ? (
-              <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                  <div class="alert alert-error">
+              <div class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                  <div class="st-alert st-alert--error">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="stroke-current shrink-0 h-6 w-6"
+                      style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -140,14 +140,14 @@ export default define.page<typeof handler>(({
                       />
                     </svg>
                     <div>
-                      <h3 class="font-bold">政治団体が見つかりません</h3>
-                      <p class="text-sm">
+                      <h3 style="font-weight: 700;">政治団体が見つかりません</h3>
+                      <p style="font-size: var(--st-sys-typescale-body-small-size);">
                         指定された政治団体は存在しないか、削除されています。
                       </p>
                     </div>
                   </div>
                   <div class="card-actions mt-4">
-                    <a href="/profile/organization" class="btn">
+                    <a href="/profile/organization" class="st-button">
                       一覧に戻る
                     </a>
                   </div>
@@ -159,12 +159,12 @@ export default define.page<typeof handler>(({
                 {/* 認証状態表示 */}
                 <div class="card bg-success/10 border border-success/30 mb-6">
                   <div class="card-body py-4">
-                    <div class="flex items-center gap-3">
+                    <div class="st-flex st-flex--items-center st-gap-3">
                       <div class="avatar placeholder">
                         <div class="bg-success text-success-content rounded-full w-10">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5"
+                            style="width: 1.25rem; height: 1.25rem;"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                           >

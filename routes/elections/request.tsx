@@ -66,12 +66,12 @@ export default define.page<typeof handler>(({
           </ul>
         </div>
 
-        <div class="card bg-base-100 shadow">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <div class="alert alert-warning mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current shrink-0 h-6 w-6"
+                style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                 fill="none"
                 viewBox="0 0 24 24"
               >

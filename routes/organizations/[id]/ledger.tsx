@@ -266,11 +266,11 @@ export default define.page<typeof handler>(({ data }) => {
           <title>台帳が見つかりません - Polimoney Ledger</title>
         </Head>
         <Layout currentPath="/organizations" title="台帳">
-          <div class="alert alert-error">
+          <div class="st-alert st-alert--error">
             <span>{error || "政治団体が見つかりません"}</span>
           </div>
-          <div class="mt-4">
-            <a href="/organizations" class="btn btn-outline">
+          <div style="margin-top: var(--st-sys-spacing-4);">
+            <a href="/organizations" class="st-button st-button--outlined">
               ← 政治団体一覧に戻る
             </a>
           </div>
@@ -308,7 +308,7 @@ export default define.page<typeof handler>(({ data }) => {
 
         {/* タブナビゲーション */}
         <div role="tablist" class="tabs tabs-bordered mb-6">
-          <a role="tab" class="tab tab-active">
+          <a role="tab" class="st-tab st-tab--active">
             仕訳一覧
           </a>
           <a
@@ -339,7 +339,7 @@ export default define.page<typeof handler>(({ data }) => {
           <div class="alert alert-warning mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="stroke-current shrink-0 h-6 w-6"
+              style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -357,14 +357,14 @@ export default define.page<typeof handler>(({ data }) => {
         )}
 
         {/* 仕訳一覧 */}
-        <div class="card bg-base-100 shadow">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <div class="flex items-center justify-between mb-4">
               <h2 class="card-title text-lg">
                 仕訳一覧
                 <span class="badge badge-ghost">{journals.length}件</span>
               </h2>
-              <div class="flex items-center gap-2">
+              <div class="st-flex st-flex--items-center st-gap-2">
                 <ExportCSVButton ledgerId={ledgerId || ""} />
                 {(() => {
                   const currentStatus = closureStatuses.find(

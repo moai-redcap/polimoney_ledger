@@ -109,10 +109,10 @@ export default define.page<typeof handler>(({
         </div>
 
         {error && (
-          <div role="alert" class="alert alert-error mb-6">
+          <div role="alert" class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-6);">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="stroke-current shrink-0 h-6 w-6"
+              style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -130,12 +130,12 @@ export default define.page<typeof handler>(({
         {!canCreateElection
           ? (
             // 政治家として認証されていない場合
-            <div class="card bg-base-100 shadow">
-              <div class="card-body">
-                <div class="alert alert-warning">
+            <div class="st-card st-card--elevated">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                <div class="st-alert st-alert--warning">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="stroke-current shrink-0 h-6 w-6"
+                    style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -147,7 +147,7 @@ export default define.page<typeof handler>(({
                     />
                   </svg>
                   <div>
-                    <h3 class="font-bold">選挙台帳を作成できません</h3>
+                    <h3 style="font-weight: 700;">選挙台帳を作成できません</h3>
                     <p class="text-sm mt-1">
                       選挙台帳を作成するには、政治家として認証されている必要があります。
                     </p>
@@ -170,12 +170,12 @@ export default define.page<typeof handler>(({
                     </li>
                   </ol>
 
-                  <div class="alert alert-info mt-4">
+                  <div class="st-alert st-alert--info" style="margin-top: var(--st-sys-spacing-4);">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      class="stroke-current shrink-0 w-6 h-6"
+                      style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                     >
                       <path
                         stroke-linecap="round"
@@ -191,10 +191,10 @@ export default define.page<typeof handler>(({
                 </div>
 
                 <div class="card-actions justify-end mt-6">
-                  <a href="/settings" class="btn btn-primary">
+                  <a href="/settings" class="st-button st-button--filled">
                     政治家認証を申請する
                   </a>
-                  <a href="/elections" class="btn btn-ghost">
+                  <a href="/elections" class="st-button st-button--text">
                     戻る
                   </a>
                 </div>
@@ -203,14 +203,14 @@ export default define.page<typeof handler>(({
           )
           : (
             // 政治家として認証されている場合
-            <div class="card bg-base-100 shadow">
-              <div class="card-body">
+            <div class="st-card st-card--elevated">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                 {/* 認証済み政治家情報 */}
                 {verifiedPolitician && (
                   <div class="alert alert-success mb-4">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="stroke-current shrink-0 h-6 w-6"
+                      style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -222,11 +222,11 @@ export default define.page<typeof handler>(({
                       />
                     </svg>
                     <div>
-                      <p class="font-bold">
+                      <p style="font-weight: 700;">
                         認証済み: {verifiedPolitician.name}
                       </p>
                       {verifiedPolitician.party && (
-                        <p class="text-sm">{verifiedPolitician.party}</p>
+                        <p style="font-size: var(--st-sys-typescale-body-small-size);">{verifiedPolitician.party}</p>
                       )}
                     </div>
                   </div>

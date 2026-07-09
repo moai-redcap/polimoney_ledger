@@ -244,9 +244,9 @@ export default function MemberManager({
     <div>
       {/* 通知 */}
       {error && (
-        <div class="alert alert-error mb-4">
+        <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
           <span>{error}</span>
-          <button class="btn btn-ghost btn-sm" onClick={() => setError(null)}>
+          <button class="st-button st-button--text st-button--sm" onClick={() => setError(null)}>
             ✕
           </button>
         </div>
@@ -255,7 +255,7 @@ export default function MemberManager({
       {success && (
         <div class="alert alert-success mb-4">
           <span>{success}</span>
-          <button class="btn btn-ghost btn-sm" onClick={() => setSuccess(null)}>
+          <button class="st-button st-button--text st-button--sm" onClick={() => setSuccess(null)}>
             ✕
           </button>
         </div>
@@ -264,13 +264,13 @@ export default function MemberManager({
       {/* ヘッダー */}
       <div class="flex justify-between items-center mb-6">
         <div>
-          <p class="text-base-content/70">
+          <p style="color: var(--st-sys-color-on-surface-variant);">
             台帳にアクセスできるメンバーと権限を管理します。
           </p>
         </div>
         {canManageMembers && (
           <button
-            class="btn btn-primary"
+            class="st-button st-button--filled"
             onClick={() => setShowInviteModal(true)}
           >
             <svg
@@ -294,7 +294,7 @@ export default function MemberManager({
 
       {/* オーナー情報 */}
       <div class="card bg-base-100 shadow-xl mb-6">
-        <div class="card-body">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <div class="flex justify-between items-start">
             <div>
               <h3 class="card-title text-base">オーナー</h3>
@@ -312,7 +312,7 @@ export default function MemberManager({
             </div>
             {isOwner && !pendingTransfer && (
               <button
-                class="btn btn-outline btn-sm"
+                class="st-button st-button--outlined st-button--sm"
                 onClick={() => setShowTransferModal(true)}
               >
                 オーナーを譲渡
@@ -322,12 +322,12 @@ export default function MemberManager({
 
           {/* 譲渡申請中の表示 */}
           {pendingTransfer && (
-            <div class="alert alert-info mt-4">
+            <div class="st-alert st-alert--info" style="margin-top: var(--st-sys-spacing-4);">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                class="stroke-current shrink-0 w-6 h-6"
+                style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
               >
                 <path
                   stroke-linecap="round"
@@ -337,13 +337,13 @@ export default function MemberManager({
                 />
               </svg>
               <div>
-                <p class="font-medium">オーナー譲渡申請中</p>
-                <p class="text-sm">
+                <p style="font-weight: 500;">オーナー譲渡申請中</p>
+                <p style="font-size: var(--st-sys-typescale-body-small-size);">
                   {pendingTransfer.to_user_name} さんへの譲渡申請が承認待ちです
                 </p>
               </div>
               <button
-                class="btn btn-ghost btn-sm"
+                class="st-button st-button--text st-button--sm"
                 onClick={handleCancelTransfer}
                 disabled={isLoading}
               >
@@ -355,8 +355,8 @@ export default function MemberManager({
       </div>
 
       {/* メンバー一覧 */}
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h3 class="card-title text-base">メンバー</h3>
 
           {members.length === 0
@@ -366,8 +366,8 @@ export default function MemberManager({
               </p>
             )
             : (
-              <div class="overflow-x-auto">
-                <table class="table">
+              <div style="overflow-x: auto;">
+                <table class="st-table">
                   <thead>
                     <tr>
                       <th>メンバー</th>
@@ -381,7 +381,7 @@ export default function MemberManager({
                       <tr key={member.id} class="hover">
                         <td>
                           <div>
-                            <div class="font-medium">
+                            <div style="font-weight: 500;">
                               {member.display_name || member.email || "未設定"}
                             </div>
                             {member.email && (
@@ -395,7 +395,7 @@ export default function MemberManager({
                           {canManageMembers
                             ? (
                               <select
-                                class="select select-bordered select-sm"
+                                class="st-select st-select--sm"
                                 value={member.role}
                                 onChange={(e) =>
                                   handleRoleChange(
@@ -413,7 +413,7 @@ export default function MemberManager({
                               </select>
                             )
                             : (
-                              <span class="badge">
+                              <span class="st-badge">
                                 {roleDisplayNames[member.role]}
                               </span>
                             )}
@@ -445,9 +445,9 @@ export default function MemberManager({
 
       {/* 権限の説明 */}
       <div class="card bg-base-100 shadow-xl mt-6">
-        <div class="card-body">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h3 class="card-title text-base">権限の説明</h3>
-          <div class="overflow-x-auto">
+          <div style="overflow-x: auto;">
             <table class="table table-sm">
               <thead>
                 <tr>
@@ -458,8 +458,8 @@ export default function MemberManager({
               <tbody>
                 {roles.map((role) => (
                   <tr key={role}>
-                    <td class="font-medium">{roleDisplayNames[role]}</td>
-                    <td class="text-base-content/70">
+                    <td style="font-weight: 500;">{roleDisplayNames[role]}</td>
+                    <td style="color: var(--st-sys-color-on-surface-variant);">
                       {roleDescriptions[role]}
                     </td>
                   </tr>
@@ -477,21 +477,21 @@ export default function MemberManager({
             <h3 class="font-bold text-lg mb-4">メンバーを招待</h3>
 
             {error && (
-              <div class="alert alert-error mb-4">
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
                 <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleInvite}>
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">
                     メールアドレス<span class="text-error ml-1">*</span>
                   </span>
                 </label>
                 <input
                   type="email"
-                  class="input input-bordered"
+                  class="st-input"
                   value={inviteEmail}
                   onChange={(e) =>
                     setInviteEmail((e.target as HTMLInputElement).value)}
@@ -500,11 +500,11 @@ export default function MemberManager({
               </div>
 
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">権限</span>
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">権限</span>
                 </label>
                 <select
-                  class="select select-bordered"
+                  class="st-select"
                   value={inviteRole}
                   onChange={(e) =>
                     setInviteRole(
@@ -522,7 +522,7 @@ export default function MemberManager({
               <div class="modal-action">
                 <button
                   type="button"
-                  class="btn btn-ghost"
+                  class="st-button st-button--text"
                   onClick={() => {
                     setShowInviteModal(false);
                     setError(null);
@@ -533,11 +533,11 @@ export default function MemberManager({
                 </button>
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isLoading}
                 >
                   {isLoading && (
-                    <span class="loading loading-spinner loading-sm" />
+                    <span class="st-spinner st-spinner--sm" />
                   )}
                   招待を送信
                 </button>
@@ -566,7 +566,7 @@ export default function MemberManager({
             <div class="alert alert-warning mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current shrink-0 h-6 w-6"
+                style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -578,8 +578,8 @@ export default function MemberManager({
                 />
               </svg>
               <div>
-                <p class="font-medium">注意</p>
-                <p class="text-sm">
+                <p style="font-weight: 500;">注意</p>
+                <p style="font-size: var(--st-sys-typescale-body-small-size);">
                   オーナーを譲渡すると、この台帳の所有権が移ります。
                   あなたは管理者として残ります。
                 </p>
@@ -587,21 +587,21 @@ export default function MemberManager({
             </div>
 
             {error && (
-              <div class="alert alert-error mb-4">
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
                 <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleTransfer}>
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">
                     譲渡先のメンバー<span class="text-error ml-1">*</span>
                   </span>
                 </label>
                 {members.length === 0
                   ? (
-                    <div class="alert alert-info">
+                    <div class="st-alert st-alert--info">
                       <span>
                         譲渡先となるメンバーがいません。先にメンバーを招待してください。
                       </span>
@@ -609,7 +609,7 @@ export default function MemberManager({
                   )
                   : (
                     <select
-                      class="select select-bordered"
+                      class="st-select"
                       value={selectedMemberId}
                       onChange={(e) =>
                         setSelectedMemberId(
@@ -625,8 +625,8 @@ export default function MemberManager({
                       ))}
                     </select>
                   )}
-                <label class="label">
-                  <span class="label-text-alt text-base-content/60">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__helper">
                     選択したメンバーに譲渡申請メールが送信されます
                   </span>
                 </label>
@@ -635,7 +635,7 @@ export default function MemberManager({
               <div class="modal-action">
                 <button
                   type="button"
-                  class="btn btn-ghost"
+                  class="st-button st-button--text"
                   onClick={() => {
                     setShowTransferModal(false);
                     setError(null);
@@ -647,11 +647,11 @@ export default function MemberManager({
                 </button>
                 <button
                   type="submit"
-                  class="btn btn-warning"
+                  class="st-button st-button--filled" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);"
                   disabled={isLoading || members.length === 0}
                 >
                   {isLoading && (
-                    <span class="loading loading-spinner loading-sm" />
+                    <span class="st-spinner st-spinner--sm" />
                   )}
                   譲渡申請を送信
                 </button>

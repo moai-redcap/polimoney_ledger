@@ -81,16 +81,16 @@ export default function PoliticianProfileForm({ politician }: Props) {
   };
 
   return (
-    <div class="space-y-6">
+    <div class="st-stack st-stack--lg">
       {/* 認証情報 */}
       <div class="card bg-success/10 border border-success/30">
-        <div class="card-body">
-          <div class="flex items-center gap-3">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+          <div class="st-flex st-flex--items-center st-gap-3">
             <div class="avatar placeholder">
               <div class="bg-success text-success-content rounded-full w-12">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
+                  style="width: 1.5rem; height: 1.5rem;"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -125,17 +125,15 @@ export default function PoliticianProfileForm({ politician }: Props) {
       {message && (
         <div
           role="alert"
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
       )}
 
       {/* プロフィール写真 */}
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
+      <div class="st-card st-card--elevated">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h3 class="card-title text-base">プロフィール写真</h3>
           <p class="text-sm text-base-content/70 mb-4">
             Polimoney の政治家ページで表示される顔写真です。円形で表示されます。
@@ -152,20 +150,20 @@ export default function PoliticianProfileForm({ politician }: Props) {
       </div>
 
       {/* 編集フォーム */}
-      <form onSubmit={handleSubmit} class="space-y-6">
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+      <form onSubmit={handleSubmit} class="st-stack st-stack--lg">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">基本情報</h3>
             <p class="text-sm text-base-content/70 mb-4">
-              <span class="text-error">*</span>{" "}
+              <span style="color: var(--st-sys-color-error);">*</span>{" "}
               は必須項目です。この情報は公開ページで表示されます。
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    氏名 <span class="text-error">*</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    氏名 <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
@@ -173,50 +171,50 @@ export default function PoliticianProfileForm({ politician }: Props) {
                   value={name}
                   onChange={(e) =>
                     setName((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   required
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">ふりがな</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">ふりがな</span>
                 </label>
                 <input
                   type="text"
                   value={nameKana}
                   onChange={(e) =>
                     setNameKana((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="やまだ たろう"
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">所属政党</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">所属政党</span>
                 </label>
                 <input
                   type="text"
                   value={party}
                   onChange={(e) =>
                     setParty((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="無所属"
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">公式サイト URL</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">公式サイト URL</span>
                 </label>
                 <input
                   type="url"
                   value={officialUrl}
                   onChange={(e) =>
                     setOfficialUrl((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="https://"
                 />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/60">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__helper">
                     認証済みドメイン ({politician.verified_domain}) のURLを推奨
                   </span>
                 </label>
@@ -226,63 +224,63 @@ export default function PoliticianProfileForm({ politician }: Props) {
         </div>
 
         {/* SNS リンク */}
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">SNS リンク</h3>
             <p class="text-sm text-base-content/70 mb-4">
               公式アカウントのURLを入力してください。すべて任意項目です。
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">X (Twitter)</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">X (Twitter)</span>
                 </label>
                 <input
                   type="url"
                   value={snsX}
                   onChange={(e) =>
                     setSnsX((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="https://x.com/username"
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Instagram</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">Instagram</span>
                 </label>
                 <input
                   type="url"
                   value={snsInstagram}
                   onChange={(e) =>
                     setSnsInstagram((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="https://instagram.com/username"
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">Facebook</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">Facebook</span>
                 </label>
                 <input
                   type="url"
                   value={snsFacebook}
                   onChange={(e) =>
                     setSnsFacebook((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="https://facebook.com/pagename"
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">TikTok</span>
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">TikTok</span>
                 </label>
                 <input
                   type="url"
                   value={snsTiktok}
                   onChange={(e) =>
                     setSnsTiktok((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="https://tiktok.com/@username"
                 />
               </div>
@@ -292,8 +290,8 @@ export default function PoliticianProfileForm({ politician }: Props) {
 
         {/* 認証ドメイン変更 */}
         {politician.verified_domain && (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">認証ドメイン</h3>
               <p class="text-sm text-base-content/70 mb-4">
                 公式サイト URL は認証済みドメインである必要があります。
@@ -305,7 +303,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
                 </div>
                 <a
                   href="/verify/politician?change_domain=true"
-                  class="btn btn-outline btn-sm"
+                  class="st-button st-button--outlined st-button--sm"
                 >
                   ドメインを変更
                 </a>
@@ -318,7 +316,7 @@ export default function PoliticianProfileForm({ politician }: Props) {
         <div class="flex justify-end">
           <button
             type="submit"
-            class="btn btn-primary"
+            class="st-button st-button--filled"
             disabled={isSubmitting || !name.trim()}
           >
             {isSubmitting ? "保存中..." : "変更を保存"}

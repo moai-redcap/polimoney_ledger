@@ -421,15 +421,15 @@ export default function OrganizationManagerVerificationForm({
   }: {
     verification: OrganizationManagerVerification;
   }) => (
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
+    <div class="st-card st-card--elevated">
+      <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
         <h3 class="card-title text-base">DNS TXT認証</h3>
-        <div class="alert alert-info mb-4">
+        <div class="st-alert st-alert--info" style="margin-bottom: var(--st-sys-spacing-4);">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            class="stroke-current shrink-0 w-6 h-6"
+            style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           >
             <path
               strokeLinecap="round"
@@ -446,15 +446,15 @@ export default function OrganizationManagerVerificationForm({
 
         <div class="bg-base-200 p-4 rounded-lg font-mono text-sm space-y-2">
           <div>
-            <span class="text-base-content/70">ドメイン:</span>{" "}
-            <span class="font-bold">{verification.official_domain}</span>
+            <span style="color: var(--st-sys-color-on-surface-variant);">ドメイン:</span>{" "}
+            <span style="font-weight: 700;">{verification.official_domain}</span>
           </div>
           <div>
-            <span class="text-base-content/70">タイプ:</span>{" "}
-            <span class="font-bold">TXT</span>
+            <span style="color: var(--st-sys-color-on-surface-variant);">タイプ:</span>{" "}
+            <span style="font-weight: 700;">TXT</span>
           </div>
           <div>
-            <span class="text-base-content/70">値:</span>{" "}
+            <span style="color: var(--st-sys-color-on-surface-variant);">値:</span>{" "}
             <code class="bg-base-300 px-2 py-1 rounded break-all">
               polimoney-verify={verification.dns_txt_token}
             </code>
@@ -468,7 +468,7 @@ export default function OrganizationManagerVerificationForm({
 
         <div class="card-actions justify-end mt-4">
           <button
-            class="btn btn-primary"
+            class="st-button st-button--filled"
             onClick={() => handleVerifyDns(verification.id)}
             disabled={isSubmitting}
           >
@@ -487,11 +487,11 @@ export default function OrganizationManagerVerificationForm({
     value: PoliticalFundReportInfo;
     onChange: (v: PoliticalFundReportInfo) => void;
   }) => (
-    <div class="space-y-4">
-      <div class="alert alert-warning">
+    <div class="st-stack st-stack--md">
+      <div class="st-alert st-alert--warning">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
+          style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -508,9 +508,9 @@ export default function OrganizationManagerVerificationForm({
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">団体名 *</span>
+        <div class="st-field">
+          <label class="st-field__label-wrapper">
+            <span class="st-field__label">団体名 *</span>
           </label>
           <input
             type="text"
@@ -520,14 +520,14 @@ export default function OrganizationManagerVerificationForm({
                 ...value,
                 organization_name: (e.target as HTMLInputElement).value,
               })}
-            class="input input-bordered"
+            class="st-input"
             placeholder="例: 山田太郎後援会"
             required
           />
         </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">代表者名 *</span>
+        <div class="st-field">
+          <label class="st-field__label-wrapper">
+            <span class="st-field__label">代表者名 *</span>
           </label>
           <input
             type="text"
@@ -537,14 +537,14 @@ export default function OrganizationManagerVerificationForm({
                 ...value,
                 representative_name: (e.target as HTMLInputElement).value,
               })}
-            class="input input-bordered"
+            class="st-input"
             placeholder="例: 山田太郎"
             required
           />
         </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">届出先 *</span>
+        <div class="st-field">
+          <label class="st-field__label-wrapper">
+            <span class="st-field__label">届出先 *</span>
           </label>
           <select
             value={value.registration_authority}
@@ -553,7 +553,7 @@ export default function OrganizationManagerVerificationForm({
                 ...value,
                 registration_authority: (e.target as HTMLSelectElement).value,
               })}
-            class="select select-bordered"
+            class="st-select"
             required
           >
             <option value="">選択してください</option>
@@ -579,37 +579,35 @@ export default function OrganizationManagerVerificationForm({
     );
 
     return (
-      <div class="space-y-6">
+      <div class="st-stack st-stack--lg">
         {/* メッセージ */}
         {message && (
           <div
             role="alert"
-            class={`alert ${
-              message.type === "success" ? "alert-success" : "alert-error"
-            }`}
+            class="st-alert"
           >
             <span>{message.text}</span>
           </div>
         )}
 
         {/* 現在の認証情報 */}
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">現在の認証情報</h3>
             <div class="bg-base-200 p-4 rounded-lg">
               <div class="grid grid-cols-2 gap-2 text-sm">
-                <div class="text-base-content/70">団体名</div>
-                <div class="font-medium">{targetOrganization.name}</div>
-                <div class="text-base-content/70">団体種別</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">団体名</div>
+                <div style="font-weight: 500;">{targetOrganization.name}</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">団体種別</div>
                 <div>
                   {organizationTypeLabels[targetOrganization.type] ||
                     targetOrganization.type}
                 </div>
-                <div class="text-base-content/70">認証ドメイン</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">認証ドメイン</div>
                 <div class="font-mono">
                   {targetOrganization.manager_verified_domain}
                 </div>
-                <div class="text-base-content/70">認証日</div>
+                <div style="color: var(--st-sys-color-on-surface-variant);">認証日</div>
                 <div>
                   {targetOrganization.manager_verified_at
                     ? new Date(
@@ -629,26 +627,26 @@ export default function OrganizationManagerVerificationForm({
 
         {/* 認証コード入力 */}
         {activeVerificationId && (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">認証コードを入力</h3>
               <p class="text-sm text-base-content/70 mb-4">
                 メールに送信された6桁のコードを入力してください。
               </p>
               <form onSubmit={handleVerifyCode}>
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <input
                     type="text"
                     value={verificationCode}
                     onChange={(e) =>
                       setVerificationCode((e.target as HTMLInputElement).value)}
-                    class="input input-bordered flex-1"
+                    class="st-input" style="flex: 1;"
                     placeholder="6桁のコード"
                     maxLength={6}
                   />
                   <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     disabled={isSubmitting || verificationCode.length !== 6}
                   >
                     認証
@@ -660,13 +658,13 @@ export default function OrganizationManagerVerificationForm({
         )}
 
         {/* ドメイン変更フォーム */}
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">ドメイン変更申請</h3>
             <div class="alert alert-warning mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current shrink-0 h-6 w-6"
+                style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -682,11 +680,11 @@ export default function OrganizationManagerVerificationForm({
               </span>
             </div>
 
-            <form onSubmit={handleDomainChangeSubmit} class="space-y-4">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">
-                    新しい公式メールアドレス <span class="text-error">*</span>
+            <form onSubmit={handleDomainChangeSubmit} class="st-stack st-stack--md">
+              <div class="st-field">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label">
+                    新しい公式メールアドレス <span style="color: var(--st-sys-color-error);">*</span>
                   </span>
                 </label>
                 <input
@@ -694,12 +692,12 @@ export default function OrganizationManagerVerificationForm({
                   value={newEmail}
                   onChange={(e) =>
                     setNewEmail((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="例: info@new-domain.jp"
                   required
                 />
                 {newEmail && (
-                  <label class="label">
+                  <label class="st-field__label-wrapper">
                     {newIsLgDomain
                       ? (
                         <span class="label-text-alt text-success">
@@ -721,17 +719,17 @@ export default function OrganizationManagerVerificationForm({
                 onChange={setNewFundInfo}
               />
 
-              <div class="flex gap-2">
+              <div class="st-flex st-gap-2">
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isSubmitting || !newEmail}
                 >
                   {isSubmitting ? "送信中..." : "変更を申請"}
                 </button>
                 <a
                   href={`/profile/organization/${targetOrganization.id}`}
-                  class="btn"
+                  class="st-button"
                 >
                   キャンセル
                 </a>
@@ -744,8 +742,8 @@ export default function OrganizationManagerVerificationForm({
         {organizationManagerVerifications.filter(
               (v) => v.request_type === "domain_change",
             ).length > 0 && (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">ドメイン変更申請履歴</h3>
               <div class="space-y-3">
                 {organizationManagerVerifications
@@ -756,7 +754,7 @@ export default function OrganizationManagerVerificationForm({
                       class="flex items-center justify-between p-4 bg-base-200 rounded-lg"
                     >
                       <div>
-                        <span class="font-medium">{v.organization_name}</span>
+                        <span style="font-weight: 500;">{v.organization_name}</span>
                         <span class="text-sm text-base-content/70 ml-2">
                           ({v.official_email})
                         </span>
@@ -774,7 +772,7 @@ export default function OrganizationManagerVerificationForm({
                           )}
                         </p>
                       </div>
-                      <div class="flex items-center gap-2">
+                      <div class="st-flex st-flex--items-center st-gap-2">
                         <span
                           class={`badge ${
                             statusLabels[v.status]?.class || "badge-ghost"
@@ -794,7 +792,7 @@ export default function OrganizationManagerVerificationForm({
                         )}
                         {v.status === "email_sent" && (
                           <button
-                            class="btn btn-sm btn-outline"
+                            class="st-button st-button--outlined st-button--sm"
                             onClick={() => handleSendCode(v.id)}
                             disabled={isSubmitting}
                           >
@@ -815,10 +813,10 @@ export default function OrganizationManagerVerificationForm({
   // ドメイン変更モードだが対象団体が見つからない場合
   if (changeDomain && targetOrganizationId && !targetOrganization) {
     return (
-      <div class="alert alert-error">
+      <div class="st-alert st-alert--error">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
+          style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -830,8 +828,8 @@ export default function OrganizationManagerVerificationForm({
           />
         </svg>
         <div>
-          <h3 class="font-bold">団体が見つかりません</h3>
-          <p class="text-sm">
+          <h3 style="font-weight: 700;">団体が見つかりません</h3>
+          <p style="font-size: var(--st-sys-typescale-body-small-size);">
             指定された政治団体が見つからないか、あなたが管理者として認証されていません。
           </p>
           <a href="/profile/organization" class="btn btn-sm mt-2">
@@ -849,14 +847,12 @@ export default function OrganizationManagerVerificationForm({
   );
 
   return (
-    <div class="space-y-6">
+    <div class="st-stack st-stack--lg">
       {/* メッセージ */}
       {message && (
         <div
           role="alert"
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
@@ -864,8 +860,8 @@ export default function OrganizationManagerVerificationForm({
 
       {/* 管理中の団体一覧 */}
       {managedOrganizations.length > 0 && (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">管理している政治団体</h3>
             <div class="space-y-3">
               {managedOrganizations.map((org) => (
@@ -873,12 +869,12 @@ export default function OrganizationManagerVerificationForm({
                   key={org.id}
                   class="flex items-center justify-between p-4 bg-base-200 rounded-lg"
                 >
-                  <div class="flex items-center gap-3">
+                  <div class="st-flex st-flex--items-center st-gap-3">
                     <div class="avatar placeholder">
                       <div class="bg-success text-success-content rounded-full w-10">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-5 w-5"
+                          style="width: 1.25rem; height: 1.25rem;"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -891,7 +887,7 @@ export default function OrganizationManagerVerificationForm({
                       </div>
                     </div>
                     <div>
-                      <span class="font-medium">{org.name}</span>
+                      <span style="font-weight: 500;">{org.name}</span>
                       <span class="badge badge-outline ml-2">
                         {organizationTypeLabels[org.type] || org.type}
                       </span>
@@ -915,8 +911,8 @@ export default function OrganizationManagerVerificationForm({
       {/* 申請履歴 */}
       {organizationManagerVerifications.filter((v) => v.status !== "approved")
             .length > 0 && (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">申請履歴</h3>
             <div class="space-y-3">
               {organizationManagerVerifications
@@ -927,7 +923,7 @@ export default function OrganizationManagerVerificationForm({
                     class="flex items-center justify-between p-4 bg-base-200 rounded-lg"
                   >
                     <div>
-                      <span class="font-medium">{v.organization_name}</span>
+                      <span style="font-weight: 500;">{v.organization_name}</span>
                       <span class="text-sm text-base-content/70 ml-2">
                         ({v.official_email})
                       </span>
@@ -950,7 +946,7 @@ export default function OrganizationManagerVerificationForm({
                         )}
                       </p>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="st-flex st-flex--items-center st-gap-2">
                       <span
                         class={`badge ${
                           statusLabels[v.status]?.class || "badge-ghost"
@@ -970,7 +966,7 @@ export default function OrganizationManagerVerificationForm({
                       )}
                       {v.status === "email_sent" && (
                         <button
-                          class="btn btn-sm btn-outline"
+                          class="st-button st-button--outlined st-button--sm"
                           onClick={() => handleSendCode(v.id)}
                           disabled={isSubmitting}
                         >
@@ -987,26 +983,26 @@ export default function OrganizationManagerVerificationForm({
 
       {/* 認証コード入力 */}
       {activeVerificationId && (
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h3 class="card-title text-base">認証コードを入力</h3>
             <p class="text-sm text-base-content/70 mb-4">
               メールに送信された6桁のコードを入力してください。
             </p>
             <form onSubmit={handleVerifyCode}>
-              <div class="flex gap-2">
+              <div class="st-flex st-gap-2">
                 <input
                   type="text"
                   value={verificationCode}
                   onChange={(e) =>
                     setVerificationCode((e.target as HTMLInputElement).value)}
-                  class="input input-bordered flex-1"
+                  class="st-input" style="flex: 1;"
                   placeholder="6桁のコード"
                   maxLength={6}
                 />
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isSubmitting || verificationCode.length !== 6}
                 >
                   認証
@@ -1020,14 +1016,14 @@ export default function OrganizationManagerVerificationForm({
       {/* 新規申請フォーム */}
       {showForm
         ? (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">認証申請</h3>
-              <form onSubmit={handleSubmit} class="space-y-4">
+              <form onSubmit={handleSubmit} class="st-stack st-stack--md">
                 {/* 検索可能コンボボックス */}
-                <div class="form-control" ref={dropdownRef}>
-                  <label class="label">
-                    <span class="label-text">政治団体を検索・選択</span>
+                <div class="st-field" ref={dropdownRef}>
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label">政治団体を検索・選択</span>
                   </label>
                   <div class="relative">
                     <input
@@ -1039,7 +1035,7 @@ export default function OrganizationManagerVerificationForm({
                         setIsDropdownOpen(true);
                       }}
                       onFocus={() => setIsDropdownOpen(true)}
-                      class="input input-bordered w-full"
+                      class="st-input" style="width: 100%;"
                       placeholder="団体名を入力して検索..."
                     />
                     {/* ドロップダウン */}
@@ -1074,7 +1070,7 @@ export default function OrganizationManagerVerificationForm({
                                 }`}
                                 onClick={() => handleSelectOrg(org)}
                               >
-                                <span class="font-medium">{org.name}</span>
+                                <span style="font-weight: 500;">{org.name}</span>
                                 <span class="badge badge-sm badge-outline ml-2">
                                   {organizationTypeLabels[org.type] || org.type}
                                 </span>
@@ -1091,8 +1087,8 @@ export default function OrganizationManagerVerificationForm({
                       </div>
                     )}
                   </div>
-                  <label class="label">
-                    <span class="label-text-alt">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__helper">
                       既存の政治団体を選択するか、新規作成できます
                     </span>
                   </label>
@@ -1101,29 +1097,29 @@ export default function OrganizationManagerVerificationForm({
                 {/* 新規作成時の入力フィールド */}
                 {!selectedOrg && (
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-base-200 rounded-lg">
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">政治団体名 *</span>
+                    <div class="st-field">
+                      <label class="st-field__label-wrapper">
+                        <span class="st-field__label">政治団体名 *</span>
                       </label>
                       <input
                         type="text"
                         value={orgName}
                         onChange={(e) =>
                           setOrgName((e.target as HTMLInputElement).value)}
-                        class="input input-bordered"
+                        class="st-input"
                         placeholder="○○後援会"
                         required={!selectedOrg}
                       />
                     </div>
-                    <div class="form-control">
-                      <label class="label">
-                        <span class="label-text">団体種別 *</span>
+                    <div class="st-field">
+                      <label class="st-field__label-wrapper">
+                        <span class="st-field__label">団体種別 *</span>
                       </label>
                       <select
                         value={orgType}
                         onChange={(e) =>
                           setOrgType((e.target as HTMLSelectElement).value)}
-                        class="select select-bordered"
+                        class="st-select"
                         required
                       >
                         {Object.entries(organizationTypeLabels).map(
@@ -1140,21 +1136,21 @@ export default function OrganizationManagerVerificationForm({
 
                 {/* 共通フィールド */}
                 <div class="grid grid-cols-1 gap-4">
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">公式メールアドレス *</span>
+                  <div class="st-field">
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__label">公式メールアドレス *</span>
                     </label>
                     <input
                       type="email"
                       value={orgEmail}
                       onChange={(e) =>
                         setOrgEmail((e.target as HTMLInputElement).value)}
-                      class="input input-bordered"
+                      class="st-input"
                       placeholder="例: info@party.example.jp"
                       required
                     />
                     {orgEmail && (
-                      <label class="label">
+                      <label class="st-field__label-wrapper">
                         {isLgDomain
                           ? (
                             <span class="label-text-alt text-success">
@@ -1169,16 +1165,16 @@ export default function OrganizationManagerVerificationForm({
                       </label>
                     )}
                   </div>
-                  <div class="form-control">
-                    <label class="label">
-                      <span class="label-text">役職</span>
+                  <div class="st-field">
+                    <label class="st-field__label-wrapper">
+                      <span class="st-field__label">役職</span>
                     </label>
                     <input
                       type="text"
                       value={orgRole}
                       onChange={(e) =>
                         setOrgRole((e.target as HTMLInputElement).value)}
-                      class="input input-bordered"
+                      class="st-input"
                       placeholder="例: 事務局長、会計責任者"
                     />
                   </div>
@@ -1187,17 +1183,17 @@ export default function OrganizationManagerVerificationForm({
                 {/* 政治資金収支報告書情報 */}
                 <FundReportInfoForm value={fundInfo} onChange={setFundInfo} />
 
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <button
                     type="submit"
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     disabled={isSubmitting || (!selectedOrg && !orgName)}
                   >
                     {isSubmitting ? "送信中..." : "申請する"}
                   </button>
                   <button
                     type="button"
-                    class="btn"
+                    class="st-button"
                     onClick={() => {
                       setShowForm(false);
                       setSelectedOrg(null);
@@ -1212,15 +1208,15 @@ export default function OrganizationManagerVerificationForm({
           </div>
         )
         : (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
               <h3 class="card-title text-base">新規認証申請</h3>
               <p class="text-base-content/70 mb-4">
                 政治団体の管理者として認証されると、その団体の収支台帳を管理できるようになります。
                 認証にはlg.jpドメインの場合はメール認証、それ以外はDNS
                 TXT認証が必要です。
               </p>
-              <button class="btn btn-primary" onClick={() => setShowForm(true)}>
+              <button class="st-button st-button--filled" onClick={() => setShowForm(true)}>
                 認証を申請する
               </button>
             </div>

@@ -162,11 +162,11 @@ export default define.page<typeof handler>(({ data }) => {
           <title>資産一覧が見つかりません - Polimoney Ledger</title>
         </Head>
         <Layout currentPath="/elections" title="資産一覧">
-          <div class="alert alert-error">
+          <div class="st-alert st-alert--error">
             <span>{error || "選挙が見つかりません"}</span>
           </div>
-          <div class="mt-4">
-            <a href="/elections" class="btn btn-outline">
+          <div style="margin-top: var(--st-sys-spacing-4);">
+            <a href="/elections" class="st-button st-button--outlined">
               ← 選挙一覧に戻る
             </a>
           </div>
@@ -221,7 +221,7 @@ export default define.page<typeof handler>(({ data }) => {
           >
             仕訳一覧
           </a>
-          <a role="tab" class="tab tab-active">
+          <a role="tab" class="st-tab st-tab--active">
             資産一覧
           </a>
           <a
@@ -253,8 +253,8 @@ export default define.page<typeof handler>(({ data }) => {
         </div>
 
         {/* 資産一覧テーブル */}
-        <div class="card bg-base-100 shadow">
-          <div class="card-body">
+        <div class="st-card st-card--elevated">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
             <h2 class="card-title text-lg">
               資産等一覧
               <span class="badge badge-ghost">{assets.length}件</span>
@@ -263,15 +263,15 @@ export default define.page<typeof handler>(({ data }) => {
             {assets.length === 0
               ? (
                 <div class="text-center py-12">
-                  <div class="text-6xl mb-4">🏛️</div>
-                  <p class="text-base-content/70">資産の登録がありません</p>
+                  <div style="font-size: 4rem; margin-bottom: var(--st-sys-spacing-4);">🏛️</div>
+                  <p style="color: var(--st-sys-color-on-surface-variant);">資産の登録がありません</p>
                   <p class="text-sm text-base-content/50 mt-2">
                     仕訳登録時に「資産取得」にチェックを入れると、ここに表示されます
                   </p>
                 </div>
               )
               : (
-                <div class="overflow-x-auto">
+                <div style="overflow-x: auto;">
                   <table class="table table-zebra">
                     <thead>
                       <tr>
@@ -290,7 +290,7 @@ export default define.page<typeof handler>(({ data }) => {
                             {formatDate(asset.journal_date)}
                           </td>
                           <td>
-                            <span class="badge badge-outline">
+                            <span class="st-badge st-badge--outline">
                               {ASSET_TYPE_LABELS[asset.asset_type] ||
                                 asset.asset_type}
                             </span>
@@ -311,7 +311,7 @@ export default define.page<typeof handler>(({ data }) => {
                           <td>
                             <a
                               href={`/journals/${asset.id}`}
-                              class="btn btn-ghost btn-sm"
+                              class="st-button st-button--text st-button--sm"
                             >
                               詳細
                             </a>

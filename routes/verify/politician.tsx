@@ -3,12 +3,12 @@ import { page } from "fresh";
 import { Layout } from "../../components/Layout.tsx";
 import PoliticianVerificationForm from "../../islands/PoliticianVerificationForm.tsx";
 import {
-import { define } from "../../lib/define.ts";
   getPoliticianVerificationsByUser,
   getVerifiedPoliticianByUserId,
   type Politician,
   type PoliticianVerification,
 } from "../../lib/hub-client.ts";
+import { define } from "../../lib/define.ts";
 
 interface PageData {
   userId: string;
@@ -59,25 +59,13 @@ export default define.page<typeof handler>(({
         <title>政治家認証 - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/verify/politician" title="政治家認証">
-        <div class="max-w-2xl">
+        <div style="max-width: 42rem;">
           {/* 説明 */}
-          <div class="alert alert-info mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="stroke-current shrink-0 w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div>
-              <h3 class="font-bold">政治家認証とは</h3>
-              <p class="text-sm">
+          <div class="st-alert st-alert--info" style="margin-bottom: var(--st-sys-spacing-6);">
+            <div class="st-alert__icon">ℹ️</div>
+            <div class="st-alert__content">
+              <h3 style="font-weight: 700;">政治家認証とは</h3>
+              <p style="font-size: var(--st-sys-typescale-body-small-size);">
                 政治家として本人確認を行うことで、選挙台帳を作成・管理できるようになります。
                 認証には公式ドメインのメールアドレスが必要です。
               </p>

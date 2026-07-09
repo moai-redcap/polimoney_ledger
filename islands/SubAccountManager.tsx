@@ -212,13 +212,13 @@ export default function SubAccountManager({
       {/* ヘッダー */}
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <p class="text-base-content/70">
+          <p style="color: var(--st-sys-color-on-surface-variant);">
             勘定科目の内訳を細分化するための補助科目を管理します。
           </p>
         </div>
-        <div class="flex gap-2">
+        <div class="st-flex st-gap-2">
           <select
-            class="select select-bordered select-sm"
+            class="st-select st-select--sm"
             value={filterLedgerType}
             onChange={(e) =>
               setFilterLedgerType((e.target as HTMLSelectElement).value)}
@@ -227,7 +227,7 @@ export default function SubAccountManager({
             <option value="political_organization">政治団体用</option>
             <option value="election">選挙用</option>
           </select>
-          <button class="btn btn-primary btn-sm" onClick={openAddModal}>
+          <button class="st-button st-button--filled st-button--sm" onClick={openAddModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-4 w-4 mr-1"
@@ -250,8 +250,8 @@ export default function SubAccountManager({
       {/* 補助科目一覧 */}
       {Object.keys(groupedSubAccounts).length === 0
         ? (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body items-center text-center py-12">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-10); text-align: center; display: flex; flex-direction: column; align-items: center;">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-16 w-16 text-base-content/30 mb-4"
@@ -269,22 +269,22 @@ export default function SubAccountManager({
               <h3 class="text-lg font-semibold">
                 補助科目がまだ登録されていません
               </h3>
-              <p class="text-base-content/70">
+              <p style="color: var(--st-sys-color-on-surface-variant);">
                 「新規登録」ボタンから補助科目を追加してください。
               </p>
             </div>
           </div>
         )
         : (
-          <div class="space-y-4">
+          <div class="st-stack st-stack--md">
             {Object.entries(groupedSubAccounts).map(([accountCode, items]) => (
-              <div key={accountCode} class="card bg-base-100 shadow-xl">
-                <div class="card-body">
+              <div key={accountCode} class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
                   <h3 class="card-title text-base">
                     {getAccountName(accountCode)}
                     <span class="badge badge-ghost">{accountCode}</span>
                   </h3>
-                  <div class="overflow-x-auto">
+                  <div style="overflow-x: auto;">
                     <table class="table table-sm">
                       <thead>
                         <tr>
@@ -296,7 +296,7 @@ export default function SubAccountManager({
                       <tbody>
                         {items.map((subAccount) => (
                           <tr key={subAccount.id} class="hover">
-                            <td class="font-medium">{subAccount.name}</td>
+                            <td style="font-weight: 500;">{subAccount.name}</td>
                             <td>
                               <span
                                 class={`badge badge-sm ${
@@ -351,7 +351,7 @@ export default function SubAccountManager({
             </h3>
 
             {error && (
-              <div class="alert alert-error mb-4">
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
                 <span>{error}</span>
               </div>
             )}
@@ -360,8 +360,8 @@ export default function SubAccountManager({
               {/* 台帳タイプ（追加時のみ） */}
               {modalMode === "add" && (
                 <div class="form-control mb-4">
-                  <label class="label">
-                    <span class="label-text font-medium">台帳タイプ</span>
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label" style="font-weight: 500;">台帳タイプ</span>
                   </label>
                   <div class="join">
                     <input
@@ -400,13 +400,13 @@ export default function SubAccountManager({
               {/* 勘定科目（追加時のみ） */}
               {modalMode === "add" && (
                 <div class="form-control mb-4">
-                  <label class="label">
-                    <span class="label-text font-medium">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label" style="font-weight: 500;">
                       勘定科目<span class="text-error ml-1">*</span>
                     </span>
                   </label>
                   <select
-                    class="select select-bordered"
+                    class="st-select"
                     value={formData.parent_account_code}
                     onChange={(e) =>
                       setFormData({
@@ -430,12 +430,12 @@ export default function SubAccountManager({
               {/* 編集時は勘定科目を表示のみ */}
               {modalMode === "edit" && editingSubAccount && (
                 <div class="form-control mb-4">
-                  <label class="label">
-                    <span class="label-text font-medium">勘定科目</span>
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label" style="font-weight: 500;">勘定科目</span>
                   </label>
                   <input
                     type="text"
-                    class="input input-bordered"
+                    class="st-input"
                     value={getAccountName(
                       editingSubAccount.parent_account_code,
                     )}
@@ -446,14 +446,14 @@ export default function SubAccountManager({
 
               {/* 補助科目名 */}
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">
                     補助科目名<span class="text-error ml-1">*</span>
                   </span>
                 </label>
                 <input
                   type="text"
-                  class="input input-bordered"
+                  class="st-input"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({
@@ -468,7 +468,7 @@ export default function SubAccountManager({
               <div class="modal-action">
                 <button
                   type="button"
-                  class="btn btn-ghost"
+                  class="st-button st-button--text"
                   onClick={closeModal}
                   disabled={isLoading}
                 >
@@ -476,11 +476,11 @@ export default function SubAccountManager({
                 </button>
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isLoading}
                 >
                   {isLoading && (
-                    <span class="loading loading-spinner loading-sm" />
+                    <span class="st-spinner st-spinner--sm" />
                   )}
                   {modalMode === "add" ? "登録" : "更新"}
                 </button>

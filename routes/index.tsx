@@ -90,8 +90,8 @@ export default define.page<typeof handler>(({ data }) => {
 
           {/* ウェルカムカード */}
           <div class="card bg-primary text-primary-content">
-            <div class="card-body">
-              <h2 class="card-title">ようこそ、Polimoney Ledger へ！</h2>
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+              <h2 class="st-card__title">ようこそ、Polimoney Ledger へ！</h2>
               <p>
                 政治資金の収支管理を始めましょう。
                 まずは政治団体または選挙を登録してください。
@@ -105,12 +105,12 @@ export default define.page<typeof handler>(({ data }) => {
               href="/organizations"
               class="card bg-base-100 shadow hover:shadow-lg transition-shadow"
             >
-              <div class="card-body">
-                <div class="flex items-center gap-4">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                <div class="st-flex st-flex--items-center st-gap-4">
                   <div class="text-4xl">🏛️</div>
                   <div>
-                    <h3 class="card-title">政治団体</h3>
-                    <p class="text-base-content/70">政治団体の台帳を管理</p>
+                    <h3 class="st-card__title">政治団体</h3>
+                    <p style="color: var(--st-sys-color-on-surface-variant);">政治団体の台帳を管理</p>
                   </div>
                 </div>
               </div>
@@ -120,12 +120,12 @@ export default define.page<typeof handler>(({ data }) => {
               href="/elections"
               class="card bg-base-100 shadow hover:shadow-lg transition-shadow"
             >
-              <div class="card-body">
-                <div class="flex items-center gap-4">
+              <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                <div class="st-flex st-flex--items-center st-gap-4">
                   <div class="text-4xl">🗳️</div>
                   <div>
-                    <h3 class="card-title">選挙</h3>
-                    <p class="text-base-content/70">選挙の台帳を管理</p>
+                    <h3 class="st-card__title">選挙</h3>
+                    <p style="color: var(--st-sys-color-on-surface-variant);">選挙の台帳を管理</p>
                   </div>
                 </div>
               </div>
@@ -133,9 +133,9 @@ export default define.page<typeof handler>(({ data }) => {
           </div>
 
           {/* ヘルプ */}
-          <div class="card bg-base-100 shadow">
-            <div class="card-body">
-              <h2 class="card-title">使い方</h2>
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+              <h2 class="st-card__title">使い方</h2>
               <ol class="list-decimal list-inside space-y-2 text-base-content/70">
                 <li>「政治団体」または「選挙」を選択</li>
                 <li>対象の団体・選挙を選んで「台帳を開く」をクリック</li>

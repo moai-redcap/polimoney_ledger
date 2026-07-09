@@ -44,11 +44,11 @@ export default function ElectionSelector({ initialElections }: Props) {
     <div>
       {/* 検索・フィルター */}
       <div class="card bg-base-100 shadow-xl mb-6">
-        <div class="card-body">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <div class="flex flex-wrap gap-4">
             <div class="form-control flex-1 min-w-[200px]">
-              <label class="label">
-                <span class="label-text">🔍 検索</span>
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">🔍 検索</span>
               </label>
               <input
                 type="text"
@@ -56,18 +56,18 @@ export default function ElectionSelector({ initialElections }: Props) {
                 onInput={(e) =>
                   setSearchTerm((e.target as HTMLInputElement).value)}
                 placeholder="選挙名または選挙区コードで検索..."
-                class="input input-bordered w-full"
+                class="st-input" style="width: 100%;"
               />
             </div>
             <div class="form-control w-48">
-              <label class="label">
-                <span class="label-text">種別</span>
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">種別</span>
               </label>
               <select
                 value={selectedType}
                 onChange={(e) =>
                   setSelectedType((e.target as HTMLSelectElement).value)}
-                class="select select-bordered w-full"
+                class="st-select" style="width: 100%;"
               >
                 <option value="">すべて</option>
                 {Object.entries(ELECTION_TYPES).map(([code, name]) => (
@@ -82,7 +82,7 @@ export default function ElectionSelector({ initialElections }: Props) {
       </div>
 
       {/* 選挙一覧 */}
-      <div class="space-y-6">
+      <div class="st-stack st-stack--lg">
         {years.length > 0
           ? (
             years.map((year) => (
@@ -91,14 +91,14 @@ export default function ElectionSelector({ initialElections }: Props) {
                   <span class="mr-2">📅</span>
                   {year}年
                 </h2>
-                <div class="card bg-base-100 shadow-xl">
+                <div class="st-card st-card--elevated">
                   <div class="card-body p-0">
                     <ul class="menu p-0">
                       {groupedByYear[year].map((election) => (
                         <li key={election.id}>
                           <div class="flex justify-between items-center py-4 px-6 border-b border-base-200 last:border-b-0">
                             <div>
-                              <h3 class="font-medium">{election.name}</h3>
+                              <h3 style="font-weight: 500;">{election.name}</h3>
                               <div class="mt-1 flex flex-wrap items-center gap-2">
                                 <span class="badge badge-info badge-sm">
                                   {ELECTION_TYPES[election.type] ||
@@ -116,7 +116,7 @@ export default function ElectionSelector({ initialElections }: Props) {
                             </div>
                             <a
                               href={`/elections/${election.id}/ledger`}
-                              class="btn btn-primary btn-sm"
+                              class="st-button st-button--filled st-button--sm"
                             >
                               台帳を開く
                             </a>
@@ -130,9 +130,9 @@ export default function ElectionSelector({ initialElections }: Props) {
             ))
           )
           : (
-            <div class="card bg-base-100 shadow-xl">
+            <div class="st-card st-card--elevated">
               <div class="card-body items-center text-center">
-                <p class="text-base-content/70">該当する選挙が見つかりません</p>
+                <p style="color: var(--st-sys-color-on-surface-variant);">該当する選挙が見つかりません</p>
               </div>
             </div>
           )}
@@ -142,7 +142,7 @@ export default function ElectionSelector({ initialElections }: Props) {
       <div role="alert" class="alert alert-warning mt-8">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current shrink-0 h-6 w-6"
+          style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -154,8 +154,8 @@ export default function ElectionSelector({ initialElections }: Props) {
           />
         </svg>
         <div>
-          <h3 class="font-bold">該当する選挙がない場合</h3>
-          <p class="text-sm">
+          <h3 style="font-weight: 700;">該当する選挙がない場合</h3>
+          <p style="font-size: var(--st-sys-typescale-body-small-size);">
             お探しの選挙が見つからない場合は、登録をリクエストできます。
           </p>
         </div>
@@ -281,10 +281,10 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
         <h3 class="font-bold text-lg mb-4">選挙の登録リクエスト</h3>
 
         {error && (
-          <div role="alert" class="alert alert-error mb-4">
+          <div role="alert" class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="stroke-current shrink-0 h-6 w-6"
+              style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -299,11 +299,11 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} class="space-y-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙名 <span class="text-error">*</span>
+        <form onSubmit={handleSubmit} class="st-stack st-stack--md">
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙名 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
@@ -316,14 +316,14 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
                   name: (e.target as HTMLInputElement).value,
                 })}
               placeholder="例: 2025年〇〇市議会議員選挙"
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙種別 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙種別 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <select
@@ -334,7 +334,7 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
                   ...formData,
                   type: (e.target as HTMLSelectElement).value,
                 })}
-              class="select select-bordered w-full"
+              class="st-select" style="width: 100%;"
             >
               {Object.entries(ELECTION_TYPES).map(([code, name]) => (
                 <option key={code} value={code}>
@@ -344,10 +344,10 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙区の説明 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙区の説明 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
@@ -360,14 +360,14 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
                   area_description: (e.target as HTMLInputElement).value,
                 })}
               placeholder="例: 東京都第1区、〇〇市全域"
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙日（投開票日） <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙日（投開票日） <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <div class="relative">
@@ -433,9 +433,9 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">証明URL（選管サイト等）</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">証明URL（選管サイト等）</span>
             </label>
             <input
               type="url"
@@ -446,13 +446,13 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
                   evidence_url: (e.target as HTMLInputElement).value,
                 })}
               placeholder="https://..."
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">連絡先メールアドレス</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">連絡先メールアドレス</span>
             </label>
             <input
               type="email"
@@ -463,13 +463,13 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
                   requested_by_email: (e.target as HTMLInputElement).value,
                 })}
               placeholder="example@email.com"
-              class="input input-bordered w-full"
+              class="st-input" style="width: 100%;"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">備考</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">備考</span>
             </label>
             <textarea
               value={formData.notes}
@@ -484,12 +484,12 @@ function ElectionRequestModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div class="modal-action">
-            <button type="button" class="btn btn-ghost" onClick={onClose}>
+            <button type="button" class="st-button st-button--text" onClick={onClose}>
               キャンセル
             </button>
             <button
               type="submit"
-              class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+              class="st-button st-button--filled"
               disabled={isSubmitting}
             >
               {isSubmitting ? "送信中..." : "リクエストを送信"}

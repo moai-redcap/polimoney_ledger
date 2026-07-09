@@ -98,11 +98,11 @@ export default function PendingTransfers({
 
   return (
     <div class="card bg-warning/10 border border-warning shadow mb-6">
-      <div class="card-body">
+      <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
         <h2 class="card-title text-warning">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
+            style="width: 1.5rem; height: 1.5rem;"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -118,9 +118,9 @@ export default function PendingTransfers({
         </h2>
 
         {error && (
-          <div class="alert alert-error mb-4">
+          <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
             <span>{error}</span>
-            <button class="btn btn-ghost btn-sm" onClick={() => setError(null)}>
+            <button class="st-button st-button--text st-button--sm" onClick={() => setError(null)}>
               ✕
             </button>
           </div>
@@ -130,7 +130,7 @@ export default function PendingTransfers({
           <div class="alert alert-success mb-4">
             <span>{success}</span>
             <button
-              class="btn btn-ghost btn-sm"
+              class="st-button st-button--text st-button--sm"
               onClick={() => setSuccess(null)}
             >
               ✕
@@ -145,7 +145,7 @@ export default function PendingTransfers({
               class="flex items-center justify-between p-4 bg-base-100 rounded-lg"
             >
               <div>
-                <p class="font-medium">
+                <p style="font-weight: 500;">
                   {transfer.political_organizations?.name ||
                     transfer.elections?.election_name ||
                     "不明な台帳"}
@@ -159,21 +159,21 @@ export default function PendingTransfers({
                   に申請
                 </p>
               </div>
-              <div class="flex gap-2">
+              <div class="st-flex st-gap-2">
                 <button
-                  class="btn btn-ghost btn-sm"
+                  class="st-button st-button--text st-button--sm"
                   onClick={() => handleDecline(transfer)}
                   disabled={isLoading}
                 >
                   拒否
                 </button>
                 <button
-                  class="btn btn-primary btn-sm"
+                  class="st-button st-button--filled st-button--sm"
                   onClick={() => handleAccept(transfer)}
                   disabled={isLoading}
                 >
                   {isLoading && (
-                    <span class="loading loading-spinner loading-sm" />
+                    <span class="st-spinner st-spinner--sm" />
                   )}
                   承認
                 </button>

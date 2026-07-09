@@ -42,16 +42,16 @@ export default define.page<typeof handler>(({ data }) => {
         <title>政治家情報編集 - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/profile/politician" title="政治家情報編集">
-        <div class="max-w-2xl">
+        <div style="max-width: 42rem;">
           {politician
             ? <PoliticianProfileForm politician={politician} />
             : (
-              <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                  <div class="alert alert-warning">
+              <div class="st-card st-card--elevated">
+                <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+                  <div class="st-alert st-alert--warning">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="stroke-current shrink-0 h-6 w-6"
+                      style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -63,14 +63,14 @@ export default define.page<typeof handler>(({ data }) => {
                       />
                     </svg>
                     <div>
-                      <h3 class="font-bold">政治家として認証されていません</h3>
-                      <p class="text-sm">
+                      <h3 style="font-weight: 700;">政治家として認証されていません</h3>
+                      <p style="font-size: var(--st-sys-typescale-body-small-size);">
                         政治家情報を編集するには、まず政治家認証を完了してください。
                       </p>
                     </div>
                   </div>
                   <div class="card-actions mt-4">
-                    <a href="/verify/politician" class="btn btn-primary">
+                    <a href="/verify/politician" class="st-button st-button--filled">
                       政治家認証を申請
                     </a>
                   </div>

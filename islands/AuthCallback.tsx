@@ -71,7 +71,7 @@ export default function AuthCallback() {
     return (
       <>
         <div class="text-5xl mb-4">✅</div>
-        <h1 class="text-xl font-bold">認証が完了しました</h1>
+        <h1 style="font-size: var(--st-sys-typescale-title-large-size); font-weight: 700;">認証が完了しました</h1>
         <p class="text-base-content/60 mt-2">
           ダッシュボードにリダイレクトします...
         </p>

@@ -102,7 +102,7 @@ export default define.page<typeof handler>(({
         <title>審査中 - Polimoney Ledger</title>
         <link href="/styles.css" rel="stylesheet" />
       </Head>
-      <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+      <div style="min-height: 100vh; background: var(--st-sys-color-surface); display: flex; align-items: center; justify-content: center; padding: var(--st-sys-spacing-4);">
         <div class="card w-full max-w-lg bg-base-100 shadow-xl">
           <div class="card-body text-center">
             {data?.status === "rejected"
@@ -114,8 +114,8 @@ export default define.page<typeof handler>(({
                   </h1>
                   <div class="alert alert-error mt-4 text-left">
                     <div>
-                      <p class="font-bold">却下理由</p>
-                      <p class="text-sm">
+                      <p style="font-weight: 700;">却下理由</p>
+                      <p style="font-size: var(--st-sys-typescale-body-small-size);">
                         {data.rejectionReason || "理由は記載されていません"}
                       </p>
                     </div>
@@ -124,10 +124,10 @@ export default define.page<typeof handler>(({
                     再度申請される場合は、新しいアカウントで登録してください。
                   </p>
                   <div class="mt-6 space-x-2">
-                    <a href="/logout" class="btn btn-ghost">
+                    <a href="/logout" class="st-button st-button--text">
                       ログアウト
                     </a>
-                    <a href="/" class="btn btn-primary">
+                    <a href="/" class="st-button st-button--filled">
                       トップページへ
                     </a>
                   </div>
@@ -136,14 +136,14 @@ export default define.page<typeof handler>(({
               : (
                 <>
                   <div class="text-5xl mb-4">⏳</div>
-                  <h1 class="text-2xl font-bold">審査中です</h1>
+                  <h1 style="font-size: var(--st-sys-typescale-headline-small-size); font-weight: 700;">審査中です</h1>
                   <div class="mt-4 space-y-4">
                     <div class="alert alert-info text-left">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        class="stroke-current shrink-0 w-6 h-6"
+                        style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
                       >
                         <path
                           stroke-linecap="round"
@@ -153,8 +153,8 @@ export default define.page<typeof handler>(({
                         />
                       </svg>
                       <div>
-                        <p class="font-bold">現在、登録申請を審査しています</p>
-                        <p class="text-sm">
+                        <p style="font-weight: 700;">現在、登録申請を審査しています</p>
+                        <p style="font-size: var(--st-sys-typescale-body-small-size);">
                           提出いただいた本人確認書類を確認中です。
                           審査が完了次第、<strong>{data?.email}</strong>{" "}
                           宛にメールでお知らせします。
@@ -164,8 +164,8 @@ export default define.page<typeof handler>(({
 
                     <div class="bg-base-200 rounded-lg p-4 text-left">
                       <p class="text-sm text-base-content/60">申請者情報</p>
-                      <p class="font-bold">{data?.fullName}</p>
-                      <p class="text-sm">{data?.email}</p>
+                      <p style="font-weight: 700;">{data?.fullName}</p>
+                      <p style="font-size: var(--st-sys-typescale-body-small-size);">{data?.email}</p>
                     </div>
 
                     <p class="text-sm text-base-content/60">
@@ -175,10 +175,10 @@ export default define.page<typeof handler>(({
                   </div>
 
                   <div class="mt-6 space-x-2">
-                    <a href="/logout" class="btn btn-ghost">
+                    <a href="/logout" class="st-button st-button--text">
                       ログアウト
                     </a>
-                    <button class="btn btn-outline" onClick="location.reload()">
+                    <button class="st-button st-button--outlined" onClick="location.reload()">
                       更新
                     </button>
                   </div>

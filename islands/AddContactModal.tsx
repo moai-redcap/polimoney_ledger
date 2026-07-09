@@ -170,12 +170,12 @@ export default function AddContactModal({
       <div class="modal-box max-w-lg">
         <h3 class="font-bold text-lg mb-4">関係者を追加</h3>
 
-        <form onSubmit={handleSubmit} class="space-y-4">
+        <form onSubmit={handleSubmit} class="st-stack st-stack--md">
           {/* 種別 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                種別 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                種別 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <div class="flex flex-wrap gap-4">
@@ -183,21 +183,21 @@ export default function AddContactModal({
                 <input
                   type="radio"
                   name="contactType"
-                  class="radio radio-primary"
+                  style="accent-color: var(--st-sys-color-primary);"
                   checked={contactType === "person"}
                   onChange={() => handleContactTypeChange("person")}
                 />
-                <span class="label-text">個人</span>
+                <span class="st-field__label">個人</span>
               </label>
               <label class="label cursor-pointer gap-2">
                 <input
                   type="radio"
                   name="contactType"
-                  class="radio radio-primary"
+                  style="accent-color: var(--st-sys-color-primary);"
                   checked={contactType === "corporation"}
                   onChange={() => handleContactTypeChange("corporation")}
                 />
-                <span class="label-text">法人</span>
+                <span class="st-field__label">法人</span>
               </label>
               <label class="label cursor-pointer gap-2">
                 <input
@@ -208,23 +208,23 @@ export default function AddContactModal({
                   onChange={() =>
                     handleContactTypeChange("political_organization")}
                 />
-                <span class="label-text">政治団体</span>
+                <span class="st-field__label">政治団体</span>
               </label>
             </div>
           </div>
 
           {/* 政治団体ID入力（政治団体の場合のみ） */}
           {contactType === "political_organization" && (
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">
-                  政治団体ID <span class="text-error">*</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">
+                  政治団体ID <span style="color: var(--st-sys-color-error);">*</span>
                 </span>
               </label>
-              <div class="flex gap-2">
+              <div class="st-flex st-gap-2">
                 <input
                   type="text"
-                  class="input input-bordered flex-1"
+                  class="st-input" style="flex: 1;"
                   placeholder="例: 12345678-1234-1234-1234-123456789012"
                   value={hubOrganizationId}
                   onChange={(e) =>
@@ -241,12 +241,12 @@ export default function AddContactModal({
                 </button>
               </div>
               {orgFetchError && (
-                <label class="label">
+                <label class="st-field__label-wrapper">
                   <span class="label-text-alt text-error">{orgFetchError}</span>
                 </label>
               )}
-              <label class="label">
-                <span class="label-text-alt text-base-content/60">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__helper">
                   Hub DBに登録されている政治団体のIDを入力してください
                 </span>
               </label>
@@ -254,19 +254,19 @@ export default function AddContactModal({
           )}
 
           {/* 名前 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
                 {contactType === "person"
                   ? "氏名"
                   : contactType === "corporation"
                   ? "法人名"
-                  : "団体名"} <span class="text-error">*</span>
+                  : "団体名"} <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
               type="text"
-              class="input input-bordered"
+              class="st-input"
               placeholder={contactType === "person"
                 ? "例: 山田 太郎"
                 : contactType === "corporation"
@@ -281,13 +281,13 @@ export default function AddContactModal({
           </div>
 
           {/* 住所 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">住所</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">住所</span>
             </label>
             <input
               type="text"
-              class="input input-bordered"
+              class="st-input"
               placeholder="例: 東京都千代田区..."
               value={address}
               onChange={(e) => setAddress((e.target as HTMLInputElement).value)}
@@ -298,13 +298,13 @@ export default function AddContactModal({
 
           {/* 職業（個人の場合のみ） */}
           {contactType === "person" && (
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">職業</span>
+            <div class="st-field">
+              <label class="st-field__label-wrapper">
+                <span class="st-field__label">職業</span>
               </label>
               <input
                 type="text"
-                class="input input-bordered"
+                class="st-input"
                 placeholder="例: 会社員"
                 value={occupation}
                 onChange={(e) =>
@@ -327,7 +327,7 @@ export default function AddContactModal({
                     onChange={(e) =>
                       setIsNamePrivate((e.target as HTMLInputElement).checked)}
                   />
-                  <span class="label-text">氏名を非公開にする</span>
+                  <span class="st-field__label">氏名を非公開にする</span>
                 </label>
 
                 <label class="label cursor-pointer justify-start gap-2">
@@ -340,7 +340,7 @@ export default function AddContactModal({
                         (e.target as HTMLInputElement).checked,
                       )}
                   />
-                  <span class="label-text">住所を非公開にする</span>
+                  <span class="st-field__label">住所を非公開にする</span>
                 </label>
 
                 {contactType === "person" && (
@@ -354,19 +354,19 @@ export default function AddContactModal({
                           (e.target as HTMLInputElement).checked,
                         )}
                     />
-                    <span class="label-text">職業を非公開にする</span>
+                    <span class="st-field__label">職業を非公開にする</span>
                   </label>
                 )}
               </div>
 
               {/* プライバシー理由（非公開設定がある場合） */}
               {hasPrivacySetting && (
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text">非公開の理由</span>
+                <div class="st-field">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label">非公開の理由</span>
                   </label>
                   <select
-                    class="select select-bordered"
+                    class="st-select"
                     value={privacyReasonType}
                     onChange={(e) =>
                       setPrivacyReasonType(
@@ -398,19 +398,19 @@ export default function AddContactModal({
 
           {/* エラー表示 */}
           {error && (
-            <div class="alert alert-error">
+            <div class="st-alert st-alert--error">
               <span>{error}</span>
             </div>
           )}
 
           {/* ボタン */}
           <div class="modal-action">
-            <button type="button" class="btn btn-ghost" onClick={handleClose}>
+            <button type="button" class="st-button st-button--text" onClick={handleClose}>
               キャンセル
             </button>
             <button
               type="submit"
-              class={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+              class="st-button st-button--filled"
               disabled={isSubmitting}
             >
               {isSubmitting ? "登録中..." : "登録"}

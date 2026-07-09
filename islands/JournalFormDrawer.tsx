@@ -43,14 +43,14 @@ export default function JournalFormDrawer({
   return (
     <>
       {/* 仕訳登録ボタン */}
-      <button type="button" class="btn btn-primary" onClick={handleOpen}>
+      <button type="button" class="st-button st-button--filled" onClick={handleOpen}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          class="w-5 h-5"
+          style="width: 1.25rem; height: 1.25rem;"
         >
           <path
             strokeLinecap="round"
@@ -71,7 +71,7 @@ export default function JournalFormDrawer({
           <div class="relative w-[85%] max-w-4xl bg-base-100 h-full shadow-xl flex flex-col animate-slide-in-right">
             {/* ヘッダー */}
             <div class="flex items-center justify-between p-4 border-b border-base-300">
-              <h2 class="text-lg font-bold">仕訳を登録</h2>
+              <h2 style="font-size: var(--st-sys-typescale-title-medium-size); font-weight: 700;">仕訳を登録</h2>
               <button
                 type="button"
                 class="btn btn-ghost btn-sm btn-square"
@@ -84,7 +84,7 @@ export default function JournalFormDrawer({
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  class="w-5 h-5"
+                  style="width: 1.25rem; height: 1.25rem;"
                 >
                   <path
                     strokeLinecap="round"

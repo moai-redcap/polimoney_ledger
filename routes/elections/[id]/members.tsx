@@ -118,7 +118,7 @@ export default define.page<typeof handler>(({ data }) => {
           <title>エラー - Polimoney Ledger</title>
         </Head>
         <Layout currentPath="/elections" title="エラー">
-          <div class="alert alert-error">
+          <div class="st-alert st-alert--error">
             <span>{error}</span>
           </div>
         </Layout>
@@ -163,12 +163,12 @@ export default define.page<typeof handler>(({ data }) => {
           >
             資産一覧
           </a>
-          <a role="tab" class="tab tab-active">
+          <a role="tab" class="st-tab st-tab--active">
             メンバー
           </a>
         </div>
 
-        <div class="max-w-4xl">
+        <div style="max-width: 56rem;">
           <MemberManager
             ledgerId={ledgerId}
             initialMembers={members}

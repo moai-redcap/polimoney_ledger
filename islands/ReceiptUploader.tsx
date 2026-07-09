@@ -157,13 +157,13 @@ export default function ReceiptUploader({
   }
 
   return (
-    <div class="space-y-4">
+    <div class="st-stack st-stack--md">
       {/* エラー表示 */}
       {error && (
-        <div class="alert alert-error">
+        <div class="st-alert st-alert--error">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
+            style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -175,7 +175,7 @@ export default function ReceiptUploader({
             />
           </svg>
           <span>{error}</span>
-          <button class="btn btn-ghost btn-sm" onClick={() => setError(null)}>
+          <button class="st-button st-button--text st-button--sm" onClick={() => setError(null)}>
             ✕
           </button>
         </div>
@@ -209,10 +209,10 @@ export default function ReceiptUploader({
                   ファイルをドラッグ＆ドロップ
                 </p>
                 <p class="text-sm text-base-content/50 mb-4">または</p>
-                <label class="btn btn-outline btn-primary">
+                <label class="st-button st-button--outlined">
                   <input
                     type="file"
-                    class="hidden"
+                    style="display: none;"
                     accept="image/jpeg,image/png,image/gif,application/pdf"
                     onChange={handleFileSelect}
                   />

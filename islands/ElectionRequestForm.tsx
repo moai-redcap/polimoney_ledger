@@ -110,39 +110,37 @@ export default function ElectionRequestForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} class="space-y-6">
+    <form onSubmit={handleSubmit} class="st-stack st-stack--lg">
       {/* メッセージ */}
       {message && (
         <div
-          class={`alert ${
-            message.type === "success" ? "alert-success" : "alert-error"
-          }`}
+          class="st-alert"
         >
           <span>{message.text}</span>
         </div>
       )}
 
       {/* 基本情報 */}
-      <div class="card bg-base-200">
-        <div class="card-body">
+      <div class="st-card st-card--filled">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h3 class="card-title text-base">選挙情報</h3>
 
           {/* 選挙名 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙名 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙名 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
               type="text"
-              class="input input-bordered"
+              class="st-input"
               placeholder="例: 2025年 渋谷区議会議員選挙"
               value={name}
               onInput={(e) => setName((e.target as HTMLInputElement).value)}
               required
             />
-            <label class="label">
+            <label class="st-field__label-wrapper">
               <span class="label-text-alt text-base-content/70">
                 正式な選挙名を入力してください
               </span>
@@ -150,14 +148,14 @@ export default function ElectionRequestForm({
           </div>
 
           {/* 選挙種別 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙種別 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙種別 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <select
-              class="select select-bordered"
+              class="st-select"
               value={type}
               onChange={(e) => setType((e.target as HTMLSelectElement).value)}
               required
@@ -172,14 +170,14 @@ export default function ElectionRequestForm({
           </div>
 
           {/* 選挙区の説明 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙区・地域の説明 <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙区・地域の説明 <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <textarea
-              class="textarea textarea-bordered"
+              class="st-textarea"
               placeholder="例: 東京都渋谷区（定数34名）"
               rows={2}
               value={areaDescription}
@@ -187,7 +185,7 @@ export default function ElectionRequestForm({
                 setAreaDescription((e.target as HTMLTextAreaElement).value)}
               required
             />
-            <label class="label">
+            <label class="st-field__label-wrapper">
               <span class="label-text-alt text-base-content/70">
                 選挙区の範囲や定数など、選挙を特定できる情報を入力してください
               </span>
@@ -195,15 +193,15 @@ export default function ElectionRequestForm({
           </div>
 
           {/* 選挙日 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">
-                選挙日（投開票日） <span class="text-error">*</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">
+                選挙日（投開票日） <span style="color: var(--st-sys-color-error);">*</span>
               </span>
             </label>
             <input
               type="date"
-              class="input input-bordered"
+              class="st-input"
               value={electionDate}
               onInput={(e) =>
                 setElectionDate((e.target as HTMLInputElement).value)}
@@ -214,23 +212,23 @@ export default function ElectionRequestForm({
       </div>
 
       {/* 連絡先・補足情報 */}
-      <div class="card bg-base-200">
-        <div class="card-body">
+      <div class="st-card st-card--filled">
+        <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
           <h3 class="card-title text-base">連絡先・補足情報</h3>
 
           {/* メールアドレス */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">連絡先メールアドレス</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">連絡先メールアドレス</span>
             </label>
             <input
               type="email"
-              class="input input-bordered"
+              class="st-input"
               placeholder="example@email.com"
               value={email}
               onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
             />
-            <label class="label">
+            <label class="st-field__label-wrapper">
               <span class="label-text-alt text-base-content/70">
                 承認結果の連絡や確認が必要な場合に使用します
               </span>
@@ -238,19 +236,19 @@ export default function ElectionRequestForm({
           </div>
 
           {/* 証拠URL */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">参考URL</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">参考URL</span>
             </label>
             <input
               type="url"
-              class="input input-bordered"
+              class="st-input"
               placeholder="https://..."
               value={evidenceUrl}
               onInput={(e) =>
                 setEvidenceUrl((e.target as HTMLInputElement).value)}
             />
-            <label class="label">
+            <label class="st-field__label-wrapper">
               <span class="label-text-alt text-base-content/70">
                 選挙管理委員会のページや告示など、選挙情報を確認できるURLがあれば入力してください
               </span>
@@ -258,12 +256,12 @@ export default function ElectionRequestForm({
           </div>
 
           {/* 備考 */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">備考</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">備考</span>
             </label>
             <textarea
-              class="textarea textarea-bordered"
+              class="st-textarea"
               placeholder="補足情報があれば入力してください"
               rows={3}
               value={notes}
@@ -274,8 +272,8 @@ export default function ElectionRequestForm({
       </div>
 
       {/* 送信ボタン */}
-      <div class="flex gap-4">
-        <a href="/elections/new" class="btn btn-outline">
+      <div class="st-flex st-gap-4">
+        <a href="/elections/new" class="st-button st-button--outlined">
           戻る
         </a>
         <button
@@ -288,12 +286,12 @@ export default function ElectionRequestForm({
       </div>
 
       {/* 注意事項 */}
-      <div class="alert alert-info">
+      <div class="st-alert st-alert--info">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          class="stroke-current shrink-0 w-6 h-6"
+          style="width: 1.5rem; height: 1.5rem; flex-shrink: 0;"
         >
           <path
             stroke-linecap="round"
@@ -303,7 +301,7 @@ export default function ElectionRequestForm({
           />
         </svg>
         <div>
-          <p class="font-bold">リクエスト後の流れ</p>
+          <p style="font-weight: 700;">リクエスト後の流れ</p>
           <ul class="list-disc list-inside text-sm mt-1">
             <li>運営が内容を確認し、承認・却下を判断します</li>
             <li>承認されると、選挙が一覧に追加されます</li>

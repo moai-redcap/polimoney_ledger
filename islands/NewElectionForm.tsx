@@ -118,36 +118,36 @@ export default function NewElectionForm({
   return (
     <form onSubmit={handleSubmit}>
       {error && (
-        <div class="alert alert-error mb-4">
+        <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
           <span>{error}</span>
         </div>
       )}
 
       {/* Step 1: 選挙を選択 */}
-      <div class="mb-6">
+      <div style="margin-bottom: var(--st-sys-spacing-6);">
         <h3 class="font-bold text-lg mb-4">1. 選挙を選択</h3>
 
         {/* 検索・フィルター */}
         <div class="flex flex-col md:flex-row gap-4 mb-4">
           <div class="form-control flex-1">
-            <label class="label">
-              <span class="label-text">🔍 検索</span>
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">🔍 検索</span>
             </label>
             <input
               type="text"
               placeholder="選挙名で検索..."
-              class="input input-bordered"
+              class="st-input"
               value={searchQuery}
               onInput={(e) =>
                 setSearchQuery((e.target as HTMLInputElement).value)}
             />
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">種別</span>
+          <div class="st-field">
+            <label class="st-field__label-wrapper">
+              <span class="st-field__label">種別</span>
             </label>
             <select
-              class="select select-bordered"
+              class="st-select"
               value={typeFilter}
               onChange={(e) =>
                 setTypeFilter((e.target as HTMLSelectElement).value)}
@@ -190,14 +190,14 @@ export default function NewElectionForm({
                         <input
                           type="radio"
                           name="election"
-                          class="radio radio-primary"
+                          style="accent-color: var(--st-sys-color-primary);"
                           checked={selectedElectionId === election.id}
                           onChange={() => setSelectedElectionId(election.id)}
                         />
-                        <div class="flex-1">
-                          <div class="font-medium">{election.name}</div>
+                        <div style="flex: 1;">
+                          <div style="font-weight: 500;">{election.name}</div>
                           <div class="flex gap-2 mt-1">
-                            <span class="badge badge-sm badge-info">
+                            <span class="st-badge st-badge--sm st-badge--primary">
                               {ELECTION_TYPES[election.type] || election.type}
                             </span>
                             <span class="text-xs text-base-content/70">
@@ -218,7 +218,7 @@ export default function NewElectionForm({
         <div class="alert alert-warning mt-4">
           <span>
             該当する選挙がない場合は、
-            <a href="/elections/request" class="link link-primary">
+            <a href="/elections/request" style="color: var(--st-sys-color-primary); text-decoration: underline;">
               登録をリクエスト
             </a>
             してください。
@@ -227,8 +227,8 @@ export default function NewElectionForm({
       </div>
 
       {/* 送信ボタン */}
-      <div class="flex gap-4">
-        <a href="/elections" class="btn btn-outline">
+      <div class="st-flex st-gap-4">
+        <a href="/elections" class="st-button st-button--outlined">
           キャンセル
         </a>
         <button

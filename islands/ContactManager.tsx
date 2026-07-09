@@ -263,11 +263,11 @@ export default function ContactManager({
       {/* ヘッダー */}
       <div class="flex justify-between items-center mb-6">
         <div>
-          <p class="text-base-content/70">
+          <p style="color: var(--st-sys-color-on-surface-variant);">
             仕訳で使用する関係者（寄附者、支払先、銀行など）を管理します。
           </p>
         </div>
-        <button class="btn btn-primary" onClick={openAddModal}>
+        <button class="st-button st-button--filled" onClick={openAddModal}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5 mr-1"
@@ -289,8 +289,8 @@ export default function ContactManager({
       {/* 関係者一覧 */}
       {contacts.length === 0
         ? (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body items-center text-center py-12">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-10); text-align: center; display: flex; flex-direction: column; align-items: center;">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-16 w-16 text-base-content/30 mb-4"
@@ -308,16 +308,16 @@ export default function ContactManager({
               <h3 class="text-lg font-semibold">
                 関係者がまだ登録されていません
               </h3>
-              <p class="text-base-content/70">
+              <p style="color: var(--st-sys-color-on-surface-variant);">
                 「新規登録」ボタンから関係者を追加してください。
               </p>
             </div>
           </div>
         )
         : (
-          <div class="card bg-base-100 shadow-xl">
-            <div class="overflow-x-auto">
-              <table class="table">
+          <div class="st-card st-card--elevated">
+            <div style="overflow-x: auto;">
+              <table class="st-table">
                 <thead>
                   <tr>
                     <th>種別</th>
@@ -349,7 +349,7 @@ export default function ContactManager({
                             : "法人"}
                         </span>
                       </td>
-                      <td class="font-medium">{contact.name}</td>
+                      <td style="font-weight: 500;">{contact.name}</td>
                       <td class="text-sm text-base-content/70 max-w-xs truncate">
                         {contact.address || "-"}
                       </td>
@@ -366,9 +366,9 @@ export default function ContactManager({
                         )}
                       </td>
                       <td>
-                        <div class="flex gap-2">
+                        <div class="st-flex st-gap-2">
                           <button
-                            class="btn btn-ghost btn-sm"
+                            class="st-button st-button--text st-button--sm"
                             onClick={() => openEditModal(contact)}
                           >
                             編集
@@ -399,7 +399,7 @@ export default function ContactManager({
             </h3>
 
             {error && (
-              <div class="alert alert-error mb-4">
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
                 <span>{error}</span>
               </div>
             )}
@@ -407,8 +407,8 @@ export default function ContactManager({
             <form onSubmit={handleSubmit}>
               {/* 種別 */}
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">種別</span>
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">種別</span>
                 </label>
                 <div class="join">
                   <input
@@ -447,15 +447,15 @@ export default function ContactManager({
               {/* 政治団体ID入力（政治団体の場合のみ） */}
               {formData.contact_type === "political_organization" && (
                 <div class="form-control mb-4">
-                  <label class="label">
-                    <span class="label-text font-medium">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label" style="font-weight: 500;">
                       政治団体ID <span class="text-error ml-1">*</span>
                     </span>
                   </label>
-                  <div class="flex gap-2">
+                  <div class="st-flex st-gap-2">
                     <input
                       type="text"
-                      class="input input-bordered flex-1"
+                      class="st-input" style="flex: 1;"
                       placeholder="例: 12345678-1234-1234-1234-123456789012"
                       value={formData.hub_organization_id}
                       onChange={(e) =>
@@ -478,14 +478,14 @@ export default function ContactManager({
                     </button>
                   </div>
                   {orgFetchError && (
-                    <label class="label">
+                    <label class="st-field__label-wrapper">
                       <span class="label-text-alt text-error">
                         {orgFetchError}
                       </span>
                     </label>
                   )}
-                  <label class="label">
-                    <span class="label-text-alt text-base-content/60">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__helper">
                       Hub DBに登録されている政治団体のIDを入力してください
                     </span>
                   </label>
@@ -494,8 +494,8 @@ export default function ContactManager({
 
               {/* 氏名/団体名 */}
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">
                     {formData.contact_type === "person"
                       ? "氏名"
                       : "団体名/法人名"}
@@ -504,7 +504,7 @@ export default function ContactManager({
                 </label>
                 <input
                   type="text"
-                  class="input input-bordered"
+                  class="st-input"
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({
@@ -515,7 +515,7 @@ export default function ContactManager({
                     ? "山田 太郎"
                     : "株式会社〇〇"}
                 />
-                <label class="label">
+                <label class="st-field__label-wrapper">
                   <span class="label-text-alt flex items-center gap-1">
                     <input
                       type="checkbox"
@@ -535,12 +535,12 @@ export default function ContactManager({
 
               {/* 住所 */}
               <div class="form-control mb-4">
-                <label class="label">
-                  <span class="label-text font-medium">住所</span>
+                <label class="st-field__label-wrapper">
+                  <span class="st-field__label" style="font-weight: 500;">住所</span>
                 </label>
                 <input
                   type="text"
-                  class="input input-bordered"
+                  class="st-input"
                   value={formData.address}
                   onChange={(e) =>
                     setFormData({
@@ -549,7 +549,7 @@ export default function ContactManager({
                     })}
                   placeholder="東京都千代田区..."
                 />
-                <label class="label">
+                <label class="st-field__label-wrapper">
                   <span class="label-text-alt flex items-center gap-1">
                     <input
                       type="checkbox"
@@ -573,12 +573,12 @@ export default function ContactManager({
               {/* 職業（個人のみ） */}
               {formData.contact_type === "person" && (
                 <div class="form-control mb-4">
-                  <label class="label">
-                    <span class="label-text font-medium">職業</span>
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label" style="font-weight: 500;">職業</span>
                   </label>
                   <input
                     type="text"
-                    class="input input-bordered"
+                    class="st-input"
                     value={formData.occupation}
                     onChange={(e) =>
                       setFormData({
@@ -587,7 +587,7 @@ export default function ContactManager({
                       })}
                     placeholder="会社員"
                   />
-                  <label class="label">
+                  <label class="st-field__label-wrapper">
                     <span class="label-text-alt flex items-center gap-1">
                       <input
                         type="checkbox"
@@ -613,13 +613,13 @@ export default function ContactManager({
               {/* 非公開理由（非公開設定がある場合のみ） */}
               {hasPrivacySetting && (
                 <div class="form-control mb-4">
-                  <label class="label">
-                    <span class="label-text font-medium">
+                  <label class="st-field__label-wrapper">
+                    <span class="st-field__label" style="font-weight: 500;">
                       非公開理由<span class="text-error ml-1">*</span>
                     </span>
                   </label>
                   <select
-                    class="select select-bordered"
+                    class="st-select"
                     value={formData.privacy_reason_type}
                     onChange={(e) =>
                       setFormData({
@@ -654,7 +654,7 @@ export default function ContactManager({
               <div class="modal-action">
                 <button
                   type="button"
-                  class="btn btn-ghost"
+                  class="st-button st-button--text"
                   onClick={closeModal}
                   disabled={isLoading}
                 >
@@ -662,11 +662,11 @@ export default function ContactManager({
                 </button>
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isLoading}
                 >
                   {isLoading && (
-                    <span class="loading loading-spinner loading-sm" />
+                    <span class="st-spinner st-spinner--sm" />
                   )}
                   {modalMode === "add" ? "登録" : "更新"}
                 </button>
