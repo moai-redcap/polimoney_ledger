@@ -74,16 +74,16 @@ export default function NewOrganizationForm({
   return (
     <form onSubmit={handleSubmit}>
       {error && (
-        <div class="alert alert-error mb-4">
-          <span>{error}</span>
+        <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
+          <div class="st-alert__content">{error}</div>
         </div>
       )}
 
       {/* 管理する政治団体一覧 */}
-      <div class="max-h-96 overflow-y-auto border rounded-lg mb-6">
+      <div style="max-height: 24rem; overflow-y: auto; border: 1px solid var(--st-sys-color-outline-variant); border-radius: var(--st-sys-shape-corner-large); margin-bottom: var(--st-sys-spacing-6);">
         {managedOrganizations.length === 0
           ? (
-            <div class="p-8 text-center text-base-content/60">
+            <div style="padding: var(--st-sys-spacing-8); text-align: center; color: var(--st-sys-color-on-surface-variant);">
               管理する政治団体がありません
             </div>
           )
@@ -91,25 +91,34 @@ export default function NewOrganizationForm({
             managedOrganizations.map((org) => (
               <label
                 key={org.id}
-                class={`flex items-center gap-4 p-4 cursor-pointer hover:bg-base-200 border-b ${
-                  selectedOrgId === org.id ? "bg-primary/10" : ""
-                }`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "var(--st-sys-spacing-4)",
+                  padding: "var(--st-sys-spacing-4)",
+                  cursor: "pointer",
+                  borderBottom: "1px solid var(--st-sys-color-outline-variant)",
+                  background: selectedOrgId === org.id
+                    ? "color-mix(in srgb, var(--st-sys-color-primary) 10%, transparent)"
+                    : "transparent",
+                  transition: "background 200ms",
+                }}
               >
                 <input
                   type="radio"
                   name="organization"
-                  class="radio radio-primary"
                   checked={selectedOrgId === org.id}
                   onChange={() => setSelectedOrgId(org.id)}
+                  style="accent-color: var(--st-sys-color-primary);"
                 />
-                <div class="flex-1">
-                  <div class="font-medium">{org.name}</div>
-                  <div class="flex gap-2 mt-1">
-                    <span class="badge badge-sm badge-info">
+                <div style="flex: 1;">
+                  <div style="font-weight: 500;">{org.name}</div>
+                  <div class="st-flex st-gap-2" style="margin-top: var(--st-sys-spacing-1);">
+                    <span class="st-badge st-badge--sm st-badge--primary">
                       {ORGANIZATION_TYPES[org.type] || org.type}
                     </span>
-                    <span class="badge badge-sm badge-success">
-                      ✓ 認証済み
+                    <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-tertiary-container); color: var(--st-sys-color-on-tertiary-container);">
+                      ✅ 認証済み
                     </span>
                   </div>
                 </div>
@@ -119,13 +128,14 @@ export default function NewOrganizationForm({
       </div>
 
       {/* 送信ボタン */}
-      <div class="flex gap-4">
-        <a href="/organizations" class="btn btn-outline">
+      <div class="st-flex st-gap-4">
+        <a href="/organizations" class="st-button st-button--outlined">
           キャンセル
         </a>
         <button
           type="submit"
-          class={`btn btn-primary flex-1 ${isSubmitting ? "loading" : ""}`}
+          class="st-button st-button--filled"
+          style="flex: 1;"
           disabled={isSubmitting || !selectedOrgId}
         >
           {isSubmitting ? "作成中..." : "政治団体台帳を作成"}
