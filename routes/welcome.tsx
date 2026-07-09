@@ -5,29 +5,27 @@ export default function LandingPage() {
     <>
       <Head>
         <title>Polimoney Ledger - 政治資金収支管理ツール</title>
-        <link href="/styles.css" rel="stylesheet" />
       </Head>
-      <div class="min-h-screen bg-gradient-to-b from-base-200 to-base-300">
+      <div style="min-height: 100vh; background: var(--st-sys-color-surface);">
         {/* ヘッダー */}
-        <header class="navbar bg-base-100/80 backdrop-blur-sm sticky top-0 z-50 border-b border-base-300">
-          <div class="container mx-auto">
-            <div class="flex-1">
-              <a href="/welcome" class="flex items-center gap-2">
-                <img src="/logo-ledger.svg" alt="" class="h-8 w-8" />
-                <span
-                  class="font-bold text-xl text-emerald-600"
-                  style="font-feature-settings: 'palt' 1;"
-                >
-                  Polimoney Ledger
-                </span>
-                <span class="badge badge-warning badge-sm">β</span>
-              </a>
-            </div>
-            <div class="flex-none gap-2">
-              <a href="/login" class="btn btn-ghost">
+        <header
+          style="position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px); border-bottom: 1px solid var(--st-sys-color-outline-variant); background: var(--st-sys-color-surface-container-low);"
+        >
+          <div class="st-container" style="display: flex; align-items: center; justify-content: space-between; padding-top: var(--st-sys-spacing-3); padding-bottom: var(--st-sys-spacing-3);">
+            <a href="/welcome" style="display: flex; align-items: center; gap: var(--st-sys-spacing-2); text-decoration: none;">
+              <img src="/logo-ledger.svg" alt="" style="height: 2rem; width: 2rem;" />
+              <span
+                style="font-weight: 700; font-size: var(--st-sys-typescale-title-large-size); color: var(--st-sys-color-primary); font-feature-settings: 'palt' 1;"
+              >
+                Polimoney Ledger
+              </span>
+              <span class="st-badge st-badge--sm" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">β</span>
+            </a>
+            <div class="st-flex st-gap-2">
+              <a href="/login" class="st-button st-button--text">
                 ログイン
               </a>
-              <a href="/register" class="btn btn-primary">
+              <a href="/register" class="st-button st-button--filled">
                 新規登録
               </a>
             </div>
@@ -35,104 +33,92 @@ export default function LandingPage() {
         </header>
 
         {/* ヒーローセクション */}
-        <section class="hero min-h-[70vh]">
-          <div class="hero-content text-center">
-            <div class="max-w-2xl">
-              <div class="flex items-center justify-center gap-3 mb-6">
-                <img
-                  src="/logo-ledger.svg"
-                  alt="Polimoney Ledger"
-                  class="h-24 w-24"
-                />
+        <section style="display: flex; align-items: center; justify-content: center; min-height: 70vh; text-align: center; padding: var(--st-sys-spacing-8);">
+          <div style="max-width: 42rem;">
+            <div class="st-flex st-flex--center" style="margin-bottom: var(--st-sys-spacing-6);">
+              <img
+                src="/logo-ledger.svg"
+                alt="Polimoney Ledger"
+                style="height: 6rem; width: 6rem;"
+              />
+            </div>
+            <span class="st-badge" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary); margin-bottom: var(--st-sys-spacing-4); display: inline-block;">🚧 ベータ版</span>
+            <h1 style="font-size: var(--st-sys-typescale-display-small-size); font-weight: 700; margin-bottom: var(--st-sys-spacing-6); line-height: 1.2; color: var(--st-sys-color-on-surface);">
+              政治資金収支の管理を
+              <br />
+              <span style="color: var(--st-sys-color-primary);">シンプルに</span>
+            </h1>
+            <p style="font-size: var(--st-sys-typescale-body-large-size); color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
+              Polimoney Ledger は、政治資金収支報告書の作成・管理を
+              <br class="hidden md:block" />
+              簡単にするオープンソースのツールです。
+            </p>
+            <div class="st-alert st-alert--warning" style="max-width: 32rem; margin: 0 auto var(--st-sys-spacing-8);">
+              <div class="st-alert__icon">⚠️</div>
+              <div class="st-alert__content" style="font-size: var(--st-sys-typescale-body-small-size); text-align: left;">
+                本サービスはベータ版です。予期せぬ動作やデータ損失の可能性があります。重要なデータは別途バックアップをお取りください。
               </div>
-              <div class="badge badge-warning badge-lg mb-4">🚧 ベータ版</div>
-              <h1 class="text-4xl md:text-5xl font-bold mb-6">
-                政治資金収支の管理を
-                <br />
-                <span class="text-primary">シンプルに</span>
-              </h1>
-              <p class="text-lg text-base-content/70 mb-4">
-                Polimoney Ledger は、政治資金収支報告書の作成・管理を
-                <br class="hidden md:block" />
-                簡単にするオープンソースのツールです。
-              </p>
-              <div class="alert alert-warning max-w-lg mx-auto mb-8">
+            </div>
+            <div class="st-flex st-flex--center st-flex--wrap st-gap-4">
+              <a href="/register" class="st-button st-button--filled st-button--lg">
+                無料で始める
+              </a>
+              <a
+                href="https://github.com/digitaldemocracy2030/polimoney_ledger"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="st-button st-button--outlined st-button--lg"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
+                  fill="currentColor"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                 </svg>
-                <span class="text-sm text-left">
-                  本サービスはベータ版です。予期せぬ動作やデータ損失の可能性があります。重要なデータは別途バックアップをお取りください。
-                </span>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/register" class="btn btn-primary btn-lg">
-                  無料で始める
-                </a>
-                <a
-                  href="https://github.com/digitaldemocracy2030/polimoney_ledger"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-outline btn-lg"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                  GitHub
-                </a>
-              </div>
+                GitHub
+              </a>
             </div>
           </div>
         </section>
 
         {/* 特徴セクション */}
-        <section class="py-20 bg-base-100">
-          <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12">特徴</h2>
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                  <span class="text-4xl mb-4">📊</span>
-                  <h3 class="card-title">簡単な収支管理</h3>
-                  <p class="text-base-content/70">
+        <section style="padding: var(--st-sys-spacing-12) 0; background: var(--st-sys-color-surface-container-low);">
+          <div class="st-container" style="padding: 0 var(--st-sys-spacing-4);">
+            <h2 style="font-size: var(--st-sys-typescale-headline-medium-size); font-weight: 700; text-align: center; margin-bottom: var(--st-sys-spacing-10); color: var(--st-sys-color-on-surface);">
+              特徴
+            </h2>
+            <div class="st-grid st-grid--cols-3" style="max-width: 64rem; margin: 0 auto; gap: var(--st-sys-spacing-6);">
+              <div class="st-card st-card--filled">
+                <div class="st-card__content" style="text-align: center;">
+                  <span style="font-size: 2.5rem; display: block; margin-bottom: var(--st-sys-spacing-4);">📊</span>
+                  <h3 class="st-card__title" style="justify-content: center;">簡単な収支管理</h3>
+                  <p style="color: var(--st-sys-color-on-surface-variant);">
                     直感的な UI で収入・支出を記録。 手軽に記録を始められます。
                   </p>
                 </div>
               </div>
-              <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                  <span class="text-4xl mb-4">📄</span>
-                  <h3 class="card-title">
+              <div class="st-card st-card--filled">
+                <div class="st-card__content" style="text-align: center;">
+                  <span style="font-size: 2.5rem; display: block; margin-bottom: var(--st-sys-spacing-4);">📄</span>
+                  <h3 class="st-card__title" style="justify-content: center;">
                     報告書出力
-                    <span class="badge badge-outline badge-sm ml-1">予定</span>
+                    <span class="st-badge st-badge--sm st-badge--outline" style="margin-left: var(--st-sys-spacing-1);">予定</span>
                   </h3>
-                  <p class="text-base-content/70">
+                  <p style="color: var(--st-sys-color-on-surface-variant);">
                     政治資金収支報告書のフォーマットに
                     対応した帳票出力を目指しています。
                     （選挙種別・届出先により様式が異なるため開発中）
                   </p>
                 </div>
               </div>
-              <div class="card bg-base-200">
-                <div class="card-body items-center text-center">
-                  <span class="text-4xl mb-4">🔒</span>
-                  <h3 class="card-title">セキュアなデータ管理</h3>
-                  <p class="text-base-content/70">
+              <div class="st-card st-card--filled">
+                <div class="st-card__content" style="text-align: center;">
+                  <span style="font-size: 2.5rem; display: block; margin-bottom: var(--st-sys-spacing-4);">🔒</span>
+                  <h3 class="st-card__title" style="justify-content: center;">セキュアなデータ管理</h3>
+                  <p style="color: var(--st-sys-color-on-surface-variant);">
                     データは暗号化して保存。
                     あなたのデータはあなただけのものです。
                   </p>
@@ -143,40 +129,42 @@ export default function LandingPage() {
         </section>
 
         {/* CTA セクション */}
-        <section class="py-20">
-          <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-6">今すぐ始めましょう</h2>
-            <p class="text-base-content/70 mb-8 max-w-xl mx-auto">
+        <section style="padding: var(--st-sys-spacing-12) 0;">
+          <div class="st-container" style="text-align: center; padding: 0 var(--st-sys-spacing-4);">
+            <h2 style="font-size: var(--st-sys-typescale-headline-medium-size); font-weight: 700; margin-bottom: var(--st-sys-spacing-6); color: var(--st-sys-color-on-surface);">
+              今すぐ始めましょう
+            </h2>
+            <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-8); max-width: 36rem; margin-left: auto; margin-right: auto;">
               Polimoney Ledger は無料でご利用いただけます。
               アカウントを作成して、政治資金の管理を始めましょう。
             </p>
-            <a href="/register" class="btn btn-primary btn-lg">
+            <a href="/register" class="st-button st-button--filled st-button--lg">
               無料で登録する
             </a>
           </div>
         </section>
 
         {/* フッター */}
-        <footer class="footer footer-center p-10 bg-base-100 text-base-content border-t border-base-300">
+        <footer style="padding: var(--st-sys-spacing-8); text-align: center; background: var(--st-sys-color-surface-container-low); border-top: 1px solid var(--st-sys-color-outline-variant);">
           <div>
-            <p class="font-bold text-lg">
-              <span class="text-2xl mr-2">📒</span>
+            <p style="font-weight: 700; font-size: var(--st-sys-typescale-body-large-size); margin-bottom: var(--st-sys-spacing-2);">
+              <span style="font-size: 1.5rem; margin-right: var(--st-sys-spacing-2);">📒</span>
               Polimoney Ledger
             </p>
-            <p class="text-base-content/60">
+            <p style="color: var(--st-sys-color-on-surface-variant); font-size: var(--st-sys-typescale-body-small-size);">
               © 2025 Digital Democracy 2030. オープンソースプロジェクト
             </p>
           </div>
-          <div>
-            <div class="grid grid-flow-col gap-4">
-              <a href="/privacy" class="link link-hover">
+          <div style="margin-top: var(--st-sys-spacing-4);">
+            <div class="st-flex st-flex--center st-gap-4">
+              <a href="/privacy" style="color: var(--st-sys-color-on-surface-variant); text-decoration: none;">
                 プライバシーポリシー
               </a>
               <a
                 href="https://github.com/digitaldemocracy2030/polimoney_ledger"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="link link-hover"
+                style="color: var(--st-sys-color-on-surface-variant); text-decoration: none;"
               >
                 GitHub
               </a>
@@ -184,7 +172,7 @@ export default function LandingPage() {
                 href="https://dd2030.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="link link-hover"
+                style="color: var(--st-sys-color-on-surface-variant); text-decoration: none;"
               >
                 DD2030
               </a>

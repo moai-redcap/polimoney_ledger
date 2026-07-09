@@ -85,90 +85,78 @@ export default define.page<typeof handler>(({ data }) => {
       <Head>
         <title>ログイン - Polimoney Ledger</title>
       </Head>
-      <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
-        <div class="card w-full max-w-md bg-base-100 shadow-xl">
-          <div class="card-body">
-            <div class="text-center mb-6">
-              <div class="flex items-center justify-center gap-3">
+      <div style="min-height: 100vh; background: var(--st-sys-color-surface); display: flex; align-items: center; justify-content: center; padding: var(--st-sys-spacing-4);">
+        <div class="st-card st-card--elevated" style="width: 100%; max-width: 28rem;">
+          <div class="st-card__content" style="padding: var(--st-sys-spacing-8);">
+            <div style="text-align: center; margin-bottom: var(--st-sys-spacing-6);">
+              <div class="st-flex st-flex--center st-gap-3">
                 <img
                   src="/logo-ledger.svg"
                   alt="Polimoney Ledger"
-                  class="w-12 h-12"
+                  style="width: 3rem; height: 3rem;"
                 />
-                <div class="text-left">
-                  <h1 class="text-2xl font-bold text-violet-600">Polimoney</h1>
-                  <p class="text-sm font-medium text-emerald-600 -mt-1">
+                <div style="text-align: left;">
+                  <h1 style="font-size: var(--st-sys-typescale-headline-small-size); font-weight: 700; color: var(--st-sys-color-primary);">Polimoney</h1>
+                  <p style="font-size: var(--st-sys-typescale-body-small-size); font-weight: 500; color: var(--st-sys-color-tertiary); margin-top: -0.25rem;">
                     Ledger
                   </p>
                 </div>
               </div>
-              <p class="text-base-content/60 mt-4">ログインしてください</p>
+              <p style="color: var(--st-sys-color-on-surface-variant); margin-top: var(--st-sys-spacing-4);">ログインしてください</p>
             </div>
 
             {data?.error && (
-              <div class="alert alert-error mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{data.error}</span>
+              <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
+                <div class="st-alert__icon">❌</div>
+                <div class="st-alert__content">{data.error}</div>
               </div>
             )}
 
-            <form method="POST" class="space-y-4">
+            <form method="POST" class="st-stack st-stack--md">
               <input
                 type="hidden"
                 name="redirect"
                 value={data?.redirect || "/dashboard"}
               />
 
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">メールアドレス</span>
-                </label>
+              <div class="st-field">
+                <label class="st-field__label">メールアドレス</label>
                 <input
                   type="email"
                   name="email"
                   placeholder="email@example.com"
-                  class="input input-bordered w-full"
+                  class="st-input"
                   required
                 />
               </div>
 
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">パスワード</span>
-                </label>
+              <div class="st-field">
+                <label class="st-field__label">パスワード</label>
                 <input
                   type="password"
                   name="password"
                   placeholder="パスワード"
-                  class="input input-bordered w-full"
+                  class="st-input"
                   required
                 />
               </div>
 
-              <button type="submit" class="btn btn-primary w-full">
+              <button type="submit" class="st-button st-button--filled" style="width: 100%;">
                 ログイン
               </button>
             </form>
 
-            <div class="divider">または</div>
+            <div style="display: flex; align-items: center; gap: var(--st-sys-spacing-3); margin: var(--st-sys-spacing-4) 0;">
+              <hr style="flex: 1; border: none; border-top: 1px solid var(--st-sys-color-outline-variant);" />
+              <span style="color: var(--st-sys-color-on-surface-variant); font-size: var(--st-sys-typescale-body-small-size);">または</span>
+              <hr style="flex: 1; border: none; border-top: 1px solid var(--st-sys-color-outline-variant);" />
+            </div>
 
-            <div class="text-center">
-              <p class="text-sm text-base-content/60">
+            <div style="text-align: center;">
+              <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                 アカウントをお持ちでない場合は
               </p>
-              <a href="/register" class="link link-primary">
+              <a href="/register" style="color: var(--st-sys-color-primary); font-weight: 500;">
                 新規登録
               </a>
             </div>
