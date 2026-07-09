@@ -46,14 +46,14 @@ export default function ApproveButton({ journalId }: ApproveButtonProps) {
 
   if (isApproved) {
     return (
-      <div class="flex items-center gap-2 text-success">
+      <div class="st-flex st-flex--items-center st-gap-2" style="color: var(--st-sys-color-tertiary);">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-5 h-5"
+          style="width: 1.25rem; height: 1.25rem;"
         >
           <path
             stroke-linecap="round"
@@ -67,19 +67,14 @@ export default function ApproveButton({ journalId }: ApproveButtonProps) {
   }
 
   return (
-    <div class="flex flex-col items-end gap-2">
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--st-sys-spacing-2);">
       <button
-        class={`btn btn-primary ${isLoading ? "loading" : ""}`}
+        class="st-button st-button--filled"
         onClick={handleApprove}
         disabled={isLoading}
       >
         {isLoading
-          ? (
-            <>
-              <span class="loading loading-spinner loading-sm"></span>
-              承認中...
-            </>
-          )
+          ? "承認中..."
           : (
             <>
               <svg
@@ -88,7 +83,7 @@ export default function ApproveButton({ journalId }: ApproveButtonProps) {
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="w-5 h-5"
+                style="width: 1.25rem; height: 1.25rem;"
               >
                 <path
                   stroke-linecap="round"
@@ -101,7 +96,7 @@ export default function ApproveButton({ journalId }: ApproveButtonProps) {
           )}
       </button>
 
-      {error && <div class="text-error text-sm">{error}</div>}
+      {error && <div style="color: var(--st-sys-color-error); font-size: var(--st-sys-typescale-body-small-size);">{error}</div>}
     </div>
   );
 }

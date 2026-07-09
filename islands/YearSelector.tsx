@@ -80,7 +80,7 @@ export default function YearSelector({
   function getStatusLabel(s: string) {
     switch (s) {
       case "closed":
-        return " (締め済)";
+        return " (締め済み)";
       case "locked":
         return " (ロック中)";
       case "temporary_unlock":
@@ -94,23 +94,23 @@ export default function YearSelector({
   function getStatusBadge() {
     switch (status) {
       case "closed":
-        return <span class="badge badge-info">締め済み</span>;
+        return <span class="st-badge st-badge--primary" style="background: var(--st-sys-color-primary); color: var(--st-sys-color-on-primary);">締め済み</span>;
       case "locked":
-        return <span class="badge badge-neutral">ロック中</span>;
+        return <span class="st-badge" style="background: var(--st-sys-color-outline); color: var(--st-sys-color-on-inverse-surface);">ロック中</span>;
       case "temporary_unlock":
-        return <span class="badge badge-warning">一時解除中</span>;
+        return <span class="st-badge" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">一時解除中</span>;
       default:
-        return <span class="badge badge-success">編集可能</span>;
+        return <span class="st-badge st-badge--primary" style="background: var(--st-sys-color-tertiary-container); color: var(--st-sys-color-on-tertiary-container);">編集可能</span>;
     }
   }
 
   return (
-    <div class="flex items-center gap-4 mb-4">
+    <div class="st-flex st-flex--items-center st-gap-4" style="margin-bottom: var(--st-sys-spacing-4);">
       {/* 年度選択 */}
-      <div class="flex items-center gap-2">
-        <label class="font-medium">年度:</label>
+      <div class="st-flex st-flex--items-center st-gap-2">
+        <label style="font-weight: 500;">年度:</label>
         <select
-          class="select select-bordered select-sm"
+          class="st-select st-select--sm"
           value={currentYear}
           onChange={handleYearChange}
         >
@@ -131,36 +131,35 @@ export default function YearSelector({
       {/* 締めステータス表示 */}
       {getStatusBadge()}
 
-      {/* 年度締めボタン（open の時のみ） */}
+      {/* 年度締めボタン（open のときのみ） */}
       {status === "open" && (
         <button
           type="button"
-          class="btn btn-sm btn-outline btn-warning"
+          class="st-button st-button--outlined st-button--sm"
+          style="color: var(--st-sys-color-tertiary); border-color: var(--st-sys-color-tertiary);"
           onClick={() => setShowClosureDialog(true)}
         >
           年度締め
         </button>
       )}
 
-      {/* 締め解除ボタン（closed の時のみ） */}
+      {/* 締め解除ボタン（closed のときのみ） */}
       {status === "closed" && (
         <button
           type="button"
-          class="btn btn-sm btn-outline btn-info"
+          class="st-button st-button--outlined st-button--sm"
           disabled={reopening}
           onClick={handleReopen}
         >
-          {reopening ? <span class="loading loading-spinner loading-sm" /> : (
-            "締め解除"
-          )}
+          {reopening ? "解除中..." : "締め解除"}
         </button>
       )}
 
-      {/* ロック解除申請ボタン（locked の時のみ） */}
+      {/* ロック解除申請ボタン（locked のときのみ） */}
       {status === "locked" && (
         <button
           type="button"
-          class="btn btn-sm btn-outline"
+          class="st-button st-button--outlined st-button--sm"
           onClick={() => setShowUnlockDialog(true)}
         >
           ロック解除申請
