@@ -8,7 +8,7 @@ interface SyncResult {
 }
 
 interface ReSyncButtonProps {
-  /** 台帳タイプ: "election" | "organization" */
+  /** 台帳タイプ "election" | "organization" */
   ledgerType?: "election" | "organization";
   /** 台帳 ID（指定時はその台帳のみ同期） */
   ledgerId?: string;
@@ -18,7 +18,7 @@ interface ReSyncButtonProps {
  * 再同期ボタン（Danger Zone 用）
  *
  * 通常は承認時に自動同期されるため、このボタンは
- * Hub との同期にズレが生じた場合の緊急用です。
+ * Hub とのデータにズレが生じた場合の緊急用です。
  */
 export default function ReSyncButton({
   ledgerType,
@@ -60,16 +60,16 @@ export default function ReSyncButton({
   };
 
   return (
-    <div class="border-2 border-error rounded-lg p-6 bg-error/5">
+    <div style="border: 2px solid var(--st-sys-color-error); border-radius: var(--st-sys-shape-corner-large); padding: var(--st-sys-spacing-6); background: color-mix(in srgb, var(--st-sys-color-error) 5%, var(--st-sys-color-surface));">
       {/* ヘッダー */}
-      <div class="flex items-center gap-2 mb-4">
+      <div class="st-flex st-flex--items-center st-gap-2" style="margin-bottom: var(--st-sys-spacing-4);">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6 text-error"
+          style="width: 1.5rem; height: 1.5rem; color: var(--st-sys-color-error);"
         >
           <path
             stroke-linecap="round"
@@ -77,14 +77,14 @@ export default function ReSyncButton({
             d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
           />
         </svg>
-        <h3 class="text-lg font-bold text-error">Danger Zone</h3>
+        <h3 style="font-size: var(--st-sys-typescale-title-medium-size); font-weight: 700; color: var(--st-sys-color-error);">Danger Zone</h3>
       </div>
 
       {/* 説明 */}
-      <div class="mb-4">
-        <h4 class="font-semibold mb-1">Hub との強制再同期</h4>
-        <p class="text-sm text-base-content/70">
-          通常、仕訳は承認時に自動で Hub に同期されます。 このボタンは Hub
+      <div style="margin-bottom: var(--st-sys-spacing-4);">
+        <h4 style="font-weight: 600; margin-bottom: var(--st-sys-spacing-1);">Hub との強制再同期</h4>
+        <p style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
+          通常、仕訳は承認時に自動で Hub に同期されます。このボタンは Hub
           とのデータにズレが生じた場合にのみ使用してください。
           承認済みの全仕訳が Hub に再送信されます。
         </p>
@@ -96,7 +96,8 @@ export default function ReSyncButton({
           <button
             onClick={() => setShowConfirm(true)}
             disabled={isLoading}
-            class="btn btn-outline btn-error"
+            class="st-button st-button--outlined"
+            style="color: var(--st-sys-color-error); border-color: var(--st-sys-color-error);"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +105,7 @@ export default function ReSyncButton({
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-5 h-5"
+              style="width: 1.25rem; height: 1.25rem;"
             >
               <path
                 stroke-linecap="round"
@@ -116,31 +117,23 @@ export default function ReSyncButton({
           </button>
         )
         : (
-          <div class="flex flex-col gap-3">
-            <p class="text-sm font-semibold text-error">
+          <div class="st-stack st-stack--sm">
+            <p style="font-size: var(--st-sys-typescale-body-small-size); font-weight: 600; color: var(--st-sys-color-error);">
               本当に再同期を実行しますか？
             </p>
-            <div class="flex gap-2">
+            <div class="st-flex st-gap-2">
               <button
                 onClick={handleSync}
                 disabled={isLoading}
-                class={`btn btn-error ${isLoading ? "loading" : ""}`}
+                class="st-button st-button--filled"
+                style="background: var(--st-sys-color-error); color: var(--st-sys-color-on-error);"
               >
-                {isLoading
-                  ? (
-                    <>
-                      <span class="loading loading-spinner loading-sm"></span>
-                      再同期中...
-                    </>
-                  )
-                  : (
-                    "はい、再同期します"
-                  )}
+                {isLoading ? "再同期中..." : "はい、再同期します"}
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
                 disabled={isLoading}
-                class="btn btn-ghost"
+                class="st-button st-button--text"
               >
                 キャンセル
               </button>
@@ -150,48 +143,23 @@ export default function ReSyncButton({
 
       {/* エラー表示 */}
       {error && (
-        <div class="alert alert-error mt-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>{error}</span>
+        <div class="st-alert st-alert--error" style="margin-top: var(--st-sys-spacing-4);">
+          <div class="st-alert__icon">❌</div>
+          <div class="st-alert__content">{error}</div>
         </div>
       )}
 
       {/* 成功表示 */}
       {result && (
-        <div class="alert alert-success mt-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <div>
-            <p class="font-bold">再同期完了!</p>
-            <p class="text-sm">
-              作成: {result.created} 件 / 更新: {result.updated} 件 / スキップ:
-              {" "}
+        <div class="st-alert st-alert--success" style="margin-top: var(--st-sys-spacing-4);">
+          <div class="st-alert__icon">✅</div>
+          <div class="st-alert__content">
+            <p style="font-weight: 700;">再同期完了</p>
+            <p style="font-size: var(--st-sys-typescale-body-small-size);">
+              作成: {result.created} 件 / 更新: {result.updated} 件 / スキップ:{" "}
               {result.skipped} 件
               {result.errors > 0 && (
-                <span class="text-error">/ エラー: {result.errors} 件</span>
+                <span style="color: var(--st-sys-color-error);"> / エラー: {result.errors} 件</span>
               )}
             </p>
           </div>

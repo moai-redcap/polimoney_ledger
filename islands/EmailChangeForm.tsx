@@ -58,17 +58,28 @@ export default function EmailChangeForm({ currentEmail }: Props) {
     }
   };
 
+  const alertClass = (type: string) => {
+    switch (type) {
+      case "success":
+        return "st-alert st-alert--success";
+      case "info":
+        return "st-alert st-alert--info";
+      default:
+        return "st-alert st-alert--error";
+    }
+  };
+
   return (
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title">
+    <div class="st-card st-card--elevated">
+      <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+        <h2 class="st-card__title">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            class="w-6 h-6"
+            style="width: 1.5rem; height: 1.5rem;"
           >
             <path
               strokeLinecap="round"
@@ -82,53 +93,42 @@ export default function EmailChangeForm({ currentEmail }: Props) {
         {message && (
           <div
             role="alert"
-            class={`alert ${
-              message.type === "success"
-                ? "alert-success"
-                : message.type === "info"
-                ? "alert-info"
-                : "alert-error"
-            } mt-2`}
+            class={alertClass(message.type)}
+            style="margin-top: var(--st-sys-spacing-2);"
           >
-            <span>{message.text}</span>
+            <div class="st-alert__content">{message.text}</div>
           </div>
         )}
 
         {isEditing
           ? (
-            <form onSubmit={handleSubmit} class="space-y-4 mt-2">
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">現在のメールアドレス</span>
-                </label>
+            <form onSubmit={handleSubmit} class="st-stack st-stack--md" style="margin-top: var(--st-sys-spacing-2);">
+              <div class="st-field">
+                <label class="st-field__label">現在のメールアドレス</label>
                 <input
                   type="email"
                   value={currentEmail}
-                  class="input input-bordered"
+                  class="st-input"
                   disabled
                 />
               </div>
-              <div class="form-control">
-                <label class="label">
-                  <span class="label-text">新しいメールアドレス</span>
-                </label>
+              <div class="st-field">
+                <label class="st-field__label">新しいメールアドレス</label>
                 <input
                   type="email"
                   value={newEmail}
                   onChange={(e) =>
                     setNewEmail((e.target as HTMLInputElement).value)}
-                  class="input input-bordered"
+                  class="st-input"
                   placeholder="新しいメールアドレスを入力"
                   required
                 />
-                <label class="label">
-                  <span class="label-text-alt">確認メールが送信されます</span>
-                </label>
+                <span class="st-field__helper">確認メールが送信されます</span>
               </div>
-              <div class="flex gap-2">
+              <div class="st-flex st-gap-2">
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  class="st-button st-button--filled"
                   disabled={isSubmitting || !newEmail ||
                     newEmail === currentEmail}
                 >
@@ -136,7 +136,7 @@ export default function EmailChangeForm({ currentEmail }: Props) {
                 </button>
                 <button
                   type="button"
-                  class="btn"
+                  class="st-button st-button--text"
                   onClick={() => {
                     setIsEditing(false);
                     setNewEmail("");
@@ -150,10 +150,10 @@ export default function EmailChangeForm({ currentEmail }: Props) {
           )
           : (
             <>
-              <p class="text-base-content/70">{currentEmail}</p>
-              <div class="card-actions mt-2">
+              <p style="color: var(--st-sys-color-on-surface-variant);">{currentEmail}</p>
+              <div class="st-card__actions" style="margin-top: var(--st-sys-spacing-2);">
                 <button
-                  class="btn btn-sm btn-outline"
+                  class="st-button st-button--outlined st-button--sm"
                   onClick={() => setIsEditing(true)}
                 >
                   メールアドレスを変更
@@ -162,23 +162,11 @@ export default function EmailChangeForm({ currentEmail }: Props) {
             </>
           )}
 
-        <div class="alert alert-info mt-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="stroke-current shrink-0 w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span class="text-sm">
-            ログインに使用するメールアドレスです。政治家認証・政治団体管理者認証で使用する「公式メールアドレス」とは別です。
-          </span>
+        <div class="st-alert st-alert--info" style="margin-top: var(--st-sys-spacing-4);">
+          <div class="st-alert__icon">ℹ️</div>
+          <div class="st-alert__content" style="font-size: var(--st-sys-typescale-body-small-size);">
+            ログインに使用するメールアドレスです。政治家認証・政治団体管理者認証で使用する「連絡メールアドレス」とは別です。
+          </div>
         </div>
       </div>
     </div>
