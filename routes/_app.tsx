@@ -2,7 +2,7 @@ import { define } from "../lib/define.ts";
 
 export default define.layout(({ Component }) => {
   return (
-    <html lang="ja" data-theme="polimoney">
+    <html lang="ja">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,11 +19,10 @@ export default define.layout(({ Component }) => {
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
-        <link rel="stylesheet" href="/styles.css" />
         <link rel="stylesheet" href="/sawtooth.css" />
         <script type="module" src="https://unpkg.com/cally"></script>
       </head>
-      <body class="min-h-screen bg-base-200 font-ud">
+      <body style="min-height: 100vh; background: var(--st-sys-color-surface-variant); font-family: 'Noto Sans JP', sans-serif;">
         <Component />
       </body>
     </html>
