@@ -82,10 +82,11 @@ export default define.page<typeof handler>(({ data }) => {
         <title>補助科目 - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/sub-accounts" title="補助科目">
-        <div class="max-w-4xl">
+        <div style="max-width: 56rem;">
           {error && (
-            <div class="alert alert-error mb-4">
-              <span>{error}</span>
+            <div class="st-alert st-alert--error" style="margin-bottom: var(--st-sys-spacing-4);">
+              <div class="st-alert__icon">❌</div>
+              <div class="st-alert__content">{error}</div>
             </div>
           )}
 
