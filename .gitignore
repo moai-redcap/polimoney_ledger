@@ -82,6 +82,7 @@ pip-delete-this-directory.txt
 # Fresh (Deno) - Web App
 # -------------------------------------------
 _fresh/
+static/sawtooth.css
 
 # -------------------------------------------
 # Future: Frontend (e.g., frontend/)

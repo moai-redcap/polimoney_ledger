@@ -20,6 +20,7 @@ export default define.layout(({ Component }) => {
           rel="stylesheet"
         />
         <link rel="stylesheet" href="/styles.css" />
+        <link rel="stylesheet" href="/sawtooth.css" />
         <script type="module" src="https://unpkg.com/cally"></script>
       </head>
       <body class="min-h-screen bg-base-200 font-ud">
