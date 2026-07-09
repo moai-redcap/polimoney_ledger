@@ -15,7 +15,7 @@ export default function ProfileEditor({
 
   const handleSave = async () => {
     if (!displayName.trim()) {
-      setError("姓名を入力してください");
+      setError("氏名を入力してください");
       return;
     }
 
@@ -51,79 +51,74 @@ export default function ProfileEditor({
   };
 
   return (
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title">プロフィール</h2>
+    <div class="st-card st-card--elevated">
+      <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+        <h2 class="st-card__title">プロフィール</h2>
 
         {error && (
-          <div class="alert alert-error">
-            <span>{error}</span>
+          <div class="st-alert st-alert--error" style="margin-top: var(--st-sys-spacing-2);">
+            <div class="st-alert__content">{error}</div>
           </div>
         )}
 
         {success && (
-          <div class="alert alert-success">
-            <span>{success}</span>
+          <div class="st-alert st-alert--success" style="margin-top: var(--st-sys-spacing-2);">
+            <div class="st-alert__content">{success}</div>
           </div>
         )}
 
-        <div class="space-y-4 mt-4">
-          {/* 姓名（本名） */}
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">姓名（本名）</span>
-            </label>
+        <div class="st-stack st-stack--md" style="margin-top: var(--st-sys-spacing-4);">
+          {/* 氏名（本名） */}
+          <div class="st-field">
+            <label class="st-field__label" style="font-weight: 500;">氏名（本名）</label>
             {isEditing
               ? (
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <input
                     type="text"
-                    class="input input-bordered flex-1"
+                    class="st-input"
+                    style="flex: 1;"
                     value={displayName}
                     onChange={(e) =>
                       setDisplayName((e.target as HTMLInputElement).value)}
                     placeholder="山田 太郎"
                   />
                   <button
-                    class="btn btn-ghost"
+                    class="st-button st-button--text"
                     onClick={handleCancel}
                     disabled={isLoading}
                   >
                     キャンセル
                   </button>
                   <button
-                    class="btn btn-primary"
+                    class="st-button st-button--filled"
                     onClick={handleSave}
                     disabled={isLoading}
                   >
-                    {isLoading && (
-                      <span class="loading loading-spinner loading-sm" />
-                    )}
                     保存
                   </button>
                 </div>
               )
               : (
-                <div class="flex gap-2">
+                <div class="st-flex st-gap-2">
                   <input
                     type="text"
-                    class="input input-bordered flex-1 bg-base-200"
+                    class="st-input"
+                    style="flex: 1;"
                     value={displayName || "（未設定）"}
                     disabled
                   />
                   <button
-                    class="btn btn-ghost"
+                    class="st-button st-button--text"
                     onClick={() => setIsEditing(true)}
                   >
                     編集
                   </button>
                 </div>
               )}
-            <label class="label">
-              <span class="label-text-alt text-base-content/60">
-                政治家認証やメンバー一覧に表示されます。本名を入力してください。
-              </span>
-            </label>
+            <span class="st-field__helper">
+              政治家認証やメンバー一覧に表示されます。本名を入力してください。
+            </span>
           </div>
         </div>
       </div>

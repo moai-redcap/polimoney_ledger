@@ -28,16 +28,16 @@ export default function PolicyBanner() {
   }
 
   return (
-    <div class="bg-info text-info-content px-4 py-3">
-      <div class="flex items-center justify-between max-w-4xl mx-auto">
-        <div class="flex items-center gap-3">
+    <div style="background: var(--st-sys-color-primary-container); color: var(--st-sys-color-on-primary-container); padding: var(--st-sys-spacing-3) var(--st-sys-spacing-4);">
+      <div style="display: flex; align-items: center; justify-content: space-between; max-width: 56rem; margin: 0 auto;">
+        <div class="st-flex st-flex--items-center st-gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-5 h-5 flex-shrink-0"
+            style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;"
           >
             <path
               stroke-linecap="round"
@@ -45,11 +45,11 @@ export default function PolicyBanner() {
               d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
             />
           </svg>
-          <p class="text-sm">
+          <p style="font-size: var(--st-sys-typescale-body-small-size);">
             プライバシーポリシーが更新されました。
             <a
               href="/privacy"
-              class="underline font-medium hover:opacity-80 ml-1"
+              style="text-decoration: underline; font-weight: 500; margin-left: var(--st-sys-spacing-1);"
             >
               詳細を確認
             </a>
@@ -57,7 +57,7 @@ export default function PolicyBanner() {
         </div>
         <button
           onClick={handleDismiss}
-          class="btn btn-ghost btn-sm btn-circle"
+          class="st-button st-button--text st-button--sm st-button--icon"
           aria-label="閉じる"
         >
           <svg
@@ -66,7 +66,7 @@ export default function PolicyBanner() {
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-5 h-5"
+            style="width: 1.25rem; height: 1.25rem;"
           >
             <path
               stroke-linecap="round"
