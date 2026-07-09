@@ -34,14 +34,14 @@ export default define.page<typeof handler>(({ data }) => {
         <title>設定 - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/settings" title="設定">
-        <div class="max-w-3xl">
+        <div class="st-stack st-stack--lg" style="max-width: 48rem;">
           {/* 同期ステータス */}
-          <section class="card bg-base-100 shadow-xl mb-8">
-            <div class="card-body">
-              <h2 class="card-title">Hub 同期ステータス</h2>
-              <div class="flex items-center gap-2 mt-2">
-                <span class="badge badge-success">自動同期: 有効</span>
-                <span class="text-sm text-base-content/70">
+          <section class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+              <h2 class="st-card__title">Hub 同期ステータス</h2>
+              <div class="st-flex st-flex--items-center st-gap-2" style="margin-top: var(--st-sys-spacing-2);">
+                <span class="st-badge st-badge--primary" style="background: var(--st-sys-color-tertiary); color: var(--st-sys-color-on-tertiary);">自動同期: 有効</span>
+                <span style="font-size: var(--st-sys-typescale-body-small-size); color: var(--st-sys-color-on-surface-variant);">
                   仕訳承認時に自動で Hub に同期されます
                 </span>
               </div>
@@ -49,22 +49,22 @@ export default define.page<typeof handler>(({ data }) => {
           </section>
 
           {/* データエクスポート */}
-          <section class="card bg-base-100 shadow-xl mb-8">
-            <div class="card-body">
-              <h2 class="card-title">📦 データポータビリティ</h2>
-              <p class="text-base-content/70 mb-4">
+          <section class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+              <h2 class="st-card__title">📦 データポータビリティ</h2>
+              <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                 あなたのすべてのデータを JSON 形式でダウンロードできます。
                 政治団体、選挙、仕訳、連絡先などが含まれます。
               </p>
-              <div class="card-actions">
+              <div class="st-card__actions">
                 <a
                   href="/api/export"
-                  class="btn btn-outline btn-primary"
+                  class="st-button st-button--outlined"
                   download
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2"
+                    style="height: 1.25rem; width: 1.25rem; margin-right: var(--st-sys-spacing-2);"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -83,7 +83,7 @@ export default define.page<typeof handler>(({ data }) => {
           </section>
 
           {/* スペーサー */}
-          <div class="py-8"></div>
+          <div style="padding: var(--st-sys-spacing-8) 0;"></div>
 
           {/* Danger Zone */}
           <section>

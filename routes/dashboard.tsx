@@ -9,24 +9,24 @@ export default function Home() {
       </Head>
       <Layout currentPath="/" title="ホーム">
         {/* ウェルカムメッセージ */}
-        <div class="flex flex-col items-center justify-center h-full">
-          <div class="text-center max-w-md">
-            <span class="text-6xl mb-4 block">📒</span>
-            <h2 class="text-2xl font-bold mb-2">Polimoney Ledger へようこそ</h2>
-            <p class="text-base-content/70 mb-6">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+          <div style="text-align: center; max-width: 28rem;">
+            <span style="font-size: 4rem; margin-bottom: var(--st-sys-spacing-4); display: block;">📒</span>
+            <h2 style="font-size: var(--st-sys-typescale-headline-small-size); font-weight: 700; margin-bottom: var(--st-sys-spacing-2); color: var(--st-sys-color-on-surface);">Polimoney Ledger へようこそ</h2>
+            <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-6);">
               政治資金収支報告書の作成・管理ツールです。
               左のメニューから台帳を選択してください。
             </p>
 
-            <div class="flex flex-col gap-3">
-              <a href="/organizations" class="btn btn-primary btn-lg">
+            <div class="st-stack st-stack--md">
+              <a href="/organizations" class="st-button st-button--filled st-button--lg" style="width: 100%; justify-content: center;">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-6 h-6"
+                  style="width: 1.5rem; height: 1.5rem;"
                 >
                   <path
                     stroke-linecap="round"
@@ -36,14 +36,14 @@ export default function Home() {
                 </svg>
                 政治団体から始める
               </a>
-              <a href="/elections" class="btn btn-outline btn-lg">
+              <a href="/elections" class="st-button st-button--outlined st-button--lg" style="width: 100%; justify-content: center;">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-6 h-6"
+                  style="width: 1.5rem; height: 1.5rem;"
                 >
                   <path
                     stroke-linecap="round"

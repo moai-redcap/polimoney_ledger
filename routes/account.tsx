@@ -48,7 +48,7 @@ export default define.page<typeof handler>(({ data }) => {
         <title>アカウント - Polimoney Ledger</title>
       </Head>
       <Layout currentPath="/account" title="アカウント">
-        <div class="max-w-2xl space-y-6">
+        <div class="st-stack st-stack--lg" style="max-width: 42rem;">
           {/* プロフィール編集 */}
           <ProfileEditor initialDisplayName={displayName} />
 
@@ -56,16 +56,16 @@ export default define.page<typeof handler>(({ data }) => {
           <EmailChangeForm currentEmail={email} />
 
           {/* パスワード変更（OAuth以外の場合） */}
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <h2 class="card-title">
+          <div class="st-card st-card--elevated">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+              <h2 class="st-card__title">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="w-6 h-6"
+                  style="width: 1.5rem; height: 1.5rem;"
                 >
                   <path
                     strokeLinecap="round"
@@ -75,11 +75,11 @@ export default define.page<typeof handler>(({ data }) => {
                 </svg>
                 セキュリティ
               </h2>
-              <p class="text-base-content/70 mb-4">
+              <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                 パスワードの変更やアカウントの削除ができます。
               </p>
-              <div class="flex flex-wrap gap-2">
-                <a href="/auth/reset-password" class="btn btn-outline">
+              <div class="st-flex st-flex--wrap st-gap-2">
+                <a href="/auth/reset-password" class="st-button st-button--outlined">
                   パスワードを変更
                 </a>
               </div>
@@ -87,16 +87,16 @@ export default define.page<typeof handler>(({ data }) => {
           </div>
 
           {/* 危険な操作 */}
-          <div class="card bg-error/5 border border-error/20">
-            <div class="card-body">
-              <h2 class="card-title text-error">
+          <div class="st-card" style="background: color-mix(in srgb, var(--st-sys-color-error) 5%, var(--st-sys-color-surface)); border: 1px solid color-mix(in srgb, var(--st-sys-color-error) 20%, transparent);">
+            <div class="st-card__content" style="padding: var(--st-sys-spacing-6);">
+              <h2 class="st-card__title" style="color: var(--st-sys-color-error);">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="w-6 h-6"
+                  style="width: 1.5rem; height: 1.5rem;"
                 >
                   <path
                     strokeLinecap="round"
@@ -106,12 +106,12 @@ export default define.page<typeof handler>(({ data }) => {
                 </svg>
                 危険な操作
               </h2>
-              <p class="text-base-content/70 mb-4">
+              <p style="color: var(--st-sys-color-on-surface-variant); margin-bottom: var(--st-sys-spacing-4);">
                 アカウントを削除すると、すべてのデータが完全に削除されます。
                 この操作は取り消せません。
               </p>
-              <div class="card-actions">
-                <button class="btn btn-error btn-outline" disabled>
+              <div class="st-card__actions">
+                <button class="st-button st-button--outlined" style="color: var(--st-sys-color-error); border-color: var(--st-sys-color-error);" disabled>
                   アカウントを削除（準備中）
                 </button>
               </div>
