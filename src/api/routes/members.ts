@@ -27,7 +27,7 @@ membersRouter.get("/", async (c) => {
       ? getServiceClient()
       : getSupabaseClient(userId);
 
-    let query = supabase.from("members").select("*");
+    let query = supabase.from("ledger_members").select("*");
 
     if (ledgerId) {
       query = query.eq("ledger_id", ledgerId);
@@ -62,7 +62,7 @@ membersRouter.post("/", async (c) => {
       : getSupabaseClient(userId);
 
     const { data, error } = await supabase
-      .from("members")
+      .from("ledger_members")
       .insert(body)
       .select()
       .single();
@@ -93,7 +93,7 @@ membersRouter.delete("/:id", async (c) => {
       ? getServiceClient()
       : getSupabaseClient(userId);
 
-    const { error } = await supabase.from("members").delete().eq("id", id);
+    const { error } = await supabase.from("ledger_members").delete().eq("id", id);
 
     if (error) {
       console.error("Failed to delete member:", error);

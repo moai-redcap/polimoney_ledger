@@ -35,7 +35,7 @@ organizationsRouter.get("/:id", async (c) => {
       : getSupabaseClient(userId);
 
     const { data, error } = await supabase
-      .from("organizations")
+      .from("political_organizations")
       .select("*")
       .eq("id", id)
       .single();
@@ -68,7 +68,7 @@ organizationsRouter.put("/:id", async (c) => {
       : getSupabaseClient(userId);
 
     const { data, error } = await supabase
-      .from("organizations")
+      .from("political_organizations")
       .update(body)
       .eq("id", id)
       .select()
@@ -101,7 +101,7 @@ organizationsRouter.post("/", async (c) => {
       : getSupabaseClient(userId);
 
     const { data, error } = await supabase
-      .from("organizations")
+      .from("political_organizations")
       .insert({
         owner_user_id: userId,
         ...body,

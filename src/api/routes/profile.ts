@@ -28,7 +28,7 @@ profileRouter.get("/", async (c) => {
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
-      .eq("user_id", userId)
+      .eq("id", userId)
       .single();
 
     if (error) {
@@ -60,7 +60,7 @@ profileRouter.put("/", async (c) => {
     const { data, error } = await supabase
       .from("profiles")
       .upsert({
-        user_id: userId,
+        id: userId,
         ...body,
       })
       .select()
