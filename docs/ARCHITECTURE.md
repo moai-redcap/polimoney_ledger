@@ -319,7 +319,9 @@ const channel = supabase
         ▼
 ┌───────────────────────────────────────────────────────────────────┐
 │                    🅰️ Ledger (Supabase A)                         │
-│  - journals に election_id, organization_id を Ledger内IDで参照  │
+│  - ledgers: 台帳（organization_id / election_id + Hub ID 参照）  │
+│  - journals: ledger_id で台帳に紐付け（1:N）                     │
+│  - contacts: 台帳間で共有（ledger_contacts 中間テーブル M:N）    │
 │  - elections: hub_politician_id, hub_election_id で Hub 参照     │
 │  - political_organizations: hub_organization_id で Hub 参照      │
 │  - profiles: hub_politician_id で認証済み政治家を紐付け          │
@@ -333,7 +335,8 @@ const channel = supabase
 | -------------- | ------------------------------------------------ |
 | 共通識別子管理 | politicians, organizations, elections を一元管理 |
 | 公開データ保存 | Ledger から同期された公開用仕訳データを保存      |
-| 匿名化         | `is_name_private` 等に基づきデータを変換         |
+| 公開データ表示 | `is_name_private` 等のフラグと非公開理由を保持   |
+| 匿名化         | Ledger が同期時に匿名化（Hub は匿名化済みデータを受領） |
 | API 提供       | Ledger / Polimoney / 将来の消費者へ API 提供     |
 
 ### 6.4. 認証方式

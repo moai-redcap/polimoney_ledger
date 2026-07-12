@@ -1,5 +1,11 @@
--- Polimoney Ledger - 正規化後スキーマ（v5）
--- 中間テーブル導入 + ledgers テーブル追加
+-- Polimoney Ledger - 正規化後スキーマ（v6）
+-- 設計方針:
+--   - politicians テーブルは作らない（Hub がマスターデータ）
+--   - politician_organizations / politician_elections 中間テーブルは作らない
+--   - ledgers テーブルが organization_id / election_id + Hub ID を直接保持
+--   - contacts は台帳間で共有（ledger_contacts 中間テーブルで M:N 紐付け）
+--   - journals は ledger_id 直接FK（1:N）
+--   - プライバシー設定は contacts にグローバルに置く
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -31,19 +37,11 @@ CREATE TABLE IF NOT EXISTS political_organizations (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 政治家
-CREATE TABLE IF NOT EXISTS politicians (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    owner_user_id UUID REFERENCES auth.users(id) NOT NULL,
-    name TEXT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 選挙（politician_id を削除 → politician_elections 中間テーブルに移行）
+-- 選挙
 CREATE TABLE IF NOT EXISTS elections (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     owner_user_id UUID REFERENCES auth.users(id) NOT NULL,
-    -- politician_id 削除: politician_elections 中間テーブルに移行
+    hub_politician_id UUID,              -- Hub 側の politicians.id（直接参照）
     election_name TEXT NOT NULL,
     election_date DATE NOT NULL,
     hub_election_id UUID,                -- Hub 側の elections.id
@@ -51,45 +49,24 @@ CREATE TABLE IF NOT EXISTS elections (
 );
 
 -- ============================================
--- 中間テーブル（新規 — Hub と同じ構造）
--- ============================================
-
--- 政治家 ↔ 政治団体（多対多）
-CREATE TABLE IF NOT EXISTS politician_organizations (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    politician_id UUID NOT NULL REFERENCES politicians(id),
-    organization_id UUID NOT NULL REFERENCES political_organizations(id),
-    hub_politician_organization_id UUID, -- Hub 側の politician_organizations.id
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (politician_id, organization_id)
-);
-
--- 政治家 ↔ 選挙（多対多）
-CREATE TABLE IF NOT EXISTS politician_elections (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    politician_id UUID NOT NULL REFERENCES politicians(id),
-    election_id UUID NOT NULL REFERENCES elections(id),
-    hub_politician_election_id UUID,     -- Hub 側の politician_elections.id
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (politician_id, election_id)
-);
-
--- ============================================
--- 台帳（新規 — Hub の public_ledgers に対応）
+-- 台帳（Hub の public_ledgers に対応）
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS ledgers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     owner_user_id UUID REFERENCES auth.users(id) NOT NULL,
     ledger_type TEXT NOT NULL,           -- 'political_fund' | 'election_fund'
-    politician_organization_id UUID REFERENCES politician_organizations(id),
-    politician_election_id UUID REFERENCES politician_elections(id),
+    organization_id UUID REFERENCES political_organizations(id),
+    election_id UUID REFERENCES elections(id),
+    -- Hub連携用ID（Hub の中間テーブルIDを直接参照、FK制約なし）
+    hub_politician_organization_id UUID,
+    hub_politician_election_id UUID,
     hub_ledger_id UUID,                  -- Hub 側の public_ledgers.id
     created_at TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT valid_ledger_type CHECK (
-        (ledger_type = 'political_fund' AND politician_organization_id IS NOT NULL AND politician_election_id IS NULL)
+        (ledger_type = 'political_fund' AND organization_id IS NOT NULL AND election_id IS NULL)
         OR
-        (ledger_type = 'election_fund' AND politician_election_id IS NOT NULL AND politician_organization_id IS NULL)
+        (ledger_type = 'election_fund' AND election_id IS NOT NULL AND organization_id IS NULL)
     )
 );
 
@@ -107,19 +84,18 @@ CREATE TABLE IF NOT EXISTS sub_accounts (
 );
 
 -- ============================================
--- 関係者（台帳に紐付け）
+-- 関係者（台帳間で共有）
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS contacts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     owner_user_id UUID REFERENCES auth.users(id) NOT NULL,
-    ledger_id UUID REFERENCES ledgers(id),           -- 台帳への紐付け
     contact_type TEXT NOT NULL,                       -- 'person', 'corporation', 'political_organization'
     name TEXT NOT NULL,
     address TEXT,
     occupation TEXT,
     hub_organization_id UUID,                        -- Hub の政治団体ID（political_organization タイプの場合）
-    -- プライバシー設定
+    -- プライバシー設定（グローバル — 全台帳で共通）
     is_name_private BOOLEAN NOT NULL DEFAULT FALSE,
     is_address_private BOOLEAN NOT NULL DEFAULT FALSE,
     is_occupation_private BOOLEAN NOT NULL DEFAULT FALSE,
@@ -128,13 +104,22 @@ CREATE TABLE IF NOT EXISTS contacts (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 台帳 ↔ 関係者（M:N）
+CREATE TABLE IF NOT EXISTS ledger_contacts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    ledger_id UUID REFERENCES ledgers(id) NOT NULL,
+    contact_id UUID REFERENCES contacts(id) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (ledger_id, contact_id)
+);
+
 -- ============================================
--- 仕訳（台帳に紐付け）
+-- 仕訳（台帳に紐付け — 1:N）
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS journals (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    ledger_id UUID REFERENCES ledgers(id) NOT NULL,  -- organization_id/election_id を廃止
+    ledger_id UUID REFERENCES ledgers(id) NOT NULL,
     journal_date DATE NOT NULL,
     description TEXT NOT NULL,
     status TEXT NOT NULL,                             -- 'draft', 'approved'
@@ -184,20 +169,20 @@ CREATE INDEX IF NOT EXISTS idx_media_assets_journal ON media_assets(journal_id);
 CREATE INDEX IF NOT EXISTS idx_media_assets_user ON media_assets(uploaded_by_user_id);
 
 -- ============================================
--- 台帳メンバー（台帳に紐付け）
+-- 台帳メンバー（M:N）
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS ledger_members (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES auth.users(id),
-    ledger_id UUID REFERENCES ledgers(id) NOT NULL,  -- organization_id/election_id を廃止
-    role TEXT NOT NULL,                               -- 'admin', 'approver', 'submitter', 'viewer'
+    ledger_id UUID REFERENCES ledgers(id) NOT NULL,
+    role TEXT NOT NULL,                               -- 'admin', 'accountant', 'approver', 'submitter', 'viewer'
     invited_by_user_id UUID REFERENCES auth.users(id),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ============================================
--- オーナーシップ移行（変更なし）
+-- オーナーシップ移行
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS ownership_transfers (
@@ -216,7 +201,7 @@ CREATE TABLE IF NOT EXISTS ownership_transfers (
 CREATE TABLE IF NOT EXISTS transaction_drafts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     owner_user_id UUID REFERENCES auth.users(id) NOT NULL,
-    ledger_id UUID REFERENCES ledgers(id),           -- organization_id/election_id を廃止
+    ledger_id UUID REFERENCES ledgers(id),
     transaction_date DATE NOT NULL,
     amount INTEGER NOT NULL,
     description TEXT,
@@ -245,7 +230,7 @@ CREATE INDEX IF NOT EXISTS idx_drafts_date ON transaction_drafts(transaction_dat
 
 CREATE TABLE IF NOT EXISTS ledger_year_closures (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    ledger_id UUID NOT NULL REFERENCES ledgers(id) ON DELETE CASCADE, -- organization_id を廃止
+    ledger_id UUID NOT NULL REFERENCES ledgers(id) ON DELETE CASCADE,
     fiscal_year INTEGER NOT NULL,
     status TEXT NOT NULL DEFAULT 'open'
         CHECK (status IN ('open', 'closed', 'locked', 'temporary_unlock')),
@@ -269,13 +254,11 @@ CREATE INDEX IF NOT EXISTS idx_year_closures_fiscal_year ON ledger_year_closures
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE political_organizations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE politicians ENABLE ROW LEVEL SECURITY;
 ALTER TABLE elections ENABLE ROW LEVEL SECURITY;
-ALTER TABLE politician_organizations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE politician_elections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ledgers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sub_accounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ledger_contacts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE journals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE media_assets ENABLE ROW LEVEL SECURITY;
@@ -284,46 +267,42 @@ ALTER TABLE ownership_transfers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transaction_drafts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ledger_year_closures ENABLE ROW LEVEL SECURITY;
 
+-- ============================================
 -- RLS ポリシー
+-- ============================================
+
+-- マスタ系
 DROP POLICY IF EXISTS "Users can CRUD their own organizations" ON political_organizations;
 CREATE POLICY "Users can CRUD their own organizations" ON political_organizations
-    FOR ALL USING (auth.uid() = owner_user_id);
-
-DROP POLICY IF EXISTS "Users can CRUD their own politicians" ON politicians;
-CREATE POLICY "Users can CRUD their own politicians" ON politicians
     FOR ALL USING (auth.uid() = owner_user_id);
 
 DROP POLICY IF EXISTS "Users can CRUD their own elections" ON elections;
 CREATE POLICY "Users can CRUD their own elections" ON elections
     FOR ALL USING (auth.uid() = owner_user_id);
 
--- 中間テーブルのポリシー（所有する政治家の関連のみ）
-DROP POLICY IF EXISTS "Users can manage their politician_organizations" ON politician_organizations;
-CREATE POLICY "Users can manage their politician_organizations" ON politician_organizations
-    FOR ALL USING (
-        politician_id IN (SELECT id FROM politicians WHERE owner_user_id = auth.uid())
-    );
-
-DROP POLICY IF EXISTS "Users can manage their politician_elections" ON politician_elections;
-CREATE POLICY "Users can manage their politician_elections" ON politician_elections
-    FOR ALL USING (
-        politician_id IN (SELECT id FROM politicians WHERE owner_user_id = auth.uid())
-    );
-
--- 台帳のポリシー
+-- 台帳
 DROP POLICY IF EXISTS "Users can CRUD their own ledgers" ON ledgers;
 CREATE POLICY "Users can CRUD their own ledgers" ON ledgers
     FOR ALL USING (auth.uid() = owner_user_id);
 
+-- 関係者（owner が管理）
 DROP POLICY IF EXISTS "Users can CRUD their own contacts" ON contacts;
 CREATE POLICY "Users can CRUD their own contacts" ON contacts
     FOR ALL USING (auth.uid() = owner_user_id);
 
+-- 台帳 ↔ 関係者（台帳の owner が管理）
+DROP POLICY IF EXISTS "Users can manage their ledger_contacts" ON ledger_contacts;
+CREATE POLICY "Users can manage their ledger_contacts" ON ledger_contacts
+    FOR ALL USING (
+        ledger_id IN (SELECT id FROM ledgers WHERE owner_user_id = auth.uid())
+    );
+
+-- 補助科目
 DROP POLICY IF EXISTS "Users can CRUD their own sub_accounts" ON sub_accounts;
 CREATE POLICY "Users can CRUD their own sub_accounts" ON sub_accounts
     FOR ALL USING (auth.uid() = owner_user_id);
 
--- Profiles ポリシー
+-- Profiles
 DROP POLICY IF EXISTS "Users can read own profile" ON profiles;
 CREATE POLICY "Users can read own profile" ON profiles
     FOR SELECT USING (auth.uid() = id);
@@ -336,7 +315,7 @@ DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 CREATE POLICY "Users can insert own profile" ON profiles
     FOR INSERT WITH CHECK (auth.uid() = id);
 
--- Media Assets ポリシー
+-- Media Assets
 DROP POLICY IF EXISTS "Users can manage their media assets" ON media_assets;
 CREATE POLICY "Users can manage their media assets" ON media_assets
     FOR ALL USING (
@@ -347,7 +326,7 @@ CREATE POLICY "Users can manage their media assets" ON media_assets
         )
     );
 
--- Ownership Transfers ポリシー
+-- Ownership Transfers
 DROP POLICY IF EXISTS "Allow individual read access" ON ownership_transfers;
 CREATE POLICY "Allow individual read access" ON ownership_transfers
     FOR SELECT USING (auth.uid() = from_user_id OR auth.uid() = to_user_id);
@@ -356,13 +335,12 @@ DROP POLICY IF EXISTS "Allow individual update access" ON ownership_transfers;
 CREATE POLICY "Allow individual update access" ON ownership_transfers
     FOR UPDATE USING (auth.uid() = to_user_id);
 
--- Transaction Drafts ポリシー
-ALTER TABLE transaction_drafts ENABLE ROW LEVEL SECURITY;
+-- Transaction Drafts
 DROP POLICY IF EXISTS "Users can CRUD their own drafts" ON transaction_drafts;
 CREATE POLICY "Users can CRUD their own drafts" ON transaction_drafts
     FOR ALL USING (auth.uid() = owner_user_id);
 
--- Ledger Year Closures ポリシー
+-- Ledger Year Closures
 DROP POLICY IF EXISTS "Users can manage closures for their ledgers" ON ledger_year_closures;
 CREATE POLICY "Users can manage closures for their ledgers" ON ledger_year_closures
     FOR ALL USING (

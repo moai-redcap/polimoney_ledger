@@ -13,6 +13,12 @@
  * 注意:
  *   - このスクリプトは service_role キーを使用します
  *   - テストユーザー（TEST_USER_ID）でログインすると、このダミーデータが表示されます
+ *
+ * v6 スキーマ対応:
+ *   - politicians テーブル廃止（Hub がマスターデータ）
+ *   - ledgers テーブル追加
+ *   - contacts は台帳間で共有（ledger_contacts 中間テーブル）
+ *   - journals は ledger_id 直接FK
  */
 
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
@@ -38,27 +44,9 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 // 固定のテストユーザー ID
 // ============================================
 
-// テスト用ユーザー（開発用ダミーデータの所有者）
 const TEST_USER_ID = "00000000-0000-0000-0000-000000000001";
 const TEST_USER_EMAIL = "test-dev@polimoney.local";
 const TEST_USER_PASSWORD = "test-dev-password-12345";
-
-// ============================================
-// ダミーデータ: 政治家
-// ============================================
-
-const testPoliticians = [
-  {
-    id: "11111111-1111-1111-1111-111111111111",
-    owner_user_id: TEST_USER_ID,
-    name: "テスト 太郎",
-  },
-  {
-    id: "22222222-2222-2222-2222-222222222222",
-    owner_user_id: TEST_USER_ID,
-    name: "テスト 花子",
-  },
-];
 
 // ============================================
 // ダミーデータ: 政治団体
@@ -69,11 +57,13 @@ const testOrganizations = [
     id: "aaaa1111-1111-1111-1111-111111111111",
     owner_user_id: TEST_USER_ID,
     name: "テスト太郎後援会",
+    hub_organization_id: "aaaa1111-1111-1111-1111-111111111111",
   },
   {
     id: "aaaa2222-2222-2222-2222-222222222222",
     owner_user_id: TEST_USER_ID,
     name: "テスト花子を応援する会",
+    hub_organization_id: "aaaa2222-2222-2222-2222-222222222222",
   },
 ];
 
@@ -85,21 +75,42 @@ const testElections = [
   {
     id: "eeee1111-1111-1111-1111-111111111111",
     owner_user_id: TEST_USER_ID,
-    politician_id: "11111111-1111-1111-1111-111111111111",
+    hub_politician_id: "11111111-1111-1111-1111-111111111111",
     election_name: "2024年 第50回衆議院議員総選挙（テスト）",
     election_date: "2024-10-27",
   },
   {
     id: "eeee2222-2222-2222-2222-222222222222",
     owner_user_id: TEST_USER_ID,
-    politician_id: "22222222-2222-2222-2222-222222222222",
+    hub_politician_id: "22222222-2222-2222-2222-222222222222",
     election_name: "令和7年東京都知事選挙（テスト）",
     election_date: "2025-07-06",
   },
 ];
 
 // ============================================
-// ダミーデータ: 関係者（取引先）
+// ダミーデータ: 台帳
+// ============================================
+
+const testLedgers = [
+  {
+    id: "bbbb1111-1111-1111-1111-111111111111",
+    owner_user_id: TEST_USER_ID,
+    ledger_type: "political_fund",
+    organization_id: "aaaa1111-1111-1111-1111-111111111111",
+    election_id: null,
+  },
+  {
+    id: "bbbb2222-2222-2222-2222-222222222222",
+    owner_user_id: TEST_USER_ID,
+    ledger_type: "election_fund",
+    organization_id: null,
+    election_id: "eeee1111-1111-1111-1111-111111111111",
+  },
+];
+
+// ============================================
+// ダミーデータ: 関係者（台帳間で共有 — 同一人物は1レコード）
 // ============================================
 
 const testContacts = [
@@ -139,15 +150,48 @@ const testContacts = [
 ];
 
 // ============================================
-// ダミーデータ: 仕訳
+// ダミーデータ: 台帳 ↔ 関係者 紐付け
+// ============================================
+
+const testLedgerContacts = [
+  // 選挙台帳 → 関係者
+  {
+    id: "lc001111-1111-1111-1111-111111111111",
+    ledger_id: "bbbb2222-2222-2222-2222-222222222222",
+    contact_id: "cccc1111-1111-1111-1111-111111111111",
+  },
+  {
+    id: "lc002222-2222-2222-2222-222222222222",
+    ledger_id: "bbbb2222-2222-2222-2222-222222222222",
+    contact_id: "cccc2222-2222-2222-2222-222222222222",
+  },
+  {
+    id: "lc003333-3333-3333-3333-333333333333",
+    ledger_id: "bbbb2222-2222-2222-2222-222222222222",
+    contact_id: "cccc3333-3333-3333-3333-333333333333",
+  },
+  // 政治団体台帳 → 関係者（山田一郎、テスト印刷は両台帳から参照）
+  {
+    id: "lc004444-4444-4444-4444-444444444444",
+    ledger_id: "bbbb1111-1111-1111-1111-111111111111",
+    contact_id: "cccc1111-1111-1111-1111-111111111111",
+  },
+  {
+    id: "lc005555-5555-5555-5555-555555555555",
+    ledger_id: "bbbb1111-1111-1111-1111-111111111111",
+    contact_id: "cccc2222-2222-2222-2222-222222222222",
+  },
+];
+
+// ============================================
+// ダミーデータ: 仕訳（ledger_id で台帳に紐付け）
 // ============================================
 
 const testJournals = [
   // 選挙台帳: テスト太郎の選挙
   {
     id: "dddd1111-1111-1111-1111-111111111111",
-    organization_id: null,
-    election_id: "eeee1111-1111-1111-1111-111111111111",
+    ledger_id: "bbbb2222-2222-2222-2222-222222222222",
     journal_date: "2024-10-01",
     description: "選挙ポスター印刷",
     status: "approved",
@@ -159,8 +203,7 @@ const testJournals = [
   },
   {
     id: "dddd1111-2222-2222-2222-222222222222",
-    organization_id: null,
-    election_id: "eeee1111-1111-1111-1111-111111111111",
+    ledger_id: "bbbb2222-2222-2222-2222-222222222222",
     journal_date: "2024-10-05",
     description: "個人寄附",
     status: "approved",
@@ -172,8 +215,7 @@ const testJournals = [
   },
   {
     id: "dddd1111-3333-3333-3333-333333333333",
-    organization_id: null,
-    election_id: "eeee1111-1111-1111-1111-111111111111",
+    ledger_id: "bbbb2222-2222-2222-2222-222222222222",
     journal_date: "2024-10-15",
     description: "選挙事務所借り上げ",
     status: "approved",
@@ -186,8 +228,7 @@ const testJournals = [
   // 政治団体台帳: テスト太郎後援会
   {
     id: "dddd2222-1111-1111-1111-111111111111",
-    organization_id: "aaaa1111-1111-1111-1111-111111111111",
-    election_id: null,
+    ledger_id: "bbbb1111-1111-1111-1111-111111111111",
     journal_date: "2024-04-15",
     description: "会費収入",
     status: "approved",
@@ -199,8 +240,7 @@ const testJournals = [
   },
   {
     id: "dddd2222-2222-2222-2222-222222222222",
-    organization_id: "aaaa1111-1111-1111-1111-111111111111",
-    election_id: null,
+    ledger_id: "bbbb1111-1111-1111-1111-111111111111",
     journal_date: "2024-05-01",
     description: "事務用品購入",
     status: "approved",
@@ -243,7 +283,7 @@ const testJournalEntries = [
   {
     id: "ff001111-2222-2222-2222-222222222222",
     journal_id: "dddd1111-2222-2222-2222-222222222222",
-    account_code: "REV_DONATION_INDIVIDUAL",
+    account_code: "REV_DONATION_INDIVIDUAL_ELEC",
     debit_amount: 0,
     credit_amount: 50000,
   },
@@ -281,7 +321,7 @@ const testJournalEntries = [
   {
     id: "ff002222-2222-2222-1111-111111111111",
     journal_id: "dddd2222-2222-2222-2222-222222222222",
-    account_code: "EXP_SUPPLIES_POL",
+    account_code: "EXP_SUPPLIES",
     debit_amount: 5000,
     credit_amount: 0,
   },
@@ -301,7 +341,6 @@ const testJournalEntries = [
 async function createTestUser(): Promise<boolean> {
   console.log("\n📝 テストユーザーを作成中...");
 
-  // 既存ユーザーをチェック
   const { data: existingUser } = await supabase.auth.admin.getUserById(
     TEST_USER_ID,
   );
@@ -311,7 +350,6 @@ async function createTestUser(): Promise<boolean> {
     return true;
   }
 
-  // 新規作成
   const { data, error } = await supabase.auth.admin.createUser({
     id: TEST_USER_ID,
     email: TEST_USER_EMAIL,
@@ -330,20 +368,6 @@ async function createTestUser(): Promise<boolean> {
 
   console.log(`  ✓ テストユーザー作成完了: ${data.user?.email}`);
   return true;
-}
-
-async function seedPoliticians() {
-  console.log("\n📝 政治家データを投入中...");
-  for (const politician of testPoliticians) {
-    const { error } = await supabase.from("politicians").upsert(politician, {
-      onConflict: "id",
-    });
-    if (error) {
-      console.error(`  ❌ ${politician.name}:`, error.message);
-    } else {
-      console.log(`  ✓ ${politician.name}`);
-    }
-  }
 }
 
 async function seedOrganizations() {
@@ -374,6 +398,20 @@ async function seedElections() {
   }
 }
 
+async function seedLedgers() {
+  console.log("\n📝 台帳データを投入中...");
+  for (const ledger of testLedgers) {
+    const { error } = await supabase
+      .from("ledgers")
+      .upsert(ledger, { onConflict: "id" });
+    if (error) {
+      console.error(`  ❌ ${ledger.ledger_type} (${ledger.id}):`, error.message);
+    } else {
+      console.log(`  ✓ ${ledger.ledger_type} (${ledger.id.substring(0, 8)}...)`);
+    }
+  }
+}
+
 async function seedContacts() {
   console.log("\n📝 関係者データを投入中...");
   for (const contact of testContacts) {
@@ -384,6 +422,20 @@ async function seedContacts() {
       console.error(`  ❌ ${contact.name}:`, error.message);
     } else {
       console.log(`  ✓ ${contact.name}`);
+    }
+  }
+}
+
+async function seedLedgerContacts() {
+  console.log("\n📝 台帳↔関係者 紐付けデータを投入中...");
+  for (const lc of testLedgerContacts) {
+    const { error } = await supabase
+      .from("ledger_contacts")
+      .upsert(lc, { onConflict: "id" });
+    if (error) {
+      console.error(`  ❌ ${lc.id}:`, error.message);
+    } else {
+      console.log(`  ✓ ledger ${lc.ledger_id.substring(0, 8)}... → contact ${lc.contact_id.substring(0, 8)}...`);
     }
   }
 }
@@ -432,12 +484,17 @@ async function seedAll() {
   }
 
   // 2. マスターデータ
-  await seedPoliticians();
   await seedOrganizations();
   await seedElections();
-  await seedContacts();
 
-  // 3. トランザクションデータ
+  // 3. 台帳
+  await seedLedgers();
+
+  // 4. 関係者（台帳間で共有）
+  await seedContacts();
+  await seedLedgerContacts();
+
+  // 5. トランザクションデータ
   await seedJournals();
   await seedJournalEntries();
 
@@ -456,10 +513,11 @@ async function seedUserOnly() {
 
 async function seedDataOnly() {
   console.log("🌱 ダミーデータのみ投入（テストユーザー既存前提）...\n");
-  await seedPoliticians();
   await seedOrganizations();
   await seedElections();
+  await seedLedgers();
   await seedContacts();
+  await seedLedgerContacts();
   await seedJournals();
   await seedJournalEntries();
   console.log("\n✅ 完了！");
