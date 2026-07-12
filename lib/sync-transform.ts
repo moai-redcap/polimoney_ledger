@@ -14,8 +14,7 @@ import type { SyncJournalInput } from "./hub-client.ts";
 /** Ledger journals テーブル */
 export interface LedgerJournal {
   id: string;
-  organization_id: string | null;
-  election_id: string | null;
+  ledger_id: string | null;
   journal_date: string;
   description: string;
   status: "draft" | "approved";
@@ -48,12 +47,9 @@ export interface LedgerContact {
   is_occupation_private: boolean;
 }
 
-/** Hub 側の台帳情報 */
-export interface HubLedger {
-  id: string;
-  election_id: string | null;
-  organization_id: string | null;
-}
+// ============================================
+// 公開判定
+// ============================================
 
 // ============================================
 // 匿名化ロジック
@@ -76,6 +72,19 @@ export function anonymizeContactName(
 export function getContactType(contact: LedgerContact | null): string | null {
   if (!contact) return null;
   return contact.contact_type;
+}
+
+/**
+ * 全フィールドが公開かどうかを判定
+ * 全て公開の場合のみ Hub に contact を同期する
+ */
+export function isFullyPublicContact(contact: LedgerContact | null): boolean {
+  if (!contact) return false;
+  return (
+    !contact.is_name_private &&
+    !contact.is_address_private &&
+    !contact.is_occupation_private
+  );
 }
 
 // ============================================
@@ -138,6 +147,8 @@ export interface TransformInput {
   contact: LedgerContact | null;
   /** Ledger 側の台帳 ID（Hub では ledger_source_id として使用） */
   ledgerSourceId: string;
+  /** Hub 側の public_contacts.id（事前に同期済み） */
+  hubContactId?: string | null;
 }
 
 /**
@@ -146,7 +157,7 @@ export interface TransformInput {
 export async function transformJournalForSync(
   input: TransformInput,
 ): Promise<SyncJournalInput> {
-  const { journal, entries, contact, ledgerSourceId } = input;
+  const { journal, entries, contact: _contact, ledgerSourceId, hubContactId } = input;
 
   const amount = calculateAmount(entries);
   const accountCode = getAccountCode(entries);
@@ -166,8 +177,7 @@ export async function transformJournalForSync(
     date: journal.journal_date,
     description: journal.description,
     amount,
-    contact_name: anonymizeContactName(contact),
-    contact_type: getContactType(contact),
+    contact_id: hubContactId || null,
     account_code: accountCode,
     classification: journal.classification,
     non_monetary_basis: journal.non_monetary_basis,
@@ -180,7 +190,7 @@ export async function transformJournalForSync(
 /**
  * 複数の仕訳を一括変換
  */
-export async function transformJournalsForSync(
+export function transformJournalsForSync(
   inputs: TransformInput[],
 ): Promise<SyncJournalInput[]> {
   return Promise.all(inputs.map(transformJournalForSync));
@@ -193,7 +203,7 @@ export async function transformJournalsForSync(
 /**
  * 同期対象の仕訳かどうかを判定
  * - approved ステータスのみ
- * - 選挙台帳の場合は election_id が必要
+ * - ledger_id が設定されていること
  */
 export function shouldSync(journal: LedgerJournal): boolean {
   // 承認済みのみ同期
@@ -202,7 +212,7 @@ export function shouldSync(journal: LedgerJournal): boolean {
   }
 
   // 台帳に紐づいているか確認
-  if (!journal.election_id && !journal.organization_id) {
+  if (!journal.ledger_id) {
     return false;
   }
 

@@ -16,8 +16,7 @@ interface Member {
 }
 
 interface MemberManagerProps {
-  organizationId?: string;
-  electionId?: string;
+  ledgerId?: string;
   initialMembers: Member[];
   isOwner: boolean;
   canManageMembers: boolean;
@@ -32,8 +31,7 @@ interface PendingTransfer {
 }
 
 export default function MemberManager({
-  organizationId,
-  electionId,
+  ledgerId,
   initialMembers,
   isOwner,
   canManageMembers,
@@ -80,8 +78,7 @@ export default function MemberManager({
         body: JSON.stringify({
           email: inviteEmail.trim(),
           role: inviteRole,
-          organization_id: organizationId || undefined,
-          election_id: electionId || undefined,
+          ledger_id: ledgerId || undefined,
         }),
       });
 
@@ -184,8 +181,7 @@ export default function MemberManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to_user_id: selectedMemberId,
-          organization_id: organizationId || undefined,
-          election_id: electionId || undefined,
+          ledger_id: ledgerId || undefined,
         }),
       });
 

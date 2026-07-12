@@ -20,8 +20,7 @@ membersRouter.get("/", async (c) => {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
-  const organizationId = c.req.query("organization_id");
-  const electionId = c.req.query("election_id");
+  const ledgerId = c.req.query("ledger_id");
 
   try {
     const supabase =
@@ -29,11 +28,8 @@ membersRouter.get("/", async (c) => {
 
     let query = supabase.from("members").select("*");
 
-    if (organizationId) {
-      query = query.eq("organization_id", organizationId);
-    }
-    if (electionId) {
-      query = query.eq("election_id", electionId);
+    if (ledgerId) {
+      query = query.eq("ledger_id", ledgerId);
     }
 
     const { data, error } = await query;

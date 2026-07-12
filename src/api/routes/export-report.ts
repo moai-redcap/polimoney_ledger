@@ -75,8 +75,7 @@ function todayStr(): string {
 
 async function fetchJournals(
   userId: string,
-  organizationId: string | null,
-  electionId: string | null,
+  ledgerId: string,
   year: string | null,
 ): Promise<JournalRow[]> {
   const supabase =
@@ -94,13 +93,8 @@ async function fetchJournals(
     `,
     )
     .eq("status", "approved")
+    .eq("ledger_id", ledgerId)
     .order("journal_date", { ascending: true });
-
-  if (organizationId) {
-    query = query.eq("organization_id", organizationId);
-  } else if (electionId) {
-    query = query.eq("election_id", electionId);
-  }
 
   if (year) {
     query = query
@@ -353,13 +347,12 @@ exportReportRouter.get("/", async (c) => {
     | "organization"
     | "election"
     | null;
-  const organizationId = c.req.query("organization_id") ?? null;
-  const electionId = c.req.query("election_id") ?? null;
+  const ledgerId = c.req.query("ledger_id") ?? null;
   const year = c.req.query("year") ?? null;
 
-  if (!organizationId && !electionId) {
+  if (!ledgerId) {
     return c.json(
-      { error: "organization_id または election_id を指定してください" },
+      { error: "ledger_id を指定してください" },
       400,
     );
   }
@@ -367,8 +360,7 @@ exportReportRouter.get("/", async (c) => {
   try {
     const journals = await fetchJournals(
       userId,
-      organizationId,
-      electionId,
+      ledgerId,
       year,
     );
 

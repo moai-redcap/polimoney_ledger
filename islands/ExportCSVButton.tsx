@@ -1,8 +1,7 @@
 import { useState } from "preact/hooks";
 
 interface ExportCSVButtonProps {
-  organizationId?: string | null;
-  electionId?: string | null;
+  ledgerId: string;
 }
 
 /**
@@ -12,8 +11,7 @@ interface ExportCSVButtonProps {
  * 一括ダウンロード（ZIP）にも対応
  */
 export default function ExportCSVButton({
-  organizationId,
-  electionId,
+  ledgerId,
 }: ExportCSVButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -26,11 +24,7 @@ export default function ExportCSVButton({
 
     try {
       const params = new URLSearchParams({ type });
-      if (organizationId) {
-        params.set("organization_id", organizationId);
-      } else if (electionId) {
-        params.set("election_id", electionId);
-      }
+      params.set("ledger_id", ledgerId);
       if (includeImages) {
         params.set("include_images", "true");
       }
@@ -86,13 +80,7 @@ export default function ExportCSVButton({
     setIsLoading("report");
     try {
       const params = new URLSearchParams();
-      if (organizationId) {
-        params.set("organization_id", organizationId);
-        params.set("ledger_type", "organization");
-      } else if (electionId) {
-        params.set("election_id", electionId);
-        params.set("ledger_type", "election");
-      }
+      params.set("ledger_id", ledgerId);
 
       const response = await fetch(`/api/export-report?${params.toString()}`);
 

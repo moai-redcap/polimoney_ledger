@@ -42,8 +42,7 @@ type EntryType = "expense" | "revenue" | "transfer";
 
 interface JournalFormProps {
   ledgerType: "organization" | "election";
-  organizationId: string | null;
-  electionId: string | null;
+  ledgerId: string;
   accountCodes: AccountCode[];
   contacts: Contact[];
   subAccounts: SubAccount[];
@@ -69,8 +68,7 @@ function getDefaultDate(selectedYear?: number): string {
 
 export default function JournalForm({
   ledgerType,
-  organizationId,
-  electionId,
+  ledgerId,
   accountCodes,
   contacts: initialContacts,
   subAccounts,
@@ -272,8 +270,7 @@ export default function JournalForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          organization_id: organizationId,
-          election_id: electionId,
+          ledger_id: ledgerId,
           journal_date: date || null,
           description,
           contact_id: entryType !== "transfer" ? contactId : null,

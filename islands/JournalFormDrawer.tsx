@@ -7,8 +7,7 @@ import JournalForm, {
 
 interface JournalFormDrawerProps {
   ledgerType: "organization" | "election";
-  organizationId: string | null;
-  electionId: string | null;
+  ledgerId: string;
   accountCodes: AccountCode[];
   contacts: Contact[];
   subAccounts: SubAccount[];
@@ -18,8 +17,7 @@ interface JournalFormDrawerProps {
 
 export default function JournalFormDrawer({
   ledgerType,
-  organizationId,
-  electionId,
+  ledgerId,
   accountCodes,
   contacts,
   subAccounts,
@@ -101,8 +99,7 @@ export default function JournalFormDrawer({
             <div class="flex-1 overflow-y-auto p-4 pb-24">
               <JournalForm
                 ledgerType={ledgerType}
-                organizationId={organizationId}
-                electionId={electionId}
+                ledgerId={ledgerId}
                 accountCodes={accountCodes}
                 contacts={contacts}
                 subAccounts={subAccounts}

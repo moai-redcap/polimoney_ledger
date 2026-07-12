@@ -70,11 +70,20 @@ export const handler: Handlers<PageData> = {
         });
       }
 
+      // election_id から ledger を取得
+      const { data: ledgerData } = await supabase
+        .from("ledgers")
+        .select("id")
+        .eq("election_id", electionId)
+        .limit(1)
+        .single();
+
       // 資産取得の仕訳を取得
-      const { data: journals, error: journalsError } = await supabase
-        .from("journals")
-        .select(
-          `
+      const { data: journals, error: journalsError } = ledgerData
+        ? await supabase
+            .from("journals")
+            .select(
+              `
           id,
           journal_date,
           description,
@@ -87,11 +96,12 @@ export const handler: Handlers<PageData> = {
             debit_amount
           )
         `
-        )
-        .eq("election_id", electionId)
-        .eq("is_asset_acquisition", true)
-        .eq("status", "approved")
-        .order("journal_date", { ascending: false });
+            )
+            .eq("ledger_id", ledgerData.id)
+            .eq("is_asset_acquisition", true)
+            .eq("status", "approved")
+            .order("journal_date", { ascending: false })
+        : { data: null, error: null };
 
       if (journalsError) {
         console.error("Failed to fetch assets:", journalsError);

@@ -74,7 +74,6 @@ export interface Organization {
   id: string;
   name: string;
   type: string; // political_party, support_group, fund_management, other
-  politician_id: string | null;
   // 詳細情報【v2.1 追加】
   official_url: string | null;
   registration_authority: string | null;
@@ -102,7 +101,6 @@ export interface Organization {
 export interface UpdateOrganizationInput {
   name?: string;
   type?: string;
-  politician_id?: string | null;
   official_url?: string | null;
   registration_authority?: string | null;
   established_date?: string | null;
@@ -869,6 +867,71 @@ export async function getOrganizationRequest(
 // 同期 API
 // ============================================
 
+/** Ledger から Hub に送信する関係者データ */
+export interface SyncContactInput {
+  /** Ledger 側の contacts.id — ユニーク識別子 */
+  contact_source_id: string;
+  /** Hub 側の public_ledgers.id */
+  ledger_id: string;
+  /** 関係者種別 */
+  contact_type: string;
+  /** 名前（非公開の場合は null） */
+  name: string | null;
+  /** 住所（非公開の場合は null） */
+  address: string | null;
+  /** 職業（非公開の場合は null） */
+  occupation: string | null;
+  /** 名前非公開フラグ */
+  is_name_private: boolean;
+  /** 住所非公開フラグ */
+  is_address_private: boolean;
+  /** 職業非公開フラグ */
+  is_occupation_private: boolean;
+  /** 非公開理由種別 */
+  privacy_reason_type?: string | null;
+  /** 非公開理由（その他） */
+  privacy_reason_other?: string | null;
+  /** 政治団体ID（法人の場合） */
+  hub_organization_id?: string | null;
+}
+
+export interface SyncContactResult {
+  /** Hub 側の public_contacts.id */
+  hub_contact_id: string;
+  /** Ledger 側の contacts.id */
+  contact_source_id: string;
+  /** 同期アクション */
+  action: "created" | "updated" | "skipped";
+}
+
+export interface SyncContactsResponse {
+  data: SyncContactResult[];
+}
+
+/**
+ * 関係者データを Hub に同期
+ *
+ * contact_source_id（Ledger の contacts.id — UUID）をユニークキーとして
+ * upsert する。同姓同名でも UUID で確実に区別される。
+ *
+ * @returns Ledger contact_id → Hub public_contacts.id のマッピング
+ */
+export async function syncContacts(
+  contacts: SyncContactInput[],
+  options: { userId?: string } = {},
+): Promise<SyncContactsResponse> {
+  const result = await fetchApi<SyncContactsResponse>(
+    "/api/v1/sync/contacts",
+    {
+      method: "POST",
+      body: JSON.stringify(contacts),
+      userId: options.userId,
+    },
+  );
+  return result;
+}
+
+
 /** Ledger から Hub に送信する同期データ */
 export interface SyncJournalInput {
   /** Ledger 側の仕訳 ID */
@@ -881,10 +944,8 @@ export interface SyncJournalInput {
   description: string | null;
   /** 金額 */
   amount: number;
-  /** 関係者名（匿名化済み） */
-  contact_name: string | null;
-  /** 関係者種別 */
-  contact_type: string | null;
+  /** 関係者ID（public_contacts.id — Hub 側で参照） */
+  contact_id: string | null;
   /** 勘定科目コード */
   account_code: string;
   /** 活動区分 (campaign / pre-campaign) */
@@ -922,12 +983,12 @@ export interface SyncStatus {
 export interface SyncLedgerInput {
   /** Ledger 側の台帳 ID */
   ledger_source_id: string;
-  /** 政治家 ID (Hub の politicians.id) */
-  politician_id: string;
-  /** 政治団体 ID - 団体台帳の場合 */
-  organization_id?: string;
-  /** 選挙 ID - 選挙台帳の場合 */
-  election_id?: string;
+  /** 台帳種別 */
+  ledger_type: "political_fund" | "election_fund";
+  /** 政治家×政治団体の中間テーブルID (Hub の politician_organizations.id) */
+  politician_organization_id?: string;
+  /** 政治家×選挙の中間テーブルID (Hub の politician_elections.id) */
+  politician_election_id?: string;
   /** 会計年度 */
   fiscal_year: number;
   /** 収入合計 */

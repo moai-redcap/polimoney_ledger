@@ -75,14 +75,25 @@ export const handler: Handlers<PageData> = {
         });
       }
 
+      // election_id から ledger を取得
+      const { data: ledgerData } = await supabase
+        .from("ledgers")
+        .select("id")
+        .eq("election_id", electionId)
+        .limit(1)
+        .single();
+
+      const ledgerId = ledgerData?.id;
+
       // 並列で各種データを取得
       const [journalsResult, contactsResult, subAccountsResult, accountCodes] =
         await Promise.all([
           // 仕訳一覧
-          supabase
-            .from("journals")
-            .select(
-              `
+          ledgerId
+            ? supabase
+                .from("journals")
+                .select(
+                  `
               id,
               journal_date,
               description,
@@ -99,9 +110,10 @@ export const handler: Handlers<PageData> = {
                 name
               )
             `,
-            )
-            .eq("election_id", electionId)
-            .order("journal_date", { ascending: false }),
+                )
+                .eq("ledger_id", ledgerId)
+                .order("journal_date", { ascending: false })
+            : Promise.resolve({ data: [], error: null }),
           // 関係者一覧
           supabase
             .from("contacts")
@@ -258,11 +270,10 @@ export default function ElectionLedgerPage({ data }: PageProps<PageData>) {
                 <span class="badge badge-ghost">{journals.length}件</span>
               </h2>
               <div class="flex items-center gap-2">
-                <ExportCSVButton electionId={election.id} />
+                <ExportCSVButton ledgerId={ledgerId || ""} />
                 <JournalFormDrawer
                   ledgerType="election"
-                  organizationId={null}
-                  electionId={election.id}
+                  ledgerId={ledgerId || ""}
                   accountCodes={accountCodes}
                   contacts={contacts}
                   subAccounts={subAccounts}

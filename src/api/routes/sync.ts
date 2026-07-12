@@ -7,6 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 import {
   isTestUser,
   recordChangeLog,
+  syncContacts,
+  type SyncContactInput,
   type SyncJournalInput,
   syncJournals,
   syncLedger,
@@ -16,6 +18,7 @@ import {
   type LedgerContact,
   type LedgerJournal,
   type LedgerJournalEntry,
+  isFullyPublicContact,
   shouldSync,
   transformJournalForSync,
 } from "../../../lib/sync-transform.ts";
@@ -33,13 +36,15 @@ export const syncRouter = new Hono<{
   };
 }>();
 
+/** 正規化後の ledgers テーブル */
 interface LedgerRecord {
   id: string;
-  type: "election" | "organization";
-  election_id: string | null;
+  ledger_type: "political_fund" | "election_fund";
   organization_id: string | null;
-  politician_id: string;
-  fiscal_year: number;
+  election_id: string | null;
+  hub_ledger_id: string | null;
+  hub_politician_organization_id: string | null;
+  hub_politician_election_id: string | null;
 }
 
 interface JournalWithEntries extends LedgerJournal {
@@ -51,7 +56,7 @@ async function getApprovedJournals(
   supabase: ReturnType<typeof getSupabase>,
   ledger: LedgerRecord
 ): Promise<JournalWithEntries[]> {
-  let query = supabase
+  const query = supabase
     .from("journals")
     .select(
       `
@@ -60,13 +65,8 @@ async function getApprovedJournals(
       contacts (*)
     `
     )
-    .eq("status", "approved");
-
-  if (ledger.type === "election") {
-    query = query.eq("election_id", ledger.election_id);
-  } else {
-    query = query.eq("organization_id", ledger.organization_id);
-  }
+    .eq("status", "approved")
+    .eq("ledger_id", ledger.id);
 
   const { data, error } = await query;
 
@@ -103,6 +103,86 @@ function calculateLedgerTotals(journals: JournalWithEntries[]): {
   };
 }
 
+/**
+ * journals から公開可能な contacts を収集し、Hub に同期する
+ *
+ * contact_source_id（Ledger contacts.id — UUID）をユニークキーとして同期。
+ * 同姓同名でも UUID で確実に区別される。
+ *
+ * @returns Ledger contact_id → Hub public_contacts.id のマッピング
+ */
+async function syncContactsForJournals(
+  journals: JournalWithEntries[],
+  hubLedgerId: string,
+  userId: string | undefined,
+): Promise<Map<string, string>> {
+  // Ledger contact_id → Hub public_contacts.id
+  const contactIdMap = new Map<string, string>();
+
+  // 全公開の contact を収集（重複排除）
+  const contactsToSync = new Map<string, SyncContactInput>();
+
+  for (const journal of journals) {
+    const contact = journal.contacts;
+    if (!contact || !contact.id) continue;
+    if (contactsToSync.has(contact.id)) continue;
+
+    // 全フィールド公開の場合のみ Hub に同期
+    if (isFullyPublicContact(contact)) {
+      contactsToSync.set(contact.id, {
+        contact_source_id: contact.id,
+        ledger_id: hubLedgerId,
+        contact_type: contact.contact_type,
+        name: contact.name,
+        address: contact.address ?? null,
+        occupation: contact.occupation ?? null,
+        is_name_private: false,
+        is_address_private: false,
+        is_occupation_private: false,
+      });
+    } else {
+      // 一部非公開の場合も非公開フラグ付きで同期
+      contactsToSync.set(contact.id, {
+        contact_source_id: contact.id,
+        ledger_id: hubLedgerId,
+        contact_type: contact.contact_type,
+        name: contact.is_name_private ? null : contact.name,
+        address: contact.is_address_private ? null : (contact.address ?? null),
+        occupation: contact.is_occupation_private
+          ? null
+          : (contact.occupation ?? null),
+        is_name_private: contact.is_name_private,
+        is_address_private: contact.is_address_private,
+        is_occupation_private: contact.is_occupation_private,
+      });
+    }
+  }
+
+  if (contactsToSync.size === 0) {
+    return contactIdMap;
+  }
+
+  try {
+    const syncResult = await syncContacts(
+      Array.from(contactsToSync.values()),
+      { userId },
+    );
+
+    // マッピングを構築
+    for (const result of syncResult.data) {
+      contactIdMap.set(result.contact_source_id, result.hub_contact_id);
+    }
+
+    console.log(
+      `[Sync] Contacts synced: ${syncResult.data.length} (map size: ${contactIdMap.size})`
+    );
+  } catch (error) {
+    console.error("[Sync] Failed to sync contacts (non-fatal):", error);
+  }
+
+  return contactIdMap;
+}
+
 // POST /sync - Hub に同期
 syncRouter.post("/", async (c) => {
   const userId = c.get("userId");
@@ -132,9 +212,9 @@ syncRouter.post("/", async (c) => {
     if (ledgerId) {
       ledgersQuery = ledgersQuery.eq("id", ledgerId);
     } else if (ledgerType === "election") {
-      ledgersQuery = ledgersQuery.not("election_id", "is", null);
+      ledgersQuery = ledgersQuery.eq("ledger_type", "election_fund");
     } else if (ledgerType === "organization") {
-      ledgersQuery = ledgersQuery.not("organization_id", "is", null);
+      ledgersQuery = ledgersQuery.eq("ledger_type", "political_fund");
     }
 
     const { data: ledgers, error: ledgersError } = await ledgersQuery;
@@ -153,17 +233,20 @@ syncRouter.post("/", async (c) => {
       skipped: 0,
       errors: 0,
       ledgers_synced: 0,
+      contacts_synced: 0,
     };
 
     for (const ledger of ledgers) {
       try {
         const ledgerRecord: LedgerRecord = {
           id: ledger.id,
-          type: ledger.election_id ? "election" : "organization",
-          election_id: ledger.election_id,
+          ledger_type: ledger.ledger_type,
           organization_id: ledger.organization_id,
-          politician_id: ledger.politician_id,
-          fiscal_year: ledger.fiscal_year || new Date().getFullYear(),
+          election_id: ledger.election_id,
+          hub_ledger_id: ledger.hub_ledger_id,
+          hub_politician_organization_id:
+            ledger.hub_politician_organization_id,
+          hub_politician_election_id: ledger.hub_politician_election_id,
         };
 
         const journals = await getApprovedJournals(supabase, ledgerRecord);
@@ -175,18 +258,36 @@ syncRouter.post("/", async (c) => {
 
         const totals = calculateLedgerTotals(journals);
 
+        // 1. 台帳を同期
         const ledgerInput: SyncLedgerInput = {
           ledger_source_id: ledger.id,
-          politician_id: ledgerRecord.politician_id,
-          organization_id: ledgerRecord.organization_id || undefined,
-          election_id: ledgerRecord.election_id || undefined,
-          fiscal_year: ledgerRecord.fiscal_year,
+          ledger_type: ledgerRecord.ledger_type,
+          politician_organization_id:
+            ledgerRecord.hub_politician_organization_id || undefined,
+          politician_election_id:
+            ledgerRecord.hub_politician_election_id || undefined,
+          fiscal_year: new Date().getFullYear(),
           is_test: isTest,
           ...totals,
         };
 
-        await syncLedger(ledgerInput, { userId: userId || undefined });
+        const ledgerResult = await syncLedger(ledgerInput, {
+          userId: userId || undefined,
+        });
 
+        // Hub の public_ledgers.id を取得
+        const hubLedgerId =
+          ledgerResult.data?.id || ledger.hub_ledger_id || ledger.id;
+
+        // 2. contacts を先に同期（UUID でユニーク識別）
+        const contactIdMap = await syncContactsForJournals(
+          journals,
+          hubLedgerId,
+          userId || undefined,
+        );
+        result.contacts_synced += contactIdMap.size;
+
+        // 3. journals を同期（contact_id は Hub の public_contacts.id を使用）
         const syncInputs: SyncJournalInput[] = [];
 
         for (const journal of journals) {
@@ -195,11 +296,17 @@ syncRouter.post("/", async (c) => {
             continue;
           }
 
+          // Ledger の contact_id → Hub の public_contacts.id にマッピング
+          const hubContactId = journal.contact_id
+            ? contactIdMap.get(journal.contact_id) || null
+            : null;
+
           const transformed = await transformJournalForSync({
             journal,
             entries: journal.journal_entries,
             contact: journal.contacts,
             ledgerSourceId: ledger.id,
+            hubContactId,
           });
 
           syncInputs.push({
@@ -226,6 +333,7 @@ syncRouter.post("/", async (c) => {
             change_summary: force ? "強制再同期" : "同期",
             change_details: {
               journal_count: syncInputs.length,
+              contacts_synced: contactIdMap.size,
               created: result.created,
               updated: result.updated,
             },
@@ -234,7 +342,7 @@ syncRouter.post("/", async (c) => {
         );
 
         console.log(
-          `[Sync] Ledger ${ledger.id}: ${syncInputs.length} journals synced`
+          `[Sync] Ledger ${ledger.id}: ${syncInputs.length} journals, ${contactIdMap.size} contacts synced`
         );
       } catch (ledgerError) {
         console.error(

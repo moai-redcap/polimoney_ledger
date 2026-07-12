@@ -10,8 +10,7 @@ interface Journal {
   journal_date: string;
   description: string;
   status: "draft" | "approved";
-  organization_id: string | null;
-  election_id: string | null;
+  ledger_id: string | null;
   contact_id: string | null;
   created_at: string;
   journal_entries: {
@@ -58,8 +57,7 @@ export const handler: Handlers<PageData> = {
           journal_date,
           description,
           status,
-          organization_id,
-          election_id,
+          ledger_id,
           contact_id,
           created_at,
           journal_entries (

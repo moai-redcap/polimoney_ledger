@@ -26,6 +26,7 @@ interface PageData {
   members: Member[];
   isOwner: boolean;
   canManageMembers: boolean;
+  ledgerId?: string;
   error?: string;
 }
 
@@ -43,7 +44,7 @@ export const handler: Handlers<PageData> = {
 
     const organizationId = ctx.params.id;
     const supabase =
-      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(req);
+      userId === TEST_USER_ID ? getServiceClient() : getSupabaseClient(userId);
 
     // 政治団体の情報を取得
     const { data: organization, error: orgError } = await supabase
@@ -64,12 +65,22 @@ export const handler: Handlers<PageData> = {
 
     const isOwner = organization.owner_user_id === userId;
 
-    // メンバー一覧を取得
-    const { data: members } = await supabase
-      .from("ledger_members")
-      .select("id, user_id, role, created_at, invited_by_user_id")
+    // organization_id から ledger を取得
+    const { data: ledgerData } = await supabase
+      .from("ledgers")
+      .select("id")
       .eq("organization_id", organizationId)
-      .order("created_at");
+      .limit(1)
+      .single();
+
+    // メンバー一覧を取得
+    const { data: members } = ledgerData
+      ? await supabase
+          .from("ledger_members")
+          .select("id, user_id, role, created_at, invited_by_user_id")
+          .eq("ledger_id", ledgerData.id)
+          .order("created_at")
+      : { data: null };
 
     // 現在のユーザーの権限を確認
     let canManageMembers = isOwner;
@@ -88,12 +99,13 @@ export const handler: Handlers<PageData> = {
       members: members || [],
       isOwner,
       canManageMembers,
+      ledgerId: ledgerData?.id,
     });
   },
 };
 
 export default function OrganizationMembersPage({ data }: PageProps<PageData>) {
-  const { organization, members, isOwner, canManageMembers, error } = data;
+  const { organization, members, isOwner, canManageMembers, ledgerId, error } = data;
 
   if (error) {
     return (
@@ -159,7 +171,7 @@ export default function OrganizationMembersPage({ data }: PageProps<PageData>) {
 
         <div class="max-w-4xl">
           <MemberManager
-            organizationId={organization.id}
+            ledgerId={ledgerId}
             initialMembers={members}
             isOwner={isOwner}
             canManageMembers={canManageMembers}
